@@ -33,7 +33,7 @@ The following code block shows how to start the model server.
 
 The ``HANDLER_SERVICE`` is a string literal that points to the Python path of a Python file that will be executed by the
 model server for incoming invocation requests. This Python script is responsible for handling incoming data and passing on to engine for inference.
-The Python file should define a method that acts as an entry point for execution, this function will be invoked by the model server on a inference request.
+The Python file should define a ``handle`` method that acts as an entry point for execution, this function will be invoked by the model server on a inference request.
 
 For more information on how to define your ``HANDLER_SERVICE`` file, see `Custom Service <https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md>`__.
 
