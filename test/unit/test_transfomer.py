@@ -65,11 +65,12 @@ def test_transformer_with_custom_default_inference_handler():
 def test_transform(validate, retrieve_content_type_header, accept_key):
     data = [{'body': INPUT_DATA}]
     context = Mock()
+    request_processor = Mock()
     transform_fn = Mock(return_value=RESULT)
 
-    context.request_ids = ['first_request_id']
+    context.request_processor = [request_processor]
     request_property = {accept_key: ACCEPT}
-    context.request_processor.get_request_property.return_value = request_property
+    request_processor.get_request_properties.return_value = request_property
 
     transformer = Transformer()
     transformer._model = MODEL
@@ -80,7 +81,7 @@ def test_transform(validate, retrieve_content_type_header, accept_key):
     validate.assert_called_once_with()
     retrieve_content_type_header.assert_called_once_with(request_property)
     transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT)
-    context.set_response_content_type.assert_called_once_with(context.request_ids[0], ACCEPT)
+    context.set_response_content_type.assert_called_once_with(0, ACCEPT)
     assert isinstance(result, list)
     assert result[0] == RESULT
 
@@ -90,12 +91,13 @@ def test_transform(validate, retrieve_content_type_header, accept_key):
 def test_transform_no_accept(validate, retrieve_content_type_header):
     data = [{'body': INPUT_DATA}]
     context = Mock()
+    request_processor = Mock()
     transform_fn = Mock()
     environment = Mock()
     environment.default_accept = DEFAULT_ACCEPT
 
-    context.request_ids = ['first_request_id']
-    context.request_processor.get_request_property.return_value = dict()
+    context.request_processor = [request_processor]
+    request_processor.get_request_properties.return_value = dict()
 
     transformer = Transformer()
     transformer._model = MODEL
@@ -113,12 +115,13 @@ def test_transform_no_accept(validate, retrieve_content_type_header):
 def test_transform_any_accept(validate, retrieve_content_type_header):
     data = [{'body': INPUT_DATA}]
     context = Mock()
+    request_processor = Mock()
     transform_fn = Mock()
     environment = Mock()
     environment.default_accept = DEFAULT_ACCEPT
 
-    context.request_ids = ['first_request_id']
-    context.request_processor.get_request_property.return_value = {'accept': content_types.ANY}
+    context.request_processor = [request_processor]
+    request_processor.get_request_properties.return_value = {'accept': content_types.ANY}
 
     transformer = Transformer()
     transformer._model = MODEL
@@ -137,12 +140,13 @@ def test_transform_any_accept(validate, retrieve_content_type_header):
 def test_transform_decode(validate, retrieve_content_type_header, content_type):
     input_data = Mock()
     context = Mock()
+    request_processor = Mock()
     transform_fn = Mock()
     data = [{'body': input_data}]
 
     input_data.decode.return_value = INPUT_DATA
-    context.request_ids = ['first_request_id']
-    context.request_processor.get_request_property.return_value = {'accept': ACCEPT}
+    context.request_processor = [request_processor]
+    request_processor.get_request_properties.return_value = {'accept': ACCEPT}
     retrieve_content_type_header.return_value = content_type
 
     transformer = Transformer()
@@ -160,10 +164,11 @@ def test_transform_decode(validate, retrieve_content_type_header, content_type):
 def test_transform_tuple(validate, retrieve_content_type_header):
     data = [{'body': INPUT_DATA}]
     context = Mock()
+    request_processor = Mock()
     transform_fn = Mock(return_value=(RESULT, ACCEPT))
 
-    context.request_ids = ['first_request_id']
-    context.request_processor.get_request_property.return_value = {'accept': ACCEPT}
+    context.request_processor = [request_processor]
+    request_processor.get_request_properties.return_value = {'accept': ACCEPT}
 
     transformer = Transformer()
     transformer._model = MODEL
@@ -172,7 +177,7 @@ def test_transform_tuple(validate, retrieve_content_type_header):
     result = transformer.transform(data, context)
 
     transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT)
-    context.set_response_content_type.assert_called_once_with(context.request_ids[0], transform_fn()[1])
+    context.set_response_content_type.assert_called_once_with(0, transform_fn()[1])
     assert isinstance(result, list)
     assert result[0] == transform_fn()[0]
 

@@ -56,10 +56,9 @@ class Transformer(object):
 
         input_data = data[0].get('body')
 
-        first_request_id = context.request_ids[0]
-        request_processor = context.request_processor
+        request_processor = context.request_processor[0]
 
-        request_property = request_processor.get_request_property(first_request_id)
+        request_property = request_processor.get_request_properties()
         content_type = utils.retrieve_content_type_header(request_property)
         accept = request_property.get('Accept') or request_property.get('accept')
 
@@ -79,7 +78,7 @@ class Transformer(object):
             response = result[0]
             response_content_type = result[1]
 
-        context.set_response_content_type(first_request_id, response_content_type)
+        context.set_response_content_type(0, response_content_type)
         return [response]
 
     def validate_and_initialize(self):  # type: () -> None
