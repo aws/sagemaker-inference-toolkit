@@ -15,7 +15,7 @@ phases:
       - python3 setup.py sdist
 
       # publish the release to github
-      - git-release
+      - git-release --publish
 
 artifacts:
   files:
