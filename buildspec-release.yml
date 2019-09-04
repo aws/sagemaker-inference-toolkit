@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      # prepare the release
+      - git-release --prepare
+
+      - tox -e flake8,twine
+
+      # run unit tests
+      - tox -e py36,py27 -- test
+
+      # generate the distribution package
+      - python3 setup.py sdist
+
+      # publish the release to github
+      - git-release
+
+artifacts:
+  files:
+    - dist/sagemaker_inference-*.tar.gz
+  name: ARTIFACT_1
