@@ -258,7 +258,7 @@ def _assert_value_error_raised():
         transformer._validate_user_module_and_set_functions()
 
     assert 'Cannot use transform_fn implementation in conjunction with input_fn, predict_fn, ' \
-           'and/or output_fn implementation' in str(e)
+           'and/or output_fn implementation' in str(e.value)
 
 
 @pytest.mark.parametrize('user_module', [UserModuleMock(input_fn=None),

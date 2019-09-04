@@ -1,0 +1,9 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - tox -e flake8,twine
+
+      # run unit tests
+      - tox -e py36,py27 -- test
