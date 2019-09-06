@@ -21,3 +21,4 @@ artifacts:
   files:
     - dist/sagemaker_inference-*.tar.gz
   name: ARTIFACT_1
+  discard-paths: yes
