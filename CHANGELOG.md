@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.3 (2019-09-06)
+
+### Bug fixes and other changes
+
+ * discard build output artifact path
+
 ## v1.0.2 (2019-09-06)
 
 ### Bug fixes and other changes
