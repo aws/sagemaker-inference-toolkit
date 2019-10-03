@@ -46,6 +46,96 @@ To run all tests:
 
     tox
 
+Using SageMaker Inference Toolkit
+---------------------------------
+
+SageMaker Inference Toolkit serving stack leverages `Model Server for Apache MXNet (MMS) <https://github.com/awslabs/mxnet-model-server>`_ to server deep learning models trained using any ML/DL framework in SageMaker. Any SageMaker container can use the SageMaker Inference Toolkit to implement their serving stack. To use the Inference Toolkit, customers need to implement the following the components:
+
+- An inference handler responsible to load the model, and provide default input, predict, and output functions:
+
+.. code:: python
+
+    from sagemaker_inference import content_types, decoder, default_inference_handler, encoder, errors
+
+    class DefaultPytorchInferenceHandler(default_inference_handler.DefaultInferenceHandler):
+        VALID_CONTENT_TYPES = (content_types.JSON, content_types.NPY)
+
+        def default_model_fn(self, model_dir):
+            """Loads a model. For PyTorch, a default function to load a model cannot be provided.
+            Users should provide customized model_fn() in script.
+            Args:
+                model_dir: a directory where model is saved.
+            Returns: A PyTorch model.
+            """
+            raise NotImplementedError(textwrap.dedent("""
+            Please provide a model_fn implementation.
+            See documentation for model_fn at https://github.com/aws/sagemaker-python-sdk
+            """))
+
+        def default_input_fn(self, input_data, content_type):
+            """A default input_fn that can handle JSON, CSV and NPZ formats.
+            Args:
+                input_data: the request payload serialized in the content_type format
+                content_type: the request content_type
+            Returns: input_data deserialized into torch.FloatTensor or torch.cuda.FloatTensor depending if cuda is available.
+            """
+            return decoder.decode(input_data, content_type)
+
+        def default_predict_fn(self, data, model):
+            """A default predict_fn for PyTorch. Calls a model on data deserialized in input_fn.
+            Runs prediction on GPU if cuda is available.
+            Args:
+                data: input data (torch.Tensor) for prediction deserialized by input_fn
+                model: PyTorch model loaded in memory by model_fn
+            Returns: a prediction
+            """
+            return model(input_data)
+
+        def default_output_fn(self, prediction, accept):
+            """A default output_fn for PyTorch. Serializes predictions from predict_fn to JSON, CSV or NPY format.
+            Args:
+                prediction: a prediction result from predict_fn
+                accept: type which the output data needs to be serialized
+            Returns: output data serialized
+            """
+            return encoder.encode(prediction, accept)
+
+- A handler service that is executed by the model server:
+
+.. code:: python
+
+    from sagemaker_inference.default_handler_service import DefaultHandlerService
+    from sagemaker_inference.transformer import Transformer
+    from sagemaker_pytorch_serving_container.default_inference_handler import \
+        DefaultPytorchInferenceHandler
+
+
+    class HandlerService(DefaultHandlerService):
+        """Handler service that is executed by the model server.
+        Determines specific default inference handlers to use based on model being used.
+        This class extends ``DefaultHandlerService``, which define the following:
+            - The ``handle`` method is invoked for all incoming inference requests to the model server.
+            - The ``initialize`` method is invoked at model server start up.
+        Based on: https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md
+        """
+        def __init__(self):
+            transformer = Transformer(default_inference_handler=DefaultPytorchInferenceHandler())
+            super(HandlerService, self).__init__(transformer=transformer)
+
+
+- A serving entrypoint responsible to start MMS:
+
+.. code:: python
+
+    from sagemaker_inference import model_server
+    
+    def main():
+        model_server.start_model_server(handler_service=HANDLER_SERVICE)
+
+
+Complete example `https://github.com/aws/sagemaker-pytorch-serving-container/pull/4/files`
+
+
 License
 -------
 
