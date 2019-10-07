@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.4 (2019-10-07)
+
+### Bug fixes and other changes
+
+ * Update README.rst
+
 ## v1.0.3 (2019-09-06)
 
 ### Bug fixes and other changes
