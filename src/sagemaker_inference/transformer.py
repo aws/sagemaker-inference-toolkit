@@ -24,7 +24,7 @@ except ImportError:
 
     def find_spec(module_name):
         try:
-            imp.find_module('eggs')
+            imp.find_module(module_name)
             return True
         except ImportError:
             return None
