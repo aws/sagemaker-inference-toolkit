@@ -181,8 +181,9 @@ def test_add_sigterm_handler(signal_call):
     assert isinstance(second_argument, types.FunctionType)
 
 
+@patch('retrying.Retrying.should_reject', return_value=False)
 @patch('psutil.process_iter')
-def test_retrieve_mms_server_process(process_iter):
+def test_retrieve_mms_server_process(process_iter, retry):
     server = Mock()
     server.cmdline.return_value = MMS_NAMESPACE
 
@@ -196,16 +197,18 @@ def test_retrieve_mms_server_process(process_iter):
     assert process == server
 
 
+@patch('retrying.Retrying.should_reject', return_value=False)
 @patch('psutil.process_iter', return_value=list())
-def test_retrieve_mms_server_process_no_server(process_iter):
+def test_retrieve_mms_server_process_no_server(process_iter, retry):
     with pytest.raises(Exception) as e:
         model_server._retrieve_mms_server_process()
 
     assert 'mms model server was unsuccessfully started' in str(e.value)
 
 
+@patch('retrying.Retrying.should_reject', return_value=False)
 @patch('psutil.process_iter')
-def test_retrieve_mms_server_process_too_many_servers(process_iter):
+def test_retrieve_mms_server_process_too_many_servers(process_iter, retry):
     server = Mock()
     second_server = Mock()
     server.cmdline.return_value = MMS_NAMESPACE

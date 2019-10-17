@@ -18,6 +18,7 @@ import subprocess
 
 import pkg_resources
 import psutil
+from retrying import retry
 
 import sagemaker_inference
 from sagemaker_inference import default_handler_service, environment, logging, utils
@@ -133,6 +134,8 @@ def _add_sigterm_handler(mms_process):
     signal.signal(signal.SIGTERM, _terminate)
 
 
+# retry for 10 seconds
+@retry(stop_max_delay=10 * 1000)
 def _retrieve_mms_server_process():
     mms_server_processes = list()
 
