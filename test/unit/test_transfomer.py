@@ -20,7 +20,7 @@ except ImportError:
 
 from sagemaker_inference import content_types, environment
 from sagemaker_inference.default_inference_handler import DefaultInferenceHandler
-from sagemaker_inference.error_handling import BaseInferenceToolkitError
+from sagemaker_inference.errors import BaseInferenceToolkitError
 from sagemaker_inference.transformer import Transformer
 
 INPUT_DATA = 'input_data'

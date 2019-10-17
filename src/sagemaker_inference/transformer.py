@@ -34,7 +34,7 @@ import importlib
 
 from sagemaker_inference import content_types, environment, utils
 from sagemaker_inference.default_inference_handler import DefaultInferenceHandler
-from sagemaker_inference.error_handling import BaseInferenceToolkitError, GenericInferenceToolkitError
+from sagemaker_inference.errors import BaseInferenceToolkitError, GenericInferenceToolkitError
 
 
 class Transformer(object):
