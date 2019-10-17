@@ -139,7 +139,7 @@ def _add_sigterm_handler(mms_process):
 
 def _install_requirements():
     logger.info('installing packages from requirements.txt...')
-    pip_install_cmd = [sys.executable, 'install', '-r', REQUIREMENTS_PATH]
+    pip_install_cmd = [sys.executable, '-m', 'pip', 'install', '-r', REQUIREMENTS_PATH]
 
     try:
         subprocess.check_call(pip_install_cmd)
