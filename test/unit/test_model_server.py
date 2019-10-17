@@ -20,22 +20,22 @@ import pytest
 
 from sagemaker_inference import environment, model_server
 from sagemaker_inference.model_server import REQUIREMENTS_PATH
+from sagemaker_inference.model_server import MMS_NAMESPACE
 
 PYTHON_PATH = 'python_path'
 DEFAULT_CONFIGURATION = 'default_configuration'
 
-MMS_PROCESS = 'mms_process'
-
 
 @patch('subprocess.call')
-@patch('subprocess.Popen', return_value=MMS_PROCESS)
+@patch('subprocess.Popen')
+@patch('sagemaker_inference.model_server._retrieve_mms_server_process')
 @patch('sagemaker_inference.model_server._add_sigterm_handler')
 @patch('sagemaker_inference.model_server._install_requirements')
 @patch('os.path.exists', return_value=True)
 @patch('sagemaker_inference.model_server._create_model_server_config_file')
 @patch('sagemaker_inference.model_server._adapt_to_mms_format')
 def test_start_model_server_default_service_handler(adapt, create_config, exists, install_requirements, sigterm,
-                                                    subprocess_popen, subprocess_call):
+                                                    retrieve, subprocess_popen, subprocess_call):
     model_server.start_model_server()
 
     adapt.assert_called_once_with(model_server.DEFAULT_HANDLER_SERVICE)
@@ -51,21 +51,17 @@ def test_start_model_server_default_service_handler(adapt, create_config, exists
                               ]
 
     subprocess_popen.assert_called_once_with(mxnet_model_server_cmd)
-    sigterm.assert_called_once_with(MMS_PROCESS)
-
-    tail_cmd = ['tail',
-                '-f',
-                '/dev/null']
-
-    subprocess_call.assert_called_once_with(tail_cmd)
+    sigterm.assert_called_once_with(retrieve.return_value)
 
 
 @patch('subprocess.call')
 @patch('subprocess.Popen')
+@patch('sagemaker_inference.model_server._retrieve_mms_server_process')
 @patch('sagemaker_inference.model_server._add_sigterm_handler')
 @patch('sagemaker_inference.model_server._create_model_server_config_file')
 @patch('sagemaker_inference.model_server._adapt_to_mms_format')
-def test_start_model_server_custom_handler_service(adapt, create_config, sigterm, subprocess_popen, subprocess_call):
+def test_start_model_server_custom_handler_service(adapt, create_config, sigterm, retrieve, subprocess_popen,
+                                                   subprocess_call):
     handler_service = Mock()
 
     model_server.start_model_server(handler_service)
@@ -202,3 +198,48 @@ def test_install_requirements_installation_failed(check_call):
         model_server._install_requirements()
 
     assert 'failed to install required packages' in str(e.value)
+
+
+@patch('retrying.Retrying.should_reject', return_value=False)
+@patch('psutil.process_iter')
+def test_retrieve_mms_server_process(process_iter, retry):
+    server = Mock()
+    server.cmdline.return_value = MMS_NAMESPACE
+
+    processes = list()
+    processes.append(server)
+
+    process_iter.return_value = processes
+
+    process = model_server._retrieve_mms_server_process()
+
+    assert process == server
+
+
+@patch('retrying.Retrying.should_reject', return_value=False)
+@patch('psutil.process_iter', return_value=list())
+def test_retrieve_mms_server_process_no_server(process_iter, retry):
+    with pytest.raises(Exception) as e:
+        model_server._retrieve_mms_server_process()
+
+    assert 'mms model server was unsuccessfully started' in str(e.value)
+
+
+@patch('retrying.Retrying.should_reject', return_value=False)
+@patch('psutil.process_iter')
+def test_retrieve_mms_server_process_too_many_servers(process_iter, retry):
+    server = Mock()
+    second_server = Mock()
+    server.cmdline.return_value = MMS_NAMESPACE
+    second_server.cmdline.return_value = MMS_NAMESPACE
+
+    processes = list()
+    processes.append(server)
+    processes.append(second_server)
+
+    process_iter.return_value = processes
+
+    with pytest.raises(Exception) as e:
+        model_server._retrieve_mms_server_process()
+
+    assert 'multiple mms model servers are not supported' in str(e.value)

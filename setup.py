@@ -30,7 +30,7 @@ def read_version():
 packages = setuptools.find_packages(where='src', exclude=('test',))
 
 required_packages = [
-    'numpy', 'six', 'typing'
+    'numpy', 'six', 'typing', 'psutil', 'retrying==1.3.3'
 ]
 
 # enum is introduced in Python 3.4. Installing enum back port

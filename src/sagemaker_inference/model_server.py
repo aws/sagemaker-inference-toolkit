@@ -18,6 +18,8 @@ import subprocess
 import sys
 
 import pkg_resources
+import psutil
+from retrying import retry
 
 import sagemaker_inference
 from sagemaker_inference import default_handler_service, environment, logging, utils
@@ -34,6 +36,7 @@ DEFAULT_MMS_MODEL_NAME = 'model'
 
 PYTHON_PATH_ENV = 'PYTHONPATH'
 REQUIREMENTS_PATH = os.path.join(code_dir, "requirements.txt")
+MMS_NAMESPACE = "com.amazonaws.ml.mms.ModelServer"
 
 
 def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
@@ -60,13 +63,13 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
                               ]
 
     logger.info(mxnet_model_server_cmd)
-    mms_process = subprocess.Popen(mxnet_model_server_cmd)
+    subprocess.Popen(mxnet_model_server_cmd)
+
+    mms_process = _retrieve_mms_server_process()
 
     _add_sigterm_handler(mms_process)
 
-    subprocess.call(['tail',
-                     '-f',
-                     '/dev/null'])
+    mms_process.wait()
 
 
 def _adapt_to_mms_format(handler_service):
@@ -146,3 +149,20 @@ def _install_requirements():
     except subprocess.CalledProcessError:
         logger.error('failed to install required packages, exiting')
         raise ValueError('failed to install required packages')
+
+# retry for 10 seconds
+@retry(stop_max_delay=10 * 1000)
+def _retrieve_mms_server_process():
+    mms_server_processes = list()
+
+    for process in psutil.process_iter():
+        if MMS_NAMESPACE in process.cmdline():
+            mms_server_processes.append(process)
+
+    if not mms_server_processes:
+        raise Exception("mms model server was unsuccessfully started")
+
+    if len(mms_server_processes) > 1:
+        raise Exception("multiple mms model servers are not supported")
+
+    return mms_server_processes[0]
