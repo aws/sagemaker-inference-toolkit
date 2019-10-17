@@ -19,8 +19,8 @@ from mock import Mock, patch
 import pytest
 
 from sagemaker_inference import environment, model_server
-from sagemaker_inference.model_server import REQUIREMENTS_PATH
 from sagemaker_inference.model_server import MMS_NAMESPACE
+from sagemaker_inference.model_server import REQUIREMENTS_PATH
 
 PYTHON_PATH = 'python_path'
 DEFAULT_CONFIGURATION = 'default_configuration'
@@ -39,9 +39,9 @@ def test_start_model_server_default_service_handler(adapt, create_config, exists
     model_server.start_model_server()
 
     adapt.assert_called_once_with(model_server.DEFAULT_HANDLER_SERVICE)
-    create_config.assert_called_once_with()
+    create_config.assert_called_once()
     exists.assert_called_once_with(REQUIREMENTS_PATH)
-    install_requirements.assert_called_once_with()
+    install_requirements.assert_called_once()
 
     mxnet_model_server_cmd = ['mxnet-model-server',
                               '--start',
@@ -90,7 +90,7 @@ def test_adapt_to_mms_format(path_exists, make_dir, subprocess_check_call, set_p
                           ]
 
     subprocess_check_call.assert_called_once_with(model_archiver_cmd)
-    set_python_path.assert_called_once_with()
+    set_python_path.assert_called_once()
 
 
 @patch('sagemaker_inference.model_server._set_python_path')

@@ -150,6 +150,7 @@ def _install_requirements():
         logger.error('failed to install required packages, exiting')
         raise ValueError('failed to install required packages')
 
+
 # retry for 10 seconds
 @retry(stop_max_delay=10 * 1000)
 def _retrieve_mms_server_process():
