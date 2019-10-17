@@ -13,8 +13,14 @@
 from mock import Mock, patch
 import pytest
 
+try:
+    import http.client as http_client
+except ImportError:
+    import httplib as http_client
+
 from sagemaker_inference import content_types, environment
 from sagemaker_inference.default_inference_handler import DefaultInferenceHandler
+from sagemaker_inference.errors import BaseInferenceToolkitError
 from sagemaker_inference.transformer import Transformer
 
 INPUT_DATA = 'input_data'
@@ -203,6 +209,67 @@ def test_validate_and_initialize(env, validate_user_module):
     validate_user_module.assert_called_once_with()
 
 
+@patch('sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions')
+@patch('sagemaker_inference.environment.Environment')
+def test_handle_validate_and_initialize_error(env, validate_user_module):
+    data = [{'body': INPUT_DATA}]
+    request_processor = Mock()
+
+    context = Mock()
+    context.request_processor = [request_processor]
+
+    transform_fn = Mock()
+    model_fn = Mock()
+
+    transformer = Transformer()
+
+    transformer._model = MODEL
+    transformer._transform_fn = transform_fn
+    transformer._model_fn = model_fn
+
+    test_error_message = "Foo"
+    validate_user_module.side_effect = ValueError(test_error_message)
+
+    assert transformer._initialized is False
+
+    response = transformer.transform(data, context)
+    assert test_error_message in str(response)
+    context.set_response_status.assert_called_with(code=http_client.INTERNAL_SERVER_ERROR, phrase=test_error_message)
+
+
+@patch('sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions')
+@patch('sagemaker_inference.environment.Environment')
+def test_handle_validate_and_initialize_user_error(env, validate_user_module):
+    test_status_code = http_client.FORBIDDEN
+    test_error_message = "Foo"
+
+    class FooUserError(BaseInferenceToolkitError):
+
+        def __init__(self, status_code, message):
+            self.status_code = status_code
+            self.message = message
+            self.phrase = "Foo"
+
+    data = [{'body': INPUT_DATA}]
+    context = Mock()
+    transform_fn = Mock()
+    model_fn = Mock()
+
+    transformer = Transformer()
+
+    transformer._model = MODEL
+    transformer._transform_fn = transform_fn
+    transformer._model_fn = model_fn
+
+    validate_user_module.side_effect = FooUserError(test_status_code, test_error_message)
+
+    assert transformer._initialized is False
+
+    response = transformer.transform(data, context)
+    assert test_error_message in str(response)
+    context.set_response_status.assert_called_with(code=http_client.FORBIDDEN, phrase=test_error_message)
+
+
 class UserModuleMock:
     def __init__(self, transform_fn=Mock(), input_fn=Mock(), predict_fn=Mock(), output_fn=Mock()):
         self.transform_fn = transform_fn
@@ -211,10 +278,12 @@ class UserModuleMock:
         self.output_fn = output_fn
 
 
-@patch('importlib.import_module', return_value=object())
-def test_validate_user_module_and_set_functions(import_module):
+@patch('importlib.import_module')
+@patch('sagemaker_inference.transformer.find_spec', return_value=None)
+def test_validate_no_user_module_and_set_functions(find_spec, import_module):
     default_inference_handler = Mock()
     mock_env = Mock()
+    mock_env.module_name = "foo_module"
 
     default_model_fn = object()
     default_input_fn = object()
@@ -230,6 +299,38 @@ def test_validate_user_module_and_set_functions(import_module):
     transformer._environment = mock_env
     transformer._validate_user_module_and_set_functions()
 
+    find_spec.assert_called_once_with(mock_env.module_name)
+    import_module.assert_not_called()
+    assert transformer._default_inference_handler == default_inference_handler
+    assert transformer._environment == mock_env
+    assert transformer._model_fn == default_model_fn
+    assert transformer._input_fn == default_input_fn
+    assert transformer._predict_fn == default_predict_fn
+    assert transformer._output_fn == default_output_fn
+
+
+@patch('importlib.import_module', return_value=object())
+@patch('sagemaker_inference.transformer.find_spec', return_value=Mock())
+def test_validate_user_module_and_set_functions(find_spec, import_module):
+    default_inference_handler = Mock()
+    mock_env = Mock()
+    mock_env.module_name = "foo_module"
+
+    default_model_fn = object()
+    default_input_fn = object()
+    default_predict_fn = object()
+    default_output_fn = object()
+
+    default_inference_handler.default_model_fn = default_model_fn
+    default_inference_handler.default_input_fn = default_input_fn
+    default_inference_handler.default_predict_fn = default_predict_fn
+    default_inference_handler.default_output_fn = default_output_fn
+
+    transformer = Transformer(default_inference_handler)
+    transformer._environment = mock_env
+    transformer._validate_user_module_and_set_functions()
+
+    find_spec.assert_called_once_with(mock_env.module_name)
     import_module.assert_called_once_with(mock_env.module_name)
     assert transformer._default_inference_handler == default_inference_handler
     assert transformer._environment == mock_env
@@ -240,14 +341,20 @@ def test_validate_user_module_and_set_functions(import_module):
 
 
 @patch('importlib.import_module', return_value=UserModuleMock(input_fn=None, predict_fn=None, output_fn=None))
-def test_validate_user_module_and_set_functions_transform_fn(import_module):
+@patch('sagemaker_inference.transformer.find_spec', return_value=Mock())
+def test_validate_user_module_and_set_functions_transform_fn(find_spec, import_module):
+    mock_env = Mock()
+    mock_env.module_name = "foo_module"
+
     import_module.transform_fn = Mock()
 
     transformer = Transformer()
-    transformer._environment = Mock()
+    transformer._environment = mock_env
 
     transformer._validate_user_module_and_set_functions()
 
+    find_spec.assert_called_once_with(mock_env.module_name)
+    import_module.assert_called_once_with(mock_env.module_name)
     assert transformer._transform_fn == import_module.return_value.transform_fn
 
 
@@ -269,7 +376,8 @@ def _assert_value_error_raised():
                                          UserModuleMock(input_fn=None, predict_fn=None),
                                          UserModuleMock()])
 @patch('importlib.import_module')
-def test_validate_user_module_error(import_module, user_module):
+@patch('sagemaker_inference.transformer.find_spec', return_value=Mock())
+def test_validate_user_module_error(find_spec, import_module, user_module):
     import_module.return_value = user_module
 
     _assert_value_error_raised()

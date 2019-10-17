@@ -28,3 +28,35 @@ class UnsupportedFormatError(Exception):
             serialize the response. For more information, see the SageMaker Python SDK README."""
             % content_type)
         super(Exception, self).__init__(self._message, **kwargs)
+
+
+class BaseInferenceToolkitError(Exception):
+    """Exception used to indicate a problem that occurred during inference.
+
+    This is meant to be extended from so that customers may handle errors within inference servers.
+
+    :param status_code: HTTP Error Status Code to send to client
+    :param message: Response message to send to client
+    :param phrase: Response body to send to client
+    """
+    def __init__(self, status_code, message, phrase):
+        self.status_code = status_code
+        self.message = message
+        self.phrase = phrase
+
+
+class GenericInferenceToolkitError(BaseInferenceToolkitError):
+    """Exception used to indicate a problem that occurred during inference.
+
+    This is meant to be a generic implementation of the BaseInferenceToolkitError for re-raising unexpected
+    exceptions in a way that can be sent back to the client.
+
+    :param status_code: HTTP Error Status Code to send to client
+    :param message: Response message to send to client
+    :param phrase: Response body to send to client
+    """
+
+    def __init__(self, status_code, message=None, phrase=None):
+        self.status_code = status_code
+        self.message = message if message else "Invalid Request"
+        self.phrase = phrase if phrase else message
