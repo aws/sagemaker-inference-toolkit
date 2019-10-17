@@ -15,6 +15,7 @@ from __future__ import absolute_import
 import os
 import signal
 import subprocess
+import sys
 
 import pkg_resources
 import psutil
@@ -22,6 +23,7 @@ from retrying import retry
 
 import sagemaker_inference
 from sagemaker_inference import default_handler_service, environment, logging, utils
+from sagemaker_inference.environment import code_dir
 
 logger = logging.get_logger()
 
@@ -33,6 +35,7 @@ DEFAULT_MMS_MODEL_DIRECTORY = os.path.join(os.getcwd(), '.sagemaker/mms/models')
 DEFAULT_MMS_MODEL_NAME = 'model'
 
 PYTHON_PATH_ENV = 'PYTHONPATH'
+REQUIREMENTS_PATH = os.path.join(code_dir, "requirements.txt")
 MMS_NAMESPACE = "com.amazonaws.ml.mms.ModelServer"
 
 
@@ -48,6 +51,9 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
     """
     _adapt_to_mms_format(handler_service)
     _create_model_server_config_file()
+
+    if os.path.exists(REQUIREMENTS_PATH):
+        _install_requirements()
 
     mxnet_model_server_cmd = ['mxnet-model-server',
                               '--start',
@@ -133,6 +139,16 @@ def _add_sigterm_handler(mms_process):
 
     signal.signal(signal.SIGTERM, _terminate)
 
+
+def _install_requirements():
+    logger.info('installing packages from requirements.txt...')
+    pip_install_cmd = [sys.executable, '-m', 'pip', 'install', '-r', REQUIREMENTS_PATH]
+
+    try:
+        subprocess.check_call(pip_install_cmd)
+    except subprocess.CalledProcessError:
+        logger.error('failed to install required packages, exiting')
+        raise ValueError('failed to install required packages')
 
 # retry for 10 seconds
 @retry(stop_max_delay=10 * 1000)

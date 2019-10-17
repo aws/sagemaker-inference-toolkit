@@ -12,12 +12,14 @@
 # language governing permissions and limitations under the License.
 import os
 import signal
+import subprocess
 import types
 
 from mock import Mock, patch
 import pytest
 
 from sagemaker_inference import environment, model_server
+from sagemaker_inference.model_server import REQUIREMENTS_PATH
 from sagemaker_inference.model_server import MMS_NAMESPACE
 
 PYTHON_PATH = 'python_path'
@@ -28,14 +30,18 @@ DEFAULT_CONFIGURATION = 'default_configuration'
 @patch('subprocess.Popen')
 @patch('sagemaker_inference.model_server._retrieve_mms_server_process')
 @patch('sagemaker_inference.model_server._add_sigterm_handler')
+@patch('sagemaker_inference.model_server._install_requirements')
+@patch('os.path.exists', return_value=True)
 @patch('sagemaker_inference.model_server._create_model_server_config_file')
 @patch('sagemaker_inference.model_server._adapt_to_mms_format')
-def test_start_model_server_default_service_handler(adapt, create_config, sigterm, retrieve, subprocess_popen,
-                                                    subprocess_call):
+def test_start_model_server_default_service_handler(adapt, create_config, exists, install_requirements, sigterm,
+                                                    retrieve, subprocess_popen, subprocess_call):
     model_server.start_model_server()
 
     adapt.assert_called_once_with(model_server.DEFAULT_HANDLER_SERVICE)
     create_config.assert_called_once_with()
+    exists.assert_called_once_with(REQUIREMENTS_PATH)
+    install_requirements.assert_called_once_with()
 
     mxnet_model_server_cmd = ['mxnet-model-server',
                               '--start',
@@ -179,6 +185,19 @@ def test_add_sigterm_handler(signal_call):
     assert len(mock_calls) == 1
     assert first_argument == signal.SIGTERM
     assert isinstance(second_argument, types.FunctionType)
+
+
+@patch('subprocess.check_call')
+def test_install_requirements(check_call):
+    model_server._install_requirements()
+
+
+@patch('subprocess.check_call', side_effect=subprocess.CalledProcessError(0, "cmd"))
+def test_install_requirements_installation_failed(check_call):
+    with pytest.raises(ValueError) as e:
+        model_server._install_requirements()
+
+    assert 'failed to install required packages' in str(e.value)
 
 
 @patch('retrying.Retrying.should_reject', return_value=False)
