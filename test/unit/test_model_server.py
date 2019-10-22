@@ -19,8 +19,7 @@ from mock import Mock, patch
 import pytest
 
 from sagemaker_inference import environment, model_server
-from sagemaker_inference.model_server import REQUIREMENTS_PATH
-from sagemaker_inference.model_server import MMS_NAMESPACE
+from sagemaker_inference.model_server import MMS_NAMESPACE, REQUIREMENTS_PATH
 
 PYTHON_PATH = 'python_path'
 DEFAULT_CONFIGURATION = 'default_configuration'
