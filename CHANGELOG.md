@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.0 (2019-10-23)
+
+### Features
+
+ * support requirements.txt
+
+### Bug fixes and other changes
+
+ * combine import statements
+ * Error handling 20191015
+ * wait for mms server process to finish instead of tailing dev null
+
 ## v1.0.4 (2019-10-07)
 
 ### Bug fixes and other changes
