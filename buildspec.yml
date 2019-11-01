@@ -6,4 +6,7 @@ phases:
       - tox -e flake8,twine
 
       # run unit tests
-      - tox -e py36,py27 -- test
+      - tox -e py36,py27 -- test/unit
+
+      # run local integration tests
+      IGNORE_COVERAGE=- tox -e py36 --test/integration/local

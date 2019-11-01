@@ -68,6 +68,6 @@ setuptools.setup(
     install_requires=required_packages,
 
     extras_require={
-        'test': ['tox', 'flake8', 'pytest', 'pytest-xdist', 'pytest-cov', 'mock']
+        'test': ['tox', 'flake8', 'pytest', 'pytest-xdist', 'pytest-cov', 'mock', 'requests']
     },
 )

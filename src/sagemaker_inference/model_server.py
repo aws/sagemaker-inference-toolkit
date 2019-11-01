@@ -30,9 +30,13 @@ logger = logging.get_logger()
 MMS_CONFIG_FILE = os.path.join('/etc', 'sagemaker-mms.properties')
 DEFAULT_HANDLER_SERVICE = default_handler_service.__name__
 DEFAULT_MMS_CONFIG_FILE = pkg_resources.resource_filename(sagemaker_inference.__name__, '/etc/default-mms.properties')
+MME_MMS_CONFIG_FILE = pkg_resources.resource_filename(sagemaker_inference.__name__, '/etc/mme-mms.properties')
 DEFAULT_MMS_LOG_FILE = pkg_resources.resource_filename(sagemaker_inference.__name__, '/etc/log4j.properties')
 DEFAULT_MMS_MODEL_DIRECTORY = os.path.join(os.getcwd(), '.sagemaker/mms/models')
 DEFAULT_MMS_MODEL_NAME = 'model'
+
+ENABLE_MULTI_MODEL = os.getenv('SAGEMAKER_MULTI_MODEL', 'false') == 'true'
+MODEL_STORE = DEFAULT_MMS_MODEL_DIRECTORY
 
 PYTHON_PATH_ENV = 'PYTHONPATH'
 REQUIREMENTS_PATH = os.path.join(code_dir, "requirements.txt")
@@ -49,7 +53,14 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
             Defaults to ``sagemaker_inference.default_handler_service``.
 
     """
+
+    if ENABLE_MULTI_MODEL:
+        MODEL_STORE = '/'
+        if not os.getenv('SAGEMAKER_HANDLER'):
+            os.environ['SAGEMAKER_HANDLER'] = handler_service
+
     _adapt_to_mms_format(handler_service)
+
     _create_model_server_config_file()
 
     if os.path.exists(REQUIREMENTS_PATH):
@@ -57,7 +68,7 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
 
     mxnet_model_server_cmd = ['mxnet-model-server',
                               '--start',
-                              '--model-store', DEFAULT_MMS_MODEL_DIRECTORY,
+                              '--model-store', MODEL_STORE,
                               '--mms-config', MMS_CONFIG_FILE,
                               '--log-config', DEFAULT_MMS_LOG_FILE,
                               ]
@@ -79,7 +90,7 @@ def _adapt_to_mms_format(handler_service):
     model_archiver_cmd = ['model-archiver',
                           '--model-name', DEFAULT_MMS_MODEL_NAME,
                           '--handler', handler_service,
-                          '--model-path', environment.model_dir,
+                          '--model-path', MODEL_STORE,
                           '--export-path', DEFAULT_MMS_MODEL_DIRECTORY,
                           '--archive-format', 'no-archive',
                           ]
@@ -125,7 +136,10 @@ def _generate_mms_config_properties():
         if value:
             custom_configuration += '{}={}\n'.format(key, value)
 
-    default_configuration = utils.read_file(DEFAULT_MMS_CONFIG_FILE)
+    if ENABLE_MULTI_MODEL:
+        default_configuration = utils.read_file(MME_MMS_CONFIG_FILE)
+    else:
+        default_configuration = utils.read_file(DEFAULT_MMS_CONFIG_FILE)
 
     return default_configuration + custom_configuration
 
