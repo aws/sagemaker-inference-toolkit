@@ -8,5 +8,15 @@ phases:
       # run unit tests
       - tox -e py36,py27 -- test/unit
 
+      # build dummy container
+      - python setup.py sdist
+      - cp dist/sagemaker_inference-*.tar.gz test/container/sagemaker_inference.tar.gz
+      - cd test/container
+      - docker build -t sagemaker-inference-toolkit-test:mme -f Dockerfile .
+      - cd ../..
+
       # run local integration tests
       - tox -e py36 -- test/integration/local
+
+      # clean up local docker images
+      - docker rmi $(docker images -aq) -f
