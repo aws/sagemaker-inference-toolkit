@@ -40,7 +40,7 @@ def container():
             try:
                 requests.get(PING_URL)
                 break
-            except:
+            except:  # noqa: E722
                 attempts += 1
                 pass
         yield proc.pid

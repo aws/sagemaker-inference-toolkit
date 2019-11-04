@@ -36,7 +36,7 @@ DEFAULT_MMS_MODEL_DIRECTORY = os.path.join(os.getcwd(), '.sagemaker/mms/models')
 DEFAULT_MMS_MODEL_NAME = 'model'
 
 ENABLE_MULTI_MODEL = os.getenv('SAGEMAKER_MULTI_MODEL', 'false') == 'true'
-MODEL_STORE = DEFAULT_MMS_MODEL_DIRECTORY
+MODEL_STORE = '/' if ENABLE_MULTI_MODEL else DEFAULT_MMS_MODEL_DIRECTORY
 
 PYTHON_PATH_ENV = 'PYTHONPATH'
 REQUIREMENTS_PATH = os.path.join(code_dir, "requirements.txt")
@@ -54,10 +54,8 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
 
     """
 
-    if ENABLE_MULTI_MODEL:
-        MODEL_STORE = '/'
-        if not os.getenv('SAGEMAKER_HANDLER'):
-            os.environ['SAGEMAKER_HANDLER'] = handler_service
+    if ENABLE_MULTI_MODEL and not os.getenv('SAGEMAKER_HANDLER'):
+        os.environ['SAGEMAKER_HANDLER'] = handler_service
 
     _adapt_to_mms_format(handler_service)
 

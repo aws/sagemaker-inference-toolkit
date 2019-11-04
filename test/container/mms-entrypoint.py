@@ -13,13 +13,12 @@
 
 import shlex
 import subprocess
-import sys
-
 from subprocess import CalledProcessError
+import sys
 from time import sleep
 
-from sagemaker_inference import model_server
 from sagemaker_inference import default_handler_service
+from sagemaker_inference import model_server
 
 HANDLER_SERVICE = default_handler_service.__name__
 
