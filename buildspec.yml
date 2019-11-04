@@ -9,4 +9,4 @@ phases:
       - tox -e py36,py27 -- test/unit
 
       # run local integration tests
-      - tox -e py36 --test/integration/local
+      - tox -e py36 -- test/integration/local
