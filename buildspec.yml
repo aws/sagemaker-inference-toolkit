@@ -20,4 +20,4 @@ phases:
       - rm sagemaker_inference.tar.gz
 
       # run local integration tests
-      - tox -e py36,py27 -- test/integration/local
+      - IGNORE_COVERAGE=- tox -e py36,py27 -- test/integration/local
