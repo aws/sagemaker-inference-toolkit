@@ -11,7 +11,7 @@ ENV SAGEMAKER_MULTI_MODEL=true
 ENV SAGEMAKER_BIND_TO_PORT=${SAGEMAKER_BIND_TO_PORT:-8080}
 
 # Update MMS version
-RUN pip3 install mxnet-model-server==1.0.8b20191031
+RUN pip3 install mxnet-model-server==1.0.8
 
 # Install Mxnet
 RUN pip3 install mxnet
