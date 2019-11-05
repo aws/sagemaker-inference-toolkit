@@ -83,7 +83,7 @@ def test_adapt_to_mms_format(path_exists, make_dir, subprocess_check_call, set_p
     model_archiver_cmd = ['model-archiver',
                           '--model-name', model_server.DEFAULT_MMS_MODEL_NAME,
                           '--handler', handler_service,
-                          '--model-path', model_server.MODEL_STORE,
+                          '--model-path', environment.model_dir,
                           '--export-path', model_server.DEFAULT_MMS_MODEL_DIRECTORY,
                           '--archive-format', 'no-archive',
                           ]

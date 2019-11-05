@@ -20,17 +20,18 @@ import time
 import pytest
 import requests
 
-PING_URL = 'http://0.0.0.0:8080/ping'
-INVOCATION_URL = 'http://0.0.0.0:8080/models/{}/invoke'
-MODELS_URL = 'http://0.0.0.0:8080/models'
-DELETE_MODEL_URL = 'http://0.0.0.0:8080/models/{}'
+BASE_URL = 'http://0.0.0.0:8080/'
+PING_URL = BASE_URL + 'ping'
+INVOCATION_URL = BASE_URL + 'models/{}/invoke'
+MODELS_URL = BASE_URL + 'models'
+DELETE_MODEL_URL = BASE_URL + 'models/{}'
 
 
 @pytest.fixture(scope='module', autouse=True)
 def container():
     try:
         command = 'docker run --name sagemaker-inference-toolkit-test -p 8080:8080' \
-                  ' sagemaker-inference-toolkit-test:mme serve'
+                  ' sagemaker-inference-toolkit-test:dummy serve'
 
         proc = subprocess.Popen(command.split(), stdout=sys.stdout, stderr=subprocess.STDOUT)
 

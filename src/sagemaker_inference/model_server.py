@@ -54,10 +54,11 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
 
     """
 
-    if ENABLE_MULTI_MODEL and not os.getenv('SAGEMAKER_HANDLER'):
-        os.environ['SAGEMAKER_HANDLER'] = handler_service
-
-    _adapt_to_mms_format(handler_service)
+    if ENABLE_MULTI_MODEL:
+        if not os.getenv('SAGEMAKER_HANDLER'):
+            os.environ['SAGEMAKER_HANDLER'] = handler_service
+    else:
+        _adapt_to_mms_format(handler_service)
 
     _create_model_server_config_file()
 
@@ -88,7 +89,7 @@ def _adapt_to_mms_format(handler_service):
     model_archiver_cmd = ['model-archiver',
                           '--model-name', DEFAULT_MMS_MODEL_NAME,
                           '--handler', handler_service,
-                          '--model-path', MODEL_STORE,
+                          '--model-path', environment.model_dir,
                           '--export-path', DEFAULT_MMS_MODEL_DIRECTORY,
                           '--archive-format', 'no-archive',
                           ]
