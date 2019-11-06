@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.1 (2019-11-06)
+
+### Bug fixes and other changes
+
+ * mme support and local integration test
+
 ## v1.1.0 (2019-10-23)
 
 ### Features
