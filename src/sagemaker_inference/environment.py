@@ -43,7 +43,7 @@ class Environment(object):
     Attributes:
         module_name (str): The name of the user-provided module. Default is inference.py.
         model_server_timeout (int): Timeout in seconds for the model server. Default is 60.
-        model_server_workers (int): Number of worker processes the model server will use.
+        model_server_workers (str): Number of worker processes the model server will use.
         default_accept (str): The desired default MIME type of the inference in the response
             as specified in the user-supplied SAGEMAKER_DEFAULT_INVOCATIONS_ACCEPT environment
             variable. Otherwise, returns 'application/json' by default.
