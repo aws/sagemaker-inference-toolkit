@@ -23,6 +23,7 @@ from sagemaker_inference import environment, parameters
                          parameters.MODEL_SERVER_WORKERS_ENV: '8',
                          parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV: 'text/html',
                          parameters.BIND_TO_PORT_ENV: '1738',
+                         parameters.MANAGEMENT_PORT_ENV: '1234',
                          parameters.SAFE_PORT_RANGE_ENV: '1111-2222'}, clear=True)
 def test_env():
     env = environment.Environment()
@@ -34,7 +35,8 @@ def test_env():
     assert env.model_server_timeout == 20
     assert env.model_server_workers == '8'
     assert env.default_accept == 'text/html'
-    assert env.http_port == '1738'
+    assert env.inference_http_port == '1738'
+    assert env.management_http_port == '1234'
     assert env.safe_port_range == '1111-2222'
 
 

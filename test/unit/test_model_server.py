@@ -140,7 +140,7 @@ def test_generate_mms_config_properties(env, read_file):
 
     env.return_value.model_server_timeout = model_server_timeout
     env.return_value.model_server_workers = model_server_workers
-    env.return_value.http_port = http_port
+    env.return_value.inference_http_port = http_port
 
     mms_config_properties = model_server._generate_mms_config_properties()
 

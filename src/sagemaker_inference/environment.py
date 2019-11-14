@@ -61,7 +61,8 @@ class Environment(object):
             int(os.environ.get(parameters.MODEL_SERVER_TIMEOUT_ENV, DEFAULT_MODEL_SERVER_TIMEOUT))
         self._model_server_workers = os.environ.get(parameters.MODEL_SERVER_WORKERS_ENV)
         self._default_accept = os.environ.get(parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON)
-        self._http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
+        self._inference_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
+        self._management_http_port = os.environ.get(parameters.MANAGEMENT_PORT_ENV, DEFAULT_HTTP_PORT)
         self._safe_port_range = os.environ.get(parameters.SAFE_PORT_RANGE_ENV)
 
     @staticmethod
@@ -102,9 +103,14 @@ class Environment(object):
         return self._default_accept
 
     @property
-    def http_port(self):  # type: () -> str
+    def inference_http_port(self):  # type: () -> str
         """str: HTTP port that SageMaker uses to handle invocations and pings."""
-        return self._http_port
+        return self._inference_http_port
+
+    @property
+    def management_http_port(self):  # type: () -> str
+        """str: HTTP port that SageMaker uses to handle model management requests."""
+        return self._management_http_port
 
     @property
     def safe_port_range(self):  # type: () -> str
