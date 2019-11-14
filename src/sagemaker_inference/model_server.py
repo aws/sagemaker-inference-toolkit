@@ -125,7 +125,8 @@ def _generate_mms_config_properties():
     user_defined_configuration = {
         'default_response_timeout': env.model_server_timeout,
         'default_workers_per_model': env.model_server_workers,
-        'inference_address': 'http://0.0.0.0:{}'.format(env.http_port)
+        'inference_address': 'http://0.0.0.0:{}'.format(env.inference_http_port),
+        'management_address': 'http://0.0.0.0:{}'.format(env.management_http_port)
     }
 
     custom_configuration = str()
@@ -162,6 +163,7 @@ def _install_requirements():
     except subprocess.CalledProcessError:
         logger.error('failed to install required packages, exiting')
         raise ValueError('failed to install required packages')
+
 
 # retry for 10 seconds
 @retry(stop_max_delay=10 * 1000)

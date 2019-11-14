@@ -34,7 +34,8 @@ def test_env():
     assert env.model_server_timeout == 20
     assert env.model_server_workers == '8'
     assert env.default_accept == 'text/html'
-    assert env.http_port == '1738'
+    assert env.inference_http_port == '1738'
+    assert env.management_http_port == '1738'
     assert env.safe_port_range == '1111-2222'
 
 
