@@ -62,7 +62,7 @@ class Environment(object):
         self._model_server_workers = os.environ.get(parameters.MODEL_SERVER_WORKERS_ENV)
         self._default_accept = os.environ.get(parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON)
         self._inference_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
-        self._management_http_port = os.environ.get(parameters.MANAGEMENT_PORT_ENV, DEFAULT_HTTP_PORT)
+        self._management_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._safe_port_range = os.environ.get(parameters.SAFE_PORT_RANGE_ENV)
 
     @staticmethod
