@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.2 (2019-11-14)
+
+### Bug fixes and other changes
+
+ * management and inference address use same port by default
+
 ## v1.1.1 (2019-11-06)
 
 ### Bug fixes and other changes
