@@ -38,15 +38,17 @@ from sagemaker_inference.errors import BaseInferenceToolkitError, GenericInferen
 
 
 class Transformer(object):
-    """Represents the execution workflow for handling inference requests sent to the model server."""
+    """Represents the execution workflow for handling inference requests
+    sent to the model server.
+    """
 
     def __init__(self, default_inference_handler=None):
         """Initialize a ``Transformer``.
 
         Args:
-            default_inference_handler (DefaultInferenceHandler): default implementation of inference handlers to
-                use in absence of expected serving functions within the user module.
-                Defaults to ``DefaultInferenceHandler``.
+            default_inference_handler (DefaultInferenceHandler): default implementation of
+                inference handlers to use in absence of expected serving functions within
+                the user module. Defaults to ``DefaultInferenceHandler``.
 
         """
         self._default_inference_handler = default_inference_handler or DefaultInferenceHandler()
@@ -65,7 +67,8 @@ class Transformer(object):
         """Set context appropriately for error response.
 
         :param context: Inference context
-        :param inference_exception: A subclass of BaseInferenceToolkitError that has information for error response
+        :param inference_exception: A subclass of BaseInferenceToolkitError that
+            has information for error response
         :return: Error message
         """
         context.set_response_status(
@@ -82,8 +85,9 @@ class Transformer(object):
             context (obj): metadata on the incoming request data.
 
         Returns:
-            list[obj]: The serialized prediction result wrapped in a list if inference is successful.
-                       Otherwise returns an error message with the context set appropriately.
+            list[obj]: The serialized prediction result wrapped in a list if
+                inference is successful. Otherwise returns an error message
+                with the context set appropriately.
         """
         try:
             self.validate_and_initialize()
@@ -137,8 +141,8 @@ class Transformer(object):
     def _validate_user_module_and_set_functions(self):
         """Retrieves and validates the inference handlers provided within the user module.
 
-        Default implementations of the inference handlers are utilized in place of missing functions defined
-        in the user module.
+        Default implementations of the inference handlers are utilized in
+        place of missing functions defined in the user module.
 
         """
         user_module_name = self._environment.module_name
@@ -156,8 +160,8 @@ class Transformer(object):
 
             if transform_fn and (input_fn or predict_fn or output_fn):
                 raise ValueError(
-                    "Cannot use transform_fn implementation in conjunction with input_fn, predict_fn, "
-                    "and/or output_fn implementation"
+                    "Cannot use transform_fn implementation in conjunction with "
+                    "input_fn, predict_fn, and/or output_fn implementation"
                 )
 
             self._transform_fn = transform_fn or self._default_transform_fn
@@ -174,8 +178,8 @@ class Transformer(object):
 
     def _default_transform_fn(self, model, input_data, content_type, accept):
         """Make predictions against the model and return a serialized response.
-        This serves as the default implementation of transform_fn, used when the user has not
-        provided an implementation.
+        This serves as the default implementation of transform_fn, used when the
+        user has not provided an implementation.
 
         Args:
             model (obj): model loaded by model_fn.
@@ -184,8 +188,8 @@ class Transformer(object):
             accept (str): accept header expected by the client.
 
         Returns:
-            obj:
-                the serialized prediction result or a tuple of the form (response_data, content_type)
+            obj: the serialized prediction result or a tuple of the form
+                (response_data, content_type)
 
         """
         data = self._input_fn(input_data, content_type)

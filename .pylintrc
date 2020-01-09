@@ -85,7 +85,6 @@ disable=
     invalid-name,
     useless-object-inheritance, # TODO: Enable this check and fix code once Python 2 is no longer supported.
     missing-docstring, # TODO: Remove this line.
-    line-too-long, # TODO: Remove this line.
     unused-argument, # TODO: Remove this line.
     bad-super-call, # TODO: Remove this line.
     super-init-not-called, # TODO: Remove this line.

@@ -34,7 +34,8 @@ class UnsupportedFormatError(Exception):
 class BaseInferenceToolkitError(Exception):
     """Exception used to indicate a problem that occurred during inference.
 
-    This is meant to be extended from so that customers may handle errors within inference servers.
+    This is meant to be extended from so that customers may handle errors
+    within inference servers.
 
     :param status_code: HTTP Error Status Code to send to client
     :param message: Response message to send to client
@@ -50,8 +51,8 @@ class BaseInferenceToolkitError(Exception):
 class GenericInferenceToolkitError(BaseInferenceToolkitError):
     """Exception used to indicate a problem that occurred during inference.
 
-    This is meant to be a generic implementation of the BaseInferenceToolkitError for re-raising unexpected
-    exceptions in a way that can be sent back to the client.
+    This is meant to be a generic implementation of the BaseInferenceToolkitError
+    for re-raising unexpected exceptions in a way that can be sent back to the client.
 
     :param status_code: HTTP Error Status Code to send to client
     :param message: Response message to send to client

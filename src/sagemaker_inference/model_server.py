@@ -53,9 +53,12 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
     """Configure and start the model server.
 
     Args:
-        handler_service (str): python path pointing to a module that defines a class with the following:
-            - A ``handle`` method, which is invoked for all incoming inference requests to the model server.
-            - A ``initialize`` method, which is invoked at model server start up for loading the model.
+        handler_service (str): python path pointing to a module that defines
+            a class with the following:
+                - A ``handle`` method, which is invoked for all incoming inference
+                    requests to the model server.
+                - A ``initialize`` method, which is invoked at model server start up
+                    for loading the model.
             Defaults to ``sagemaker_inference.default_handler_service``.
 
     """
