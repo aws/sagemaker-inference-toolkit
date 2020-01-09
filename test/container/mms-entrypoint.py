@@ -32,10 +32,10 @@ def _start_model_server():
     model_server.start_model_server(handler_service=HANDLER_SERVICE)
 
 
-if sys.argv[1] == 'serve':
+if sys.argv[1] == "serve":
     _start_model_server()
 else:
-    subprocess.check_call(shlex.split(' '.join(sys.argv[1:])))
+    subprocess.check_call(shlex.split(" ".join(sys.argv[1:])))
 
 # prevent docker exit
-subprocess.call(['tail', '-f', '/dev/null'])
+subprocess.call(["tail", "-f", "/dev/null"])

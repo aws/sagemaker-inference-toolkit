@@ -29,10 +29,14 @@ class DefaultInferenceHandler(object):
             obj: the loaded model.
 
         """
-        raise NotImplementedError(textwrap.dedent("""
+        raise NotImplementedError(
+            textwrap.dedent(
+                """
             Please provide a model_fn implementation.
             See documentation for model_fn at https://sagemaker.readthedocs.io/en/stable/
-            """))
+            """
+            )
+        )
 
     def default_input_fn(self, input_data, content_type):
         """Function responsible for deserializing the input data into an object for prediction.
@@ -58,10 +62,14 @@ class DefaultInferenceHandler(object):
             obj: prediction result.
 
         """
-        raise NotImplementedError(textwrap.dedent("""
+        raise NotImplementedError(
+            textwrap.dedent(
+                """
             Please provide a predict_fn implementation.
             See documentation for predict_fn at https://sagemaker.readthedocs.io/en/stable/
-            """))
+            """
+            )
+        )
 
     def default_output_fn(self, prediction, accept):
         """Function responsible for serializing the prediction result to the desired accept type.

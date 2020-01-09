@@ -50,7 +50,7 @@ def _csv_to_numpy(string_like, dtype=None):  # type: (str) -> np.array
         (np.array): numpy array
     """
     stream = StringIO(string_like)
-    return np.genfromtxt(stream, dtype=dtype, delimiter=',')
+    return np.genfromtxt(stream, dtype=dtype, delimiter=",")
 
 
 def _npy_to_numpy(npy_array):  # type: (object) -> np.array
@@ -66,9 +66,11 @@ def _npy_to_numpy(npy_array):  # type: (object) -> np.array
     return np.load(stream, allow_pickle=True)
 
 
-_decoder_map = {content_types.NPY: _npy_to_numpy,
-                content_types.CSV: _csv_to_numpy,
-                content_types.JSON: _json_to_numpy}
+_decoder_map = {
+    content_types.NPY: _npy_to_numpy,
+    content_types.CSV: _csv_to_numpy,
+    content_types.JSON: _json_to_numpy,
+}
 
 
 def decode(obj, content_type):

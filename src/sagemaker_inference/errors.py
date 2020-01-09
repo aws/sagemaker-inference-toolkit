@@ -26,7 +26,8 @@ class UnsupportedFormatError(Exception):
 
             Please implement input_fn to to deserialize the request data or an output_fn to
             serialize the response. For more information, see the SageMaker Python SDK README."""
-            % content_type)
+            % content_type
+        )
         super(Exception, self).__init__(self._message, **kwargs)
 
 
@@ -39,6 +40,7 @@ class BaseInferenceToolkitError(Exception):
     :param message: Response message to send to client
     :param phrase: Response body to send to client
     """
+
     def __init__(self, status_code, message, phrase):
         self.status_code = status_code
         self.message = message

@@ -15,22 +15,22 @@ import pytest
 
 from sagemaker_inference.utils import read_file, retrieve_content_type_header, write_file
 
-TEXT = 'text'
-CONTENT_TYPE = 'content_type'
+TEXT = "text"
+CONTENT_TYPE = "content_type"
 
 
-@patch('sagemaker_inference.utils.open', new_callable=mock_open, read_data=TEXT)
+@patch("sagemaker_inference.utils.open", new_callable=mock_open, read_data=TEXT)
 def test_read_file(with_open):
     path = Mock()
 
     result = read_file(path)
 
-    with_open.assert_called_once_with(path, 'r')
+    with_open.assert_called_once_with(path, "r")
     with_open().read.assert_called_once_with()
     assert TEXT == result
 
 
-@patch('sagemaker_inference.utils.open', new_callable=mock_open, read_data=TEXT)
+@patch("sagemaker_inference.utils.open", new_callable=mock_open, read_data=TEXT)
 def test_read_file_mode(with_open):
     path = Mock()
     mode = Mock()
@@ -42,18 +42,18 @@ def test_read_file_mode(with_open):
     assert result == TEXT
 
 
-@patch('sagemaker_inference.utils.open', new_callable=mock_open)
+@patch("sagemaker_inference.utils.open", new_callable=mock_open)
 def test_write_file(with_open):
     path = Mock()
     data = Mock()
 
     write_file(path, data)
 
-    with_open.assert_called_once_with(path, 'w')
+    with_open.assert_called_once_with(path, "w")
     with_open().write.assert_called_once_with(data)
 
 
-@patch('sagemaker_inference.utils.open', new_callable=mock_open)
+@patch("sagemaker_inference.utils.open", new_callable=mock_open)
 def test_write_file_mode(with_open):
     path = Mock()
     data = Mock()
@@ -65,10 +65,9 @@ def test_write_file_mode(with_open):
     with_open().write.assert_called_once_with(data)
 
 
-@pytest.mark.parametrize('content_type_key', ['Content-Type',
-                                              'Content-type',
-                                              'content-type',
-                                              'ContentType'])
+@pytest.mark.parametrize(
+    "content_type_key", ["Content-Type", "Content-type", "content-type", "ContentType"]
+)
 def test_content_type_header(content_type_key):
     request_property = {content_type_key: CONTENT_TYPE}
 

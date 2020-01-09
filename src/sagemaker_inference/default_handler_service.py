@@ -24,6 +24,7 @@ class DefaultHandlerService(object):
 
     Implementation of: https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md
     """
+
     def __init__(self, transformer=None):
         self._service = transformer if transformer else Transformer()
 

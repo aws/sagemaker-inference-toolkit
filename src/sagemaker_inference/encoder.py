@@ -35,7 +35,7 @@ def _array_to_json(array_like):  # type: (np.array or Iterable or int or float) 
     """
 
     def default(_array_like):
-        if hasattr(_array_like, 'tolist'):
+        if hasattr(_array_like, "tolist"):
             return _array_like.tolist()
         return json.JSONEncoder().default(_array_like)
 
@@ -72,13 +72,15 @@ def _array_to_csv(array_like):  # type: (np.array or Iterable or int or float) -
         (str): object serialized to CSV
     """
     stream = StringIO()
-    np.savetxt(stream, array_like, delimiter=',', fmt='%s')
+    np.savetxt(stream, array_like, delimiter=",", fmt="%s")
     return stream.getvalue()
 
 
-_encoder_map = {content_types.NPY: _array_to_npy,
-                content_types.CSV: _array_to_csv,
-                content_types.JSON: _array_to_json}
+_encoder_map = {
+    content_types.NPY: _array_to_npy,
+    content_types.CSV: _array_to_csv,
+    content_types.JSON: _array_to_json,
+}
 
 
 def encode(array_like, content_type):
