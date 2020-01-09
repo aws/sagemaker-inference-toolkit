@@ -46,6 +46,7 @@ class BaseInferenceToolkitError(Exception):
         self.status_code = status_code
         self.message = message
         self.phrase = phrase
+        super(BaseInferenceToolkitError, self).__init__(status_code, message, phrase)
 
 
 class GenericInferenceToolkitError(BaseInferenceToolkitError):
@@ -60,6 +61,6 @@ class GenericInferenceToolkitError(BaseInferenceToolkitError):
     """
 
     def __init__(self, status_code, message=None, phrase=None):
-        self.status_code = status_code
-        self.message = message if message else "Invalid Request"
-        self.phrase = phrase if phrase else message
+        message = message or "Invalid Request"
+        phrase = phrase or message
+        super(GenericInferenceToolkitError, self).__init__(status_code, message, phrase)
