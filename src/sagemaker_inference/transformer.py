@@ -118,7 +118,7 @@ class Transformer(object):
 
             context.set_response_content_type(0, response_content_type)
             return [response]
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             if isinstance(e, BaseInferenceToolkitError):
                 return self.handle_error(context, e)
             else:
