@@ -164,7 +164,7 @@ def _generate_mms_config_properties():
 
 
 def _add_sigterm_handler(mms_process):
-    def _terminate(signo, frame):
+    def _terminate(signo, frame):  # pylint: disable=unused-argument
         try:
             os.kill(mms_process.pid, signal.SIGTERM)
         except OSError:
