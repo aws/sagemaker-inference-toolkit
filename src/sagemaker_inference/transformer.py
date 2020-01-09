@@ -30,7 +30,7 @@ except ImportError:
             return None
 
 
-import importlib
+import importlib  # pylint: disable=ungrouped-imports
 
 from sagemaker_inference import content_types, environment, utils
 from sagemaker_inference.default_inference_handler import DefaultInferenceHandler
