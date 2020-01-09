@@ -87,7 +87,6 @@ disable=
     missing-docstring, # TODO: Remove this line.
     bad-super-call, # TODO: Remove this line.
     super-init-not-called, # TODO: Remove this line.
-    no-self-use, # TODO: Remove this line.
 
 [REPORTS]
 # Set the output format. Available formats are text, parseable, colorized, msvs
