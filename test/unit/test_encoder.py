@@ -18,7 +18,10 @@ from six import BytesIO
 from sagemaker_inference import content_types, encoder, errors
 
 
-@pytest.mark.parametrize('target', ([42, 6, 9], [42., 6., 9.], ['42', '6', '9'], [u'42', u'6', u'9'], {42: {'6': 9.}}))
+@pytest.mark.parametrize(
+    "target",
+    ([42, 6, 9], [42.0, 6.0, 9.0], ["42", "6", "9"], [u"42", u"6", u"9"], {42: {"6": 9.0}}),
+)
 def test_array_to_npy(target):
     input_data = np.array(target)
 
@@ -32,10 +35,13 @@ def test_array_to_npy(target):
 
 
 @pytest.mark.parametrize(
-    'target, expected', [([42, 6, 9], '[42, 6, 9]'),
-                         ([42., 6., 9.], '[42.0, 6.0, 9.0]'),
-                         (['42', '6', '9'], '["42", "6", "9"]'),
-                         ({42: {'6': 9.}}, '{"42": {"6": 9.0}}')]
+    "target, expected",
+    [
+        ([42, 6, 9], "[42, 6, 9]"),
+        ([42.0, 6.0, 9.0], "[42.0, 6.0, 9.0]"),
+        (["42", "6", "9"], '["42", "6", "9"]'),
+        ({42: {"6": 9.0}}, '{"42": {"6": 9.0}}'),
+    ],
 )
 def test_array_to_json(target, expected):
     actual = encoder._array_to_json(target)
@@ -51,9 +57,13 @@ def test_array_to_json_exception():
 
 
 @pytest.mark.parametrize(
-    'target, expected', [([42, 6, 9], '42\n6\n9\n'),
-                         ([42., 6., 9.], '42.0\n6.0\n9.0\n'),
-                         (['42', '6', '9'], '42\n6\n9\n')])
+    "target, expected",
+    [
+        ([42, 6, 9], "42\n6\n9\n"),
+        ([42.0, 6.0, 9.0], "42.0\n6.0\n9.0\n"),
+        (["42", "6", "9"], "42\n6\n9\n"),
+    ],
+)
 def test_array_to_csv(target, expected):
     actual = encoder._array_to_csv(target)
     np.testing.assert_equal(actual, expected)
@@ -62,9 +72,7 @@ def test_array_to_csv(target, expected):
     np.testing.assert_equal(actual, expected)
 
 
-@pytest.mark.parametrize(
-    'content_type', [content_types.JSON, content_types.CSV, content_types.NPY]
-)
+@pytest.mark.parametrize("content_type", [content_types.JSON, content_types.CSV, content_types.NPY])
 def test_encode(content_type):
     mock_encoder = Mock()
     with patch.dict(encoder._encoder_map, {content_type: mock_encoder}, clear=True):

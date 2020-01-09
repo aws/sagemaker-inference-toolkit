@@ -14,10 +14,10 @@ from __future__ import absolute_import
 
 import re
 
-CONTENT_TYPE_REGEX = re.compile('^[Cc]ontent-?[Tt]ype')
+CONTENT_TYPE_REGEX = re.compile("^[Cc]ontent-?[Tt]ype")
 
 
-def read_file(path, mode='r'):
+def read_file(path, mode="r"):
     """Read data from a file.
 
     Args:
@@ -32,7 +32,7 @@ def read_file(path, mode='r'):
         return f.read()
 
 
-def write_file(path, data, mode='w'):  # type: (str, str, str) -> None
+def write_file(path, data, mode="w"):  # type: (str, str, str) -> None
     """Write data to a file.
 
     Args:

@@ -7,7 +7,12 @@ phases:
 
   build:
     commands:
-      - tox -e flake8,twine
+      # run linters
+      - TOX_PARALLEL_NO_SPINNER=1
+      - tox -e flake8,black-check --parallel all
+
+      # run README check
+      - tox -e twine
 
       # run unit tests
       - tox -e py36,py27 -- test/unit

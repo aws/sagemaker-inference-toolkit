@@ -39,6 +39,7 @@ from sagemaker_inference.errors import BaseInferenceToolkitError, GenericInferen
 
 class Transformer(object):
     """Represents the execution workflow for handling inference requests sent to the model server."""
+
     def __init__(self, default_inference_handler=None):
         """Initialize a ``Transformer``.
 
@@ -67,8 +68,9 @@ class Transformer(object):
         :param inference_exception: A subclass of BaseInferenceToolkitError that has information for error response
         :return: Error message
         """
-        context.set_response_status(code=inference_exception.status_code,
-                                    phrase=inference_exception.phrase)
+        context.set_response_status(
+            code=inference_exception.status_code, phrase=inference_exception.phrase
+        )
         return [inference_exception.message]
 
     def transform(self, data, context):
@@ -86,19 +88,19 @@ class Transformer(object):
         try:
             self.validate_and_initialize()
 
-            input_data = data[0].get('body')
+            input_data = data[0].get("body")
 
             request_processor = context.request_processor[0]
 
             request_property = request_processor.get_request_properties()
             content_type = utils.retrieve_content_type_header(request_property)
-            accept = request_property.get('Accept') or request_property.get('accept')
+            accept = request_property.get("Accept") or request_property.get("accept")
 
             if not accept or accept == content_types.ANY:
                 accept = self._environment.default_accept
 
             if content_type in content_types.UTF8_TYPES:
-                input_data = input_data.decode('utf-8')
+                input_data = input_data.decode("utf-8")
 
             result = self._transform_fn(self._model, input_data, content_type, accept)
 
@@ -116,8 +118,9 @@ class Transformer(object):
             if isinstance(e, BaseInferenceToolkitError):
                 return self.handle_error(context, e)
             else:
-                return self.handle_error(context, GenericInferenceToolkitError(http_client.INTERNAL_SERVER_ERROR,
-                                                                               str(e)))
+                return self.handle_error(
+                    context, GenericInferenceToolkitError(http_client.INTERNAL_SERVER_ERROR, str(e))
+                )
 
     def validate_and_initialize(self):  # type: () -> None
         """Validates the user module against the SageMaker inference contract.
@@ -142,16 +145,20 @@ class Transformer(object):
         if find_spec(user_module_name) is not None:
             user_module = importlib.import_module(user_module_name)
 
-            self._model_fn = getattr(user_module, 'model_fn', self._default_inference_handler.default_model_fn)
+            self._model_fn = getattr(
+                user_module, "model_fn", self._default_inference_handler.default_model_fn
+            )
 
-            transform_fn = getattr(user_module, 'transform_fn', None)
-            input_fn = getattr(user_module, 'input_fn', None)
-            predict_fn = getattr(user_module, 'predict_fn', None)
-            output_fn = getattr(user_module, 'output_fn', None)
+            transform_fn = getattr(user_module, "transform_fn", None)
+            input_fn = getattr(user_module, "input_fn", None)
+            predict_fn = getattr(user_module, "predict_fn", None)
+            output_fn = getattr(user_module, "output_fn", None)
 
             if transform_fn and (input_fn or predict_fn or output_fn):
-                raise ValueError('Cannot use transform_fn implementation in conjunction with input_fn, predict_fn, '
-                                 'and/or output_fn implementation')
+                raise ValueError(
+                    "Cannot use transform_fn implementation in conjunction with input_fn, predict_fn, "
+                    "and/or output_fn implementation"
+                )
 
             self._transform_fn = transform_fn or self._default_transform_fn
             self._input_fn = input_fn or self._default_inference_handler.default_input_fn

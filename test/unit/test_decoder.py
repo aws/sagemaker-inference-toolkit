@@ -18,7 +18,10 @@ from six import BytesIO
 from sagemaker_inference import content_types, decoder, errors
 
 
-@pytest.mark.parametrize('target', ([42, 6, 9], [42., 6., 9.], ['42', '6', '9'], [u'42', u'6', u'9'], {42: {'6': 9.}}))
+@pytest.mark.parametrize(
+    "target",
+    ([42, 6, 9], [42.0, 6.0, 9.0], ["42", "6", "9"], [u"42", u"6", u"9"], {42: {"6": 9.0}}),
+)
 def test_npy_to_numpy(target):
     buffer = BytesIO()
     np.save(buffer, target)
@@ -30,10 +33,13 @@ def test_npy_to_numpy(target):
 
 
 @pytest.mark.parametrize(
-    'target, expected', [('[42, 6, 9]', np.array([42, 6, 9])),
-                         ('[42.0, 6.0, 9.0]', np.array([42., 6., 9.])),
-                         ('["42", "6", "9"]', np.array(['42', '6', '9'])),
-                         (u'["42", "6", "9"]', np.array([u'42', u'6', u'9']))]
+    "target, expected",
+    [
+        ("[42, 6, 9]", np.array([42, 6, 9])),
+        ("[42.0, 6.0, 9.0]", np.array([42.0, 6.0, 9.0])),
+        ('["42", "6", "9"]', np.array(["42", "6", "9"])),
+        (u'["42", "6", "9"]', np.array([u"42", u"6", u"9"])),
+    ],
 )
 def test_json_to_numpy(target, expected):
     actual = decoder._json_to_numpy(target)
@@ -45,9 +51,12 @@ def test_json_to_numpy(target, expected):
 
 
 @pytest.mark.parametrize(
-    'target, expected', [('42\n6\n9\n', np.array([42, 6, 9])),
-                         ('42.0\n6.0\n9.0\n', np.array([42., 6., 9.])),
-                         ('42\n6\n9\n', np.array([42, 6, 9]))]
+    "target, expected",
+    [
+        ("42\n6\n9\n", np.array([42, 6, 9])),
+        ("42.0\n6.0\n9.0\n", np.array([42.0, 6.0, 9.0])),
+        ("42\n6\n9\n", np.array([42, 6, 9])),
+    ],
 )
 def test_csv_to_numpy(target, expected):
     actual = decoder._csv_to_numpy(target)
@@ -59,9 +68,7 @@ def test_decode_error():
         decoder.decode(42, content_types.OCTET_STREAM)
 
 
-@pytest.mark.parametrize(
-    'content_type', [content_types.JSON, content_types.CSV, content_types.NPY]
-)
+@pytest.mark.parametrize("content_type", [content_types.JSON, content_types.CSV, content_types.NPY])
 def test_decode(content_type):
     mock_decoder = Mock()
     with patch.dict(decoder._decoder_map, {content_type: mock_decoder}, clear=True):

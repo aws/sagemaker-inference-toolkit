@@ -16,4 +16,4 @@ import logging
 
 
 def get_logger():
-    return logging.getLogger('sagemaker-inference')
+    return logging.getLogger("sagemaker-inference")

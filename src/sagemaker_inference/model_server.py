@@ -27,18 +27,24 @@ from sagemaker_inference.environment import code_dir
 
 logger = logging.get_logger()
 
-MMS_CONFIG_FILE = os.path.join('/etc', 'sagemaker-mms.properties')
+MMS_CONFIG_FILE = os.path.join("/etc", "sagemaker-mms.properties")
 DEFAULT_HANDLER_SERVICE = default_handler_service.__name__
-DEFAULT_MMS_CONFIG_FILE = pkg_resources.resource_filename(sagemaker_inference.__name__, '/etc/default-mms.properties')
-MME_MMS_CONFIG_FILE = pkg_resources.resource_filename(sagemaker_inference.__name__, '/etc/mme-mms.properties')
-DEFAULT_MMS_LOG_FILE = pkg_resources.resource_filename(sagemaker_inference.__name__, '/etc/log4j.properties')
-DEFAULT_MMS_MODEL_DIRECTORY = os.path.join(os.getcwd(), '.sagemaker/mms/models')
-DEFAULT_MMS_MODEL_NAME = 'model'
+DEFAULT_MMS_CONFIG_FILE = pkg_resources.resource_filename(
+    sagemaker_inference.__name__, "/etc/default-mms.properties"
+)
+MME_MMS_CONFIG_FILE = pkg_resources.resource_filename(
+    sagemaker_inference.__name__, "/etc/mme-mms.properties"
+)
+DEFAULT_MMS_LOG_FILE = pkg_resources.resource_filename(
+    sagemaker_inference.__name__, "/etc/log4j.properties"
+)
+DEFAULT_MMS_MODEL_DIRECTORY = os.path.join(os.getcwd(), ".sagemaker/mms/models")
+DEFAULT_MMS_MODEL_NAME = "model"
 
-ENABLE_MULTI_MODEL = os.getenv('SAGEMAKER_MULTI_MODEL', 'false') == 'true'
-MODEL_STORE = '/' if ENABLE_MULTI_MODEL else DEFAULT_MMS_MODEL_DIRECTORY
+ENABLE_MULTI_MODEL = os.getenv("SAGEMAKER_MULTI_MODEL", "false") == "true"
+MODEL_STORE = "/" if ENABLE_MULTI_MODEL else DEFAULT_MMS_MODEL_DIRECTORY
 
-PYTHON_PATH_ENV = 'PYTHONPATH'
+PYTHON_PATH_ENV = "PYTHONPATH"
 REQUIREMENTS_PATH = os.path.join(code_dir, "requirements.txt")
 MMS_NAMESPACE = "com.amazonaws.ml.mms.ModelServer"
 
@@ -55,8 +61,8 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
     """
 
     if ENABLE_MULTI_MODEL:
-        if not os.getenv('SAGEMAKER_HANDLER'):
-            os.environ['SAGEMAKER_HANDLER'] = handler_service
+        if not os.getenv("SAGEMAKER_HANDLER"):
+            os.environ["SAGEMAKER_HANDLER"] = handler_service
     else:
         _adapt_to_mms_format(handler_service)
 
@@ -65,12 +71,16 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
     if os.path.exists(REQUIREMENTS_PATH):
         _install_requirements()
 
-    mxnet_model_server_cmd = ['mxnet-model-server',
-                              '--start',
-                              '--model-store', MODEL_STORE,
-                              '--mms-config', MMS_CONFIG_FILE,
-                              '--log-config', DEFAULT_MMS_LOG_FILE,
-                              ]
+    mxnet_model_server_cmd = [
+        "mxnet-model-server",
+        "--start",
+        "--model-store",
+        MODEL_STORE,
+        "--mms-config",
+        MMS_CONFIG_FILE,
+        "--log-config",
+        DEFAULT_MMS_LOG_FILE,
+    ]
 
     logger.info(mxnet_model_server_cmd)
     subprocess.Popen(mxnet_model_server_cmd)
@@ -86,13 +96,19 @@ def _adapt_to_mms_format(handler_service):
     if not os.path.exists(DEFAULT_MMS_MODEL_DIRECTORY):
         os.makedirs(DEFAULT_MMS_MODEL_DIRECTORY)
 
-    model_archiver_cmd = ['model-archiver',
-                          '--model-name', DEFAULT_MMS_MODEL_NAME,
-                          '--handler', handler_service,
-                          '--model-path', environment.model_dir,
-                          '--export-path', DEFAULT_MMS_MODEL_DIRECTORY,
-                          '--archive-format', 'no-archive',
-                          ]
+    model_archiver_cmd = [
+        "model-archiver",
+        "--model-name",
+        DEFAULT_MMS_MODEL_NAME,
+        "--handler",
+        handler_service,
+        "--model-path",
+        environment.model_dir,
+        "--export-path",
+        DEFAULT_MMS_MODEL_DIRECTORY,
+        "--archive-format",
+        "no-archive",
+    ]
 
     logger.info(model_archiver_cmd)
     subprocess.check_call(model_archiver_cmd)
@@ -105,7 +121,7 @@ def _set_python_path():
     # to the model archiver, to the PYTHONPATH env var.
     # The code_dir has to be added to the PYTHONPATH otherwise the
     # user provided module can not be imported properly.
-    code_dir_path = '{}:'.format(environment.code_dir)
+    code_dir_path = "{}:".format(environment.code_dir)
 
     if PYTHON_PATH_ENV in os.environ:
         os.environ[PYTHON_PATH_ENV] = code_dir_path + os.environ[PYTHON_PATH_ENV]
@@ -123,10 +139,10 @@ def _generate_mms_config_properties():
     env = environment.Environment()
 
     user_defined_configuration = {
-        'default_response_timeout': env.model_server_timeout,
-        'default_workers_per_model': env.model_server_workers,
-        'inference_address': 'http://0.0.0.0:{}'.format(env.inference_http_port),
-        'management_address': 'http://0.0.0.0:{}'.format(env.management_http_port)
+        "default_response_timeout": env.model_server_timeout,
+        "default_workers_per_model": env.model_server_workers,
+        "inference_address": "http://0.0.0.0:{}".format(env.inference_http_port),
+        "management_address": "http://0.0.0.0:{}".format(env.management_http_port),
     }
 
     custom_configuration = str()
@@ -134,7 +150,7 @@ def _generate_mms_config_properties():
     for key in user_defined_configuration:
         value = user_defined_configuration.get(key)
         if value:
-            custom_configuration += '{}={}\n'.format(key, value)
+            custom_configuration += "{}={}\n".format(key, value)
 
     if ENABLE_MULTI_MODEL:
         default_configuration = utils.read_file(MME_MMS_CONFIG_FILE)
@@ -155,14 +171,14 @@ def _add_sigterm_handler(mms_process):
 
 
 def _install_requirements():
-    logger.info('installing packages from requirements.txt...')
-    pip_install_cmd = [sys.executable, '-m', 'pip', 'install', '-r', REQUIREMENTS_PATH]
+    logger.info("installing packages from requirements.txt...")
+    pip_install_cmd = [sys.executable, "-m", "pip", "install", "-r", REQUIREMENTS_PATH]
 
     try:
         subprocess.check_call(pip_install_cmd)
     except subprocess.CalledProcessError:
-        logger.error('failed to install required packages, exiting')
-        raise ValueError('failed to install required packages')
+        logger.error("failed to install required packages, exiting")
+        raise ValueError("failed to install required packages")
 
 
 # retry for 10 seconds
