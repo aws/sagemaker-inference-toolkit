@@ -28,7 +28,7 @@ class UnsupportedFormatError(Exception):
             serialize the response. For more information, see the SageMaker Python SDK README."""
             % content_type
         )
-        super(Exception, self).__init__(self._message, **kwargs)
+        super(UnsupportedFormatError, self).__init__(self._message, **kwargs)
 
 
 class BaseInferenceToolkitError(Exception):
