@@ -19,8 +19,7 @@ class DefaultInferenceHandler(object):
     """Bare-bones implementation of default inference functions.
     """
 
-    @staticmethod
-    def default_model_fn(model_dir):
+    def default_model_fn(self, model_dir):
         """Function responsible for loading the model.
 
         Args:
@@ -39,8 +38,7 @@ class DefaultInferenceHandler(object):
             )
         )
 
-    @staticmethod
-    def default_input_fn(input_data, content_type):
+    def default_input_fn(self, input_data, content_type):  # pylint: disable=no-self-use
         """Function responsible for deserializing the input data into an object for prediction.
 
         Args:
@@ -53,8 +51,7 @@ class DefaultInferenceHandler(object):
         """
         return decoder.decode(input_data, content_type)
 
-    @staticmethod
-    def default_predict_fn(data, model):
+    def default_predict_fn(self, data, model):
         """Function responsible for model predictions.
 
         Args:
@@ -74,8 +71,7 @@ class DefaultInferenceHandler(object):
             )
         )
 
-    @staticmethod
-    def default_output_fn(prediction, accept):
+    def default_output_fn(self, prediction, accept):  # pylint: disable=no-self-use
         """Function responsible for serializing the prediction result to the desired accept type.
 
         Args:
