@@ -28,7 +28,8 @@ def _array_to_json(array_like):  # type: (np.array or Iterable or int or float) 
     https://docs.scipy.org/doc/numpy/user/basics.creation.html#converting-python-array-like-objects-to-numpy-arrays
 
     Args:
-        array_like (np.array or Iterable or int or float): array-like object to be converted to JSON.
+        array_like (np.array or Iterable or int or float): array-like object
+            to be converted to JSON.
 
     Returns:
         (str): object serialized to JSON
@@ -49,7 +50,8 @@ def _array_to_npy(array_like):  # type: (np.array or Iterable or int or float) -
     https://docs.scipy.org/doc/numpy/user/basics.creation.html#converting-python-array-like-objects-to-numpy-arrays
 
     Args:
-        array_like (np.array or Iterable or int or float): array-like object to be converted to NPY.
+        array_like (np.array or Iterable or int or float): array-like object
+            to be converted to NPY.
 
     Returns:
         (obj): NPY array.
@@ -66,7 +68,8 @@ def _array_to_csv(array_like):  # type: (np.array or Iterable or int or float) -
     https://docs.scipy.org/doc/numpy/user/basics.creation.html#converting-python-array-like-objects-to-numpy-arrays
 
     Args:
-        array_like (np.array or Iterable or int or float): array-like object to be converted to CSV.
+        array_like (np.array or Iterable or int or float): array-like object
+            to be converted to CSV.
 
     Returns:
         (str): object serialized to CSV

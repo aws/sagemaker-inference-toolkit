@@ -28,13 +28,14 @@ class UnsupportedFormatError(Exception):
             serialize the response. For more information, see the SageMaker Python SDK README."""
             % content_type
         )
-        super(Exception, self).__init__(self._message, **kwargs)
+        super(UnsupportedFormatError, self).__init__(self._message, **kwargs)
 
 
 class BaseInferenceToolkitError(Exception):
     """Exception used to indicate a problem that occurred during inference.
 
-    This is meant to be extended from so that customers may handle errors within inference servers.
+    This is meant to be extended from so that customers may handle errors
+    within inference servers.
 
     :param status_code: HTTP Error Status Code to send to client
     :param message: Response message to send to client
@@ -45,13 +46,14 @@ class BaseInferenceToolkitError(Exception):
         self.status_code = status_code
         self.message = message
         self.phrase = phrase
+        super(BaseInferenceToolkitError, self).__init__(status_code, message, phrase)
 
 
 class GenericInferenceToolkitError(BaseInferenceToolkitError):
     """Exception used to indicate a problem that occurred during inference.
 
-    This is meant to be a generic implementation of the BaseInferenceToolkitError for re-raising unexpected
-    exceptions in a way that can be sent back to the client.
+    This is meant to be a generic implementation of the BaseInferenceToolkitError
+    for re-raising unexpected exceptions in a way that can be sent back to the client.
 
     :param status_code: HTTP Error Status Code to send to client
     :param message: Response message to send to client
@@ -59,6 +61,6 @@ class GenericInferenceToolkitError(BaseInferenceToolkitError):
     """
 
     def __init__(self, status_code, message=None, phrase=None):
-        self.status_code = status_code
-        self.message = message if message else "Invalid Request"
-        self.phrase = phrase if phrase else message
+        message = message or "Invalid Request"
+        phrase = phrase or message
+        super(GenericInferenceToolkitError, self).__init__(status_code, message, phrase)

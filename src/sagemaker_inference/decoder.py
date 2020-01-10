@@ -26,9 +26,11 @@ def _json_to_numpy(string_like, dtype=None):  # type: (str) -> np.array
 
         Args:
             string_like (str): JSON string.
-            dtype (dtype, optional):  Data type of the resulting array. If None, the dtypes will be determined by the
-                                        contents of each column, individually. This argument can only be used to
-                                        'upcast' the array.  For downcasting, use the .astype(t) method.
+            dtype (dtype, optional):  Data type of the resulting array.
+                If None, the dtypes will be determined by the contents
+                of each column, individually. This argument can only be
+                used to 'upcast' the array.  For downcasting, use the
+                .astype(t) method.
 
         Returns:
             (np.array): numpy array
@@ -42,9 +44,10 @@ def _csv_to_numpy(string_like, dtype=None):  # type: (str) -> np.array
 
     Args:
         string_like (str): CSV string.
-        dtype (dtype, optional):  Data type of the resulting array. If None, the dtypes will be determined by the
-                                        contents of each column, individually. This argument can only be used to
-                                        'upcast' the array.  For downcasting, use the .astype(t) method.
+        dtype (dtype, optional):  Data type of the resulting array. If None,
+            the dtypes will be determined by the contents of each column,
+            individually. This argument can only be used to 'upcast' the array.
+            For downcasting, use the .astype(t) method.
 
     Returns:
         (np.array): numpy array

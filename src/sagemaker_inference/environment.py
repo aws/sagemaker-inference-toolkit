@@ -34,8 +34,8 @@ code_dir = os.path.join(model_dir, "code")  # type: str
 
 
 class Environment(object):
-    """Provides access to aspects of the serving environment relevant to serving containers, including
-    system characteristics, environment variables and configuration settings.
+    """Provides access to aspects of the serving environment relevant to serving containers,
+    including system characteristics, environment variables and configuration settings.
 
     The Environment is a read-only snapshot of the container environment.
     It is a dictionary-like object, allowing any builtin function that works with dictionary.

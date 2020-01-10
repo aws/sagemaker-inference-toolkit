@@ -61,3 +61,5 @@ def retrieve_content_type_header(request_property):
     for key in request_property:
         if CONTENT_TYPE_REGEX.match(key):
             return request_property[key]
+
+    return None
