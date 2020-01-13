@@ -40,7 +40,7 @@ GitHub provides additional document on [forking a repository](https://help.githu
 1. cd into the sagemaker-inference-toolkit folder: `cd sagemaker-inference-toolkit`
 1. Run the following tox command and verify that all code checks and unit tests pass: `tox test/unit`
 
-You can also run a single test with the following command: `tox -e py36 -- -s -vv <path_to_file><file_name>::<test_function_name>`  
+You can also run a single test with the following command: `tox -e py36 -- -s -vv test/unit/test_utils.py::test_read_file`  
   * Note that the coverage test will fail if you only run a single test, so make sure to surround the command with `export IGNORE_COVERAGE=-` and `unset IGNORE_COVERAGE`
   * Example: `export IGNORE_COVERAGE=- ; tox -e py36 -- -s -vv test/unit/test_utils.py::test_read_file ; unset IGNORE_COVERAGE`
 
@@ -51,9 +51,9 @@ Our CI system runs integration tests (the ones in the `test/integration` directo
 You should only worry about manually running any new integration tests that you write, or integration tests that test an area of code that you've modified.  
 
 1. Follow the instructions at [Set Up the AWS Command Line Interface (AWS CLI)](https://docs.aws.amazon.com/polly/latest/dg/setup-aws-cli.html).
-1. To run a test, specify the test file and method you want to run per the following command: `tox -e py36 -- -s -vv <path_to_file><file_name>::<test_function_name>`
+1. To run a test, specify the test file and method you want to run per the following command: `tox -e py36 -- -s -vv test/integration/local/test_multi_model.py::test_ping`
    * Note that the coverage test will fail if you only run a single test, so make sure to surround the command with `export IGNORE_COVERAGE=-` and `unset IGNORE_COVERAGE`
-   * Example: `export IGNORE_COVERAGE=- ; tox -e py36 -- -s -vv tests/integ/test_tf_script_mode.py::test_mnist ; unset IGNORE_COVERAGE`
+   * Example: `export IGNORE_COVERAGE=- ; tox -e py36 -- -s -vv test/integration/local/test_multi_model.py::test_ping ; unset IGNORE_COVERAGE`
 
 
 ### Making and testing your change
@@ -107,7 +107,7 @@ Please remember to:
 * Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
 
 ## Finding contributions to work on
-Looking at the [existing issues](https://github.com/aws/sagemaker-inference-toolkit/issues) is a great way to find something to contribute on.
+Looking at the [existing issues](https://github.com/aws/sagemaker-inference-toolkit/issues) is a great place to start.
 
 
 ## Code of Conduct
