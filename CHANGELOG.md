@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.4 (2020-01-13)
+
+### Bug fixes and other changes
+
+ * update linting
+ * Add linting with Pylint
+ * Add code formatting with Black
+
 ## v1.1.3 (2020-01-08)
 
 ### Bug fixes and other changes
