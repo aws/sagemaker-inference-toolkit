@@ -27,6 +27,7 @@ from sagemaker_inference import environment, parameters
         parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV: "text/html",
         parameters.BIND_TO_PORT_ENV: "1738",
         parameters.SAFE_PORT_RANGE_ENV: "1111-2222",
+        parameters.ADDITIONAL_MODEL_SERVER_OPTIONS_ENV: '{"preload_model": "true"}',
     },
     clear=True,
 )
@@ -43,6 +44,7 @@ def test_env():
     assert env.inference_http_port == "1738"
     assert env.management_http_port == "1738"
     assert env.safe_port_range == "1111-2222"
+    assert env.additional_model_server_options == {"preload_model": "true"}
 
 
 @pytest.mark.parametrize("sagemaker_program", ["program.py", "program"])

@@ -150,6 +150,8 @@ def _generate_mms_config_properties():
         "management_address": "http://0.0.0.0:{}".format(env.management_http_port),
     }
 
+    user_defined_configuration.update(env.additional_model_server_options)
+
     custom_configuration = str()
 
     for key in user_defined_configuration:

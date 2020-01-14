@@ -12,6 +12,7 @@
 # language governing permissions and limitations under the License.
 from __future__ import absolute_import
 
+import json
 import os
 
 from sagemaker_inference import content_types, logging, parameters
@@ -68,6 +69,9 @@ class Environment(object):
         self._inference_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._management_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._safe_port_range = os.environ.get(parameters.SAFE_PORT_RANGE_ENV)
+        self._additional_model_server_options = json.loads(
+            os.environ.get(parameters.ADDITIONAL_MODEL_SERVER_OPTIONS_ENV, "{}")
+        )
 
     @staticmethod
     def _parse_module_name(program_param):
@@ -122,3 +126,8 @@ class Environment(object):
         specified by SageMaker for handling pings and invocations.
         """
         return self._safe_port_range
+
+    @property
+    def additional_model_server_options(self):  # type: () -> dict
+        """dict: Additional configuration for the model server."""
+        return self._additional_model_server_options

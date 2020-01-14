@@ -160,16 +160,19 @@ def test_generate_mms_config_properties(env, read_file):
     model_server_timeout = "model_server_timeout"
     model_server_workers = "model_server_workers"
     http_port = "http_port"
+    additional_options = {"preload_model": "true"}
 
     env.return_value.model_server_timeout = model_server_timeout
     env.return_value.model_server_workers = model_server_workers
     env.return_value.inference_http_port = http_port
+    env.return_value.additional_model_server_options = additional_options
 
     mms_config_properties = model_server._generate_mms_config_properties()
 
     inference_address = "inference_address=http://0.0.0.0:{}\n".format(http_port)
     server_timeout = "default_response_timeout={}\n".format(model_server_timeout)
     workers = "default_workers_per_model={}\n".format(model_server_workers)
+    preload_model = "preload_model=true\n"
 
     read_file.assert_called_once_with(model_server.DEFAULT_MMS_CONFIG_FILE)
 
@@ -177,6 +180,7 @@ def test_generate_mms_config_properties(env, read_file):
     assert inference_address in mms_config_properties
     assert server_timeout in mms_config_properties
     assert workers in mms_config_properties
+    assert preload_model in mms_config_properties
 
 
 @patch("sagemaker_inference.utils.read_file", return_value=DEFAULT_CONFIGURATION)
