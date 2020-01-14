@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.4.post0 (2020-01-14)
+
+### Documentation changes
+
+ * Update CONTRIBUTING.md
+ * Add issue templates
+ * Add pull request template and issue template config
+
 ## v1.1.4 (2020-01-13)
 
 ### Bug fixes and other changes
