@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.4.post1 (2020-01-16)
+
+### Documentation changes
+
+ * Update link for questions in issue template config and minor issue template edits
+ * Edit developer forum link for consistency
+
 ## v1.1.4.post0 (2020-01-14)
 
 ### Documentation changes
