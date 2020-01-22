@@ -1,4 +1,4 @@
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2019-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License'). You
 # may not use this file except in compliance with the License. A copy of
@@ -26,9 +26,11 @@ def _json_to_numpy(string_like, dtype=None):  # type: (str) -> np.array
 
         Args:
             string_like (str): JSON string.
-            dtype (dtype, optional):  Data type of the resulting array. If None, the dtypes will be determined by the
-                                        contents of each column, individually. This argument can only be used to
-                                        'upcast' the array.  For downcasting, use the .astype(t) method.
+            dtype (dtype, optional):  Data type of the resulting array.
+                If None, the dtypes will be determined by the contents
+                of each column, individually. This argument can only be
+                used to 'upcast' the array.  For downcasting, use the
+                .astype(t) method.
 
         Returns:
             (np.array): numpy array
@@ -42,15 +44,16 @@ def _csv_to_numpy(string_like, dtype=None):  # type: (str) -> np.array
 
     Args:
         string_like (str): CSV string.
-        dtype (dtype, optional):  Data type of the resulting array. If None, the dtypes will be determined by the
-                                        contents of each column, individually. This argument can only be used to
-                                        'upcast' the array.  For downcasting, use the .astype(t) method.
+        dtype (dtype, optional):  Data type of the resulting array. If None,
+            the dtypes will be determined by the contents of each column,
+            individually. This argument can only be used to 'upcast' the array.
+            For downcasting, use the .astype(t) method.
 
     Returns:
         (np.array): numpy array
     """
     stream = StringIO(string_like)
-    return np.genfromtxt(stream, dtype=dtype, delimiter=',')
+    return np.genfromtxt(stream, dtype=dtype, delimiter=",")
 
 
 def _npy_to_numpy(npy_array):  # type: (object) -> np.array
@@ -66,9 +69,11 @@ def _npy_to_numpy(npy_array):  # type: (object) -> np.array
     return np.load(stream, allow_pickle=True)
 
 
-_decoder_map = {content_types.NPY: _npy_to_numpy,
-                content_types.CSV: _csv_to_numpy,
-                content_types.JSON: _json_to_numpy}
+_decoder_map = {
+    content_types.NPY: _npy_to_numpy,
+    content_types.CSV: _csv_to_numpy,
+    content_types.JSON: _json_to_numpy,
+}
 
 
 def decode(obj, content_type):

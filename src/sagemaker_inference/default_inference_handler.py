@@ -1,4 +1,4 @@
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2019-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License'). You
 # may not use this file except in compliance with the License. A copy of
@@ -29,12 +29,16 @@ class DefaultInferenceHandler(object):
             obj: the loaded model.
 
         """
-        raise NotImplementedError(textwrap.dedent("""
+        raise NotImplementedError(
+            textwrap.dedent(
+                """
             Please provide a model_fn implementation.
             See documentation for model_fn at https://sagemaker.readthedocs.io/en/stable/
-            """))
+            """
+            )
+        )
 
-    def default_input_fn(self, input_data, content_type):
+    def default_input_fn(self, input_data, content_type):  # pylint: disable=no-self-use
         """Function responsible for deserializing the input data into an object for prediction.
 
         Args:
@@ -58,12 +62,16 @@ class DefaultInferenceHandler(object):
             obj: prediction result.
 
         """
-        raise NotImplementedError(textwrap.dedent("""
+        raise NotImplementedError(
+            textwrap.dedent(
+                """
             Please provide a predict_fn implementation.
             See documentation for predict_fn at https://sagemaker.readthedocs.io/en/stable/
-            """))
+            """
+            )
+        )
 
-    def default_output_fn(self, prediction, accept):
+    def default_output_fn(self, prediction, accept):  # pylint: disable=no-self-use
         """Function responsible for serializing the prediction result to the desired accept type.
 
         Args:

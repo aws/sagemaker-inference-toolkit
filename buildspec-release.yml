@@ -10,7 +10,11 @@ phases:
       # prepare the release
       - git-release --prepare
 
-      - tox -e flake8,twine
+      # run linters
+      - tox -e flake8,twine,pylint
+
+      # run format verification
+      - tox -e black-check
 
       # run unit tests
       - tox -e py36,py27 -- test/unit

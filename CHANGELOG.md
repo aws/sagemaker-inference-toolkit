@@ -1,5 +1,34 @@
 # Changelog
 
+## v1.1.4.post1 (2020-01-16)
+
+### Documentation changes
+
+ * Update link for questions in issue template config and minor issue template edits
+ * Edit developer forum link for consistency
+
+## v1.1.4.post0 (2020-01-14)
+
+### Documentation changes
+
+ * Update CONTRIBUTING.md
+ * Add issue templates
+ * Add pull request template and issue template config
+
+## v1.1.4 (2020-01-13)
+
+### Bug fixes and other changes
+
+ * update linting
+ * Add linting with Pylint
+ * Add code formatting with Black
+
+## v1.1.3 (2020-01-08)
+
+### Bug fixes and other changes
+
+ * update copyright year in license header
+
 ## v1.1.2 (2019-11-14)
 
 ### Bug fixes and other changes

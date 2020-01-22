@@ -1,4 +1,4 @@
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2019-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License'). You
 # may not use this file except in compliance with the License. A copy of
@@ -24,6 +24,7 @@ class DefaultHandlerService(object):
 
     Implementation of: https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md
     """
+
     def __init__(self, transformer=None):
         self._service = transformer if transformer else Transformer()
 
