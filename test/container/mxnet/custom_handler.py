@@ -31,12 +31,15 @@ class ModelHandler(object):
         :return: prefix string for model artifact files
         """
         sym_file_suffix = "-symbol.json"
-        checkpoint_prefix_regex = "{}/*{}".format(model_dir,
-                                                  sym_file_suffix)  # Ex output: /opt/ml/models/resnet-18/*-symbol.json
+        checkpoint_prefix_regex = "{}/*{}".format(
+            model_dir, sym_file_suffix
+        )  # Ex output: /opt/ml/models/resnet-18/*-symbol.json
         checkpoint_prefix_filename = glob.glob(checkpoint_prefix_regex)[
-            0]  # Ex output: /opt/ml/models/resnet-18/resnet18-symbol.json
+            0
+        ]  # Ex output: /opt/ml/models/resnet-18/resnet18-symbol.json
         checkpoint_prefix = os.path.basename(checkpoint_prefix_filename).split(sym_file_suffix)[
-            0]  # Ex output: resnet18
+            0
+        ]  # Ex output: resnet18
         logging.info("Prefix for the model artifacts: {}".format(checkpoint_prefix))
         return checkpoint_prefix
 
@@ -82,15 +85,20 @@ class ModelHandler(object):
         # Load MXNet model
         try:
             ctx = mx.cpu()  # Set the context on CPU
-            sym, arg_params, aux_params = mx.model.load_checkpoint(checkpoint_prefix, 0)  # epoch set to 0
+            sym, arg_params, aux_params = mx.model.load_checkpoint(
+                checkpoint_prefix, 0
+            )  # epoch set to 0
             self.mx_model = mx.mod.Module(symbol=sym, context=ctx, label_names=None)
-            self.mx_model.bind(for_training=False, data_shapes=data_shapes,
-                               label_shapes=self.mx_model._label_shapes)
+            self.mx_model.bind(
+                for_training=False,
+                data_shapes=data_shapes,
+                label_shapes=self.mx_model._label_shapes,
+            )
             self.mx_model.set_params(arg_params, aux_params, allow_missing=True)
-            with open("synset.txt", 'r') as f:
+            with open("synset.txt", "r") as f:
                 self.labels = [l.rstrip() for l in f]
         except (mx.base.MXNetError, RuntimeError) as error:
-            if re.search('Failed to allocate (.*) Memory', str(error), re.IGNORECASE):
+            if re.search("Failed to allocate (.*) Memory", str(error), re.IGNORECASE):
                 logging.error("Memory allocation exception: {}".format(error))
                 raise MemoryError
             raise
@@ -106,7 +114,7 @@ class ModelHandler(object):
         img_list = []
         for idx, data in enumerate(request):
             # Read the bytearray of the image from the input
-            img_arr = data.get('body')
+            img_arr = data.get("body")
 
             # Input image is in bytearray, convert it to MXNet NDArray
             img = mx.img.imdecode(img_arr)
@@ -128,7 +136,7 @@ class ModelHandler(object):
         :return: list of inference output in NDArray
         """
         # Do some inference call to engine here and return output
-        Batch = namedtuple('Batch', ['data'])
+        Batch = namedtuple("Batch", ["data"])
         self.mx_model.forward(Batch(model_input))
         prob = self.mx_model.get_outputs()[0].asnumpy()
         return prob
@@ -142,7 +150,7 @@ class ModelHandler(object):
         # Take output from network and post-process to desired format
         prob = np.squeeze(inference_output)
         a = np.argsort(prob)[::-1]
-        return [['probability=%f, class=%s' % (prob[i], self.labels[i]) for i in a[0:5]]]
+        return [["probability=%f, class=%s" % (prob[i], self.labels[i]) for i in a[0:5]]]
 
     def handle(self, data, context):
         """

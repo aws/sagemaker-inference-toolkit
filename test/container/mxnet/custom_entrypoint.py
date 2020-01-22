@@ -26,13 +26,13 @@ def _retry_if_error(exception):
 
 def _start_model_server():
     sleep(5)
-    model_server.start_model_server(handler_service='/usr/local/bin/custom_handler.py:handle')
+    model_server.start_model_server(handler_service="/usr/local/bin/custom_handler.py:handle")
 
 
-if sys.argv[1] == 'serve':
+if sys.argv[1] == "serve":
     _start_model_server()
 else:
-    subprocess.check_call(shlex.split(' '.join(sys.argv[1:])))
+    subprocess.check_call(shlex.split(" ".join(sys.argv[1:])))
 
 # prevent docker exit
-subprocess.call(['tail', '-f', '/dev/null'])
+subprocess.call(["tail", "-f", "/dev/null"])

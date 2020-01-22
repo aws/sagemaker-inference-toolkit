@@ -21,7 +21,7 @@ def _validate_instance_id(instance_id):
     """
     Validate instance ID
     """
-    instance_id_regex = '^(i-\S{17})'  # noqa: W605
+    instance_id_regex = "^(i-\S{17})"  # noqa: W605
     compiled_regex = re.compile(instance_id_regex)
     match = compiled_regex.match(instance_id)
 
@@ -50,10 +50,24 @@ def _retrieve_instance_region():
     Retrieve instance region from instance metadata service
     """
     region = None
-    valid_regions = ['ap-northeast-1', 'ap-northeast-2', 'ap-southeast-1', 'ap-southeast-2',
-                     'ap-south-1', 'ca-central-1', 'eu-central-1', 'eu-north-1',
-                     'eu-west-1', 'eu-west-2', 'eu-west-3', 'sa-east-1',
-                     'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2']
+    valid_regions = [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-south-1",
+        "ca-central-1",
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3",
+        "sa-east-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2",
+    ]
 
     url = "http://169.254.169.254/latest/dynamic/instance-identity/document"
     response = requests_helper(url, timeout=0.1)
@@ -61,8 +75,8 @@ def _retrieve_instance_region():
     if response is not None:
         response_json = json.loads(response.text)
 
-        if response_json['region'] in valid_regions:
-            region = response_json['region']
+        if response_json["region"] in valid_regions:
+            region = response_json["region"]
 
     return region
 
@@ -76,8 +90,10 @@ def query_bucket():
     region = _retrieve_instance_region()
 
     if instance_id is not None and region is not None:
-        url = "https://aws-deep-learning-containers-{0}.s3.{0}.amazonaws.com/dlc-containers.txt?x-instance-id={1}"\
-            .format(region, instance_id)
+        url = (
+            "https://aws-deep-learning-containers-{0}.s3.{0}.amazonaws.com"
+            "/dlc-containers.txt?x-instance-id={1}".format(region, instance_id)
+        )
         response = requests_helper(url, timeout=0.2)
 
     logging.debug("Query bucket finished: {}".format(response))
@@ -104,5 +120,5 @@ def main():
     query_bucket()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
