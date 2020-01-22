@@ -1,4 +1,4 @@
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2019-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License'). You
 # may not use this file except in compliance with the License. A copy of
@@ -15,12 +15,12 @@ from mock import Mock, patch
 from sagemaker_inference.default_handler_service import DefaultHandlerService
 from sagemaker_inference.transformer import Transformer
 
-DATA = 'data'
-CONTEXT = 'context'
-TRANSFORMED_RESULT = 'transformed_result'
+DATA = "data"
+CONTEXT = "context"
+TRANSFORMED_RESULT = "transformed_result"
 
 
-@patch('importlib.import_module', return_value=object())
+@patch("importlib.import_module", return_value=object())
 def test_default_handler_service(import_lib):
     handler_service = DefaultHandlerService()
 

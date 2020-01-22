@@ -1,4 +1,4 @@
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2019-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License'). You
 # may not use this file except in compliance with the License. A copy of
@@ -28,14 +28,15 @@ def _array_to_json(array_like):  # type: (np.array or Iterable or int or float) 
     https://docs.scipy.org/doc/numpy/user/basics.creation.html#converting-python-array-like-objects-to-numpy-arrays
 
     Args:
-        array_like (np.array or Iterable or int or float): array-like object to be converted to JSON.
+        array_like (np.array or Iterable or int or float): array-like object
+            to be converted to JSON.
 
     Returns:
         (str): object serialized to JSON
     """
 
     def default(_array_like):
-        if hasattr(_array_like, 'tolist'):
+        if hasattr(_array_like, "tolist"):
             return _array_like.tolist()
         return json.JSONEncoder().default(_array_like)
 
@@ -49,7 +50,8 @@ def _array_to_npy(array_like):  # type: (np.array or Iterable or int or float) -
     https://docs.scipy.org/doc/numpy/user/basics.creation.html#converting-python-array-like-objects-to-numpy-arrays
 
     Args:
-        array_like (np.array or Iterable or int or float): array-like object to be converted to NPY.
+        array_like (np.array or Iterable or int or float): array-like object
+            to be converted to NPY.
 
     Returns:
         (obj): NPY array.
@@ -66,19 +68,22 @@ def _array_to_csv(array_like):  # type: (np.array or Iterable or int or float) -
     https://docs.scipy.org/doc/numpy/user/basics.creation.html#converting-python-array-like-objects-to-numpy-arrays
 
     Args:
-        array_like (np.array or Iterable or int or float): array-like object to be converted to CSV.
+        array_like (np.array or Iterable or int or float): array-like object
+            to be converted to CSV.
 
     Returns:
         (str): object serialized to CSV
     """
     stream = StringIO()
-    np.savetxt(stream, array_like, delimiter=',', fmt='%s')
+    np.savetxt(stream, array_like, delimiter=",", fmt="%s")
     return stream.getvalue()
 
 
-_encoder_map = {content_types.NPY: _array_to_npy,
-                content_types.CSV: _array_to_csv,
-                content_types.JSON: _array_to_json}
+_encoder_map = {
+    content_types.NPY: _array_to_npy,
+    content_types.CSV: _array_to_csv,
+    content_types.JSON: _array_to_json,
+}
 
 
 def encode(array_like, content_type):

@@ -1,4 +1,4 @@
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2019-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License'). You
 # may not use this file except in compliance with the License. A copy of
@@ -24,50 +24,43 @@ def read(file_name):
 
 
 def read_version():
-    return read('VERSION').strip()
+    return read("VERSION").strip()
 
 
-packages = setuptools.find_packages(where='src', exclude=('test',))
+packages = setuptools.find_packages(where="src", exclude=("test",))
 
-required_packages = [
-    'numpy', 'six', 'typing', 'psutil', 'retrying==1.3.3'
-]
+required_packages = ["numpy", "six", "typing", "psutil", "retrying==1.3.3"]
 
 # enum is introduced in Python 3.4. Installing enum back port
 if sys.version_info < (3, 4):
-    required_packages.append('enum34 >= 1.1.6')
+    required_packages.append("enum34 >= 1.1.6")
 
-PKG_NAME = 'sagemaker_inference'
+PKG_NAME = "sagemaker_inference"
 
 setuptools.setup(
     name=PKG_NAME,
     version=read_version(),
-    description='Open source toolkit for helping create serving containers to run on Amazon SageMaker.',
+    description="Open source toolkit for helping create serving containers to run on Amazon SageMaker.",
     packages=packages,
-    package_dir={
-        PKG_NAME: 'src/sagemaker_inference',
-    },
-    package_data={PKG_NAME: ['etc/*']},
-    py_modules=[os.path.splitext(os.path.basename(path))[0] for path in glob('src/*.py')],
-    long_description=read('README.rst'),
-    long_description_content_type='text/x-rst',
-    author='Amazon Web Services',
-    url='https://github.com/aws/sagemaker-inference-toolkit/',
-    license='Apache License 2.0',
-
+    package_dir={PKG_NAME: "src/sagemaker_inference"},
+    package_data={PKG_NAME: ["etc/*"]},
+    py_modules=[os.path.splitext(os.path.basename(path))[0] for path in glob("src/*.py")],
+    long_description=read("README.rst"),
+    long_description_content_type="text/x-rst",
+    author="Amazon Web Services",
+    url="https://github.com/aws/sagemaker-inference-toolkit/",
+    license="Apache License 2.0",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.6',
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.6",
     ],
-
     install_requires=required_packages,
-
     extras_require={
-        'test': ['tox', 'flake8', 'pytest', 'pytest-xdist', 'pytest-cov', 'mock', 'requests']
+        "test": ["tox", "flake8", "pytest", "pytest-xdist", "pytest-cov", "mock", "requests"]
     },
 )

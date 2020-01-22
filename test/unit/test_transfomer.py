@@ -1,4 +1,4 @@
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2019-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License'). You
 # may not use this file except in compliance with the License. A copy of
@@ -23,16 +23,16 @@ from sagemaker_inference.default_inference_handler import DefaultInferenceHandle
 from sagemaker_inference.errors import BaseInferenceToolkitError
 from sagemaker_inference.transformer import Transformer
 
-INPUT_DATA = 'input_data'
-CONTENT_TYPE = 'content_type'
-ACCEPT = 'accept'
-DEFAULT_ACCEPT = 'default_accept'
-RESULT = 'result'
-MODEL = 'foo'
+INPUT_DATA = "input_data"
+CONTENT_TYPE = "content_type"
+ACCEPT = "accept"
+DEFAULT_ACCEPT = "default_accept"
+RESULT = "result"
+MODEL = "foo"
 
-PREPROCESSED_DATA = 'preprocessed_data'
-PREDICT_RESULT = 'prediction_result'
-PROCESSED_RESULT = 'processed_result'
+PREPROCESSED_DATA = "preprocessed_data"
+PREDICT_RESULT = "prediction_result"
+PROCESSED_RESULT = "processed_result"
 
 
 def test_default_transformer():
@@ -65,11 +65,11 @@ def test_transformer_with_custom_default_inference_handler():
     assert transformer._output_fn is None
 
 
-@pytest.mark.parametrize('accept_key', ['Accept', 'accept'])
-@patch('sagemaker_inference.utils.retrieve_content_type_header', return_value=CONTENT_TYPE)
-@patch('sagemaker_inference.transformer.Transformer.validate_and_initialize')
+@pytest.mark.parametrize("accept_key", ["Accept", "accept"])
+@patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
+@patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
 def test_transform(validate, retrieve_content_type_header, accept_key):
-    data = [{'body': INPUT_DATA}]
+    data = [{"body": INPUT_DATA}]
     context = Mock()
     request_processor = Mock()
     transform_fn = Mock(return_value=RESULT)
@@ -92,10 +92,10 @@ def test_transform(validate, retrieve_content_type_header, accept_key):
     assert result[0] == RESULT
 
 
-@patch('sagemaker_inference.utils.retrieve_content_type_header', return_value=CONTENT_TYPE)
-@patch('sagemaker_inference.transformer.Transformer.validate_and_initialize')
+@patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
+@patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
 def test_transform_no_accept(validate, retrieve_content_type_header):
-    data = [{'body': INPUT_DATA}]
+    data = [{"body": INPUT_DATA}]
     context = Mock()
     request_processor = Mock()
     transform_fn = Mock()
@@ -116,10 +116,10 @@ def test_transform_no_accept(validate, retrieve_content_type_header):
     transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, DEFAULT_ACCEPT)
 
 
-@patch('sagemaker_inference.utils.retrieve_content_type_header', return_value=CONTENT_TYPE)
-@patch('sagemaker_inference.transformer.Transformer.validate_and_initialize')
+@patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
+@patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
 def test_transform_any_accept(validate, retrieve_content_type_header):
-    data = [{'body': INPUT_DATA}]
+    data = [{"body": INPUT_DATA}]
     context = Mock()
     request_processor = Mock()
     transform_fn = Mock()
@@ -127,7 +127,7 @@ def test_transform_any_accept(validate, retrieve_content_type_header):
     environment.default_accept = DEFAULT_ACCEPT
 
     context.request_processor = [request_processor]
-    request_processor.get_request_properties.return_value = {'accept': content_types.ANY}
+    request_processor.get_request_properties.return_value = {"accept": content_types.ANY}
 
     transformer = Transformer()
     transformer._model = MODEL
@@ -140,19 +140,19 @@ def test_transform_any_accept(validate, retrieve_content_type_header):
     transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, DEFAULT_ACCEPT)
 
 
-@pytest.mark.parametrize('content_type', content_types.UTF8_TYPES)
-@patch('sagemaker_inference.utils.retrieve_content_type_header')
-@patch('sagemaker_inference.transformer.Transformer.validate_and_initialize')
+@pytest.mark.parametrize("content_type", content_types.UTF8_TYPES)
+@patch("sagemaker_inference.utils.retrieve_content_type_header")
+@patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
 def test_transform_decode(validate, retrieve_content_type_header, content_type):
     input_data = Mock()
     context = Mock()
     request_processor = Mock()
     transform_fn = Mock()
-    data = [{'body': input_data}]
+    data = [{"body": input_data}]
 
     input_data.decode.return_value = INPUT_DATA
     context.request_processor = [request_processor]
-    request_processor.get_request_properties.return_value = {'accept': ACCEPT}
+    request_processor.get_request_properties.return_value = {"accept": ACCEPT}
     retrieve_content_type_header.return_value = content_type
 
     transformer = Transformer()
@@ -161,20 +161,20 @@ def test_transform_decode(validate, retrieve_content_type_header, content_type):
 
     transformer.transform(data, context)
 
-    input_data.decode.assert_called_once_with('utf-8')
+    input_data.decode.assert_called_once_with("utf-8")
     transform_fn.assert_called_once_with(MODEL, INPUT_DATA, content_type, ACCEPT)
 
 
-@patch('sagemaker_inference.utils.retrieve_content_type_header', return_value=CONTENT_TYPE)
-@patch('sagemaker_inference.transformer.Transformer.validate_and_initialize')
+@patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
+@patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
 def test_transform_tuple(validate, retrieve_content_type_header):
-    data = [{'body': INPUT_DATA}]
+    data = [{"body": INPUT_DATA}]
     context = Mock()
     request_processor = Mock()
     transform_fn = Mock(return_value=(RESULT, ACCEPT))
 
     context.request_processor = [request_processor]
-    request_processor.get_request_properties.return_value = {'accept': ACCEPT}
+    request_processor.get_request_properties.return_value = {"accept": ACCEPT}
 
     transformer = Transformer()
     transformer._model = MODEL
@@ -188,8 +188,8 @@ def test_transform_tuple(validate, retrieve_content_type_header):
     assert result[0] == transform_fn()[0]
 
 
-@patch('sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions')
-@patch('sagemaker_inference.environment.Environment')
+@patch("sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions")
+@patch("sagemaker_inference.environment.Environment")
 def test_validate_and_initialize(env, validate_user_module):
     transformer = Transformer()
 
@@ -209,10 +209,10 @@ def test_validate_and_initialize(env, validate_user_module):
     validate_user_module.assert_called_once_with()
 
 
-@patch('sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions')
-@patch('sagemaker_inference.environment.Environment')
+@patch("sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions")
+@patch("sagemaker_inference.environment.Environment")
 def test_handle_validate_and_initialize_error(env, validate_user_module):
-    data = [{'body': INPUT_DATA}]
+    data = [{"body": INPUT_DATA}]
     request_processor = Mock()
 
     context = Mock()
@@ -234,23 +234,24 @@ def test_handle_validate_and_initialize_error(env, validate_user_module):
 
     response = transformer.transform(data, context)
     assert test_error_message in str(response)
-    context.set_response_status.assert_called_with(code=http_client.INTERNAL_SERVER_ERROR, phrase=test_error_message)
+    context.set_response_status.assert_called_with(
+        code=http_client.INTERNAL_SERVER_ERROR, phrase=test_error_message
+    )
 
 
-@patch('sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions')
-@patch('sagemaker_inference.environment.Environment')
+@patch("sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions")
+@patch("sagemaker_inference.environment.Environment")
 def test_handle_validate_and_initialize_user_error(env, validate_user_module):
     test_status_code = http_client.FORBIDDEN
     test_error_message = "Foo"
 
     class FooUserError(BaseInferenceToolkitError):
-
         def __init__(self, status_code, message):
             self.status_code = status_code
             self.message = message
             self.phrase = "Foo"
 
-    data = [{'body': INPUT_DATA}]
+    data = [{"body": INPUT_DATA}]
     context = Mock()
     transform_fn = Mock()
     model_fn = Mock()
@@ -267,7 +268,9 @@ def test_handle_validate_and_initialize_user_error(env, validate_user_module):
 
     response = transformer.transform(data, context)
     assert test_error_message in str(response)
-    context.set_response_status.assert_called_with(code=http_client.FORBIDDEN, phrase=test_error_message)
+    context.set_response_status.assert_called_with(
+        code=http_client.FORBIDDEN, phrase=test_error_message
+    )
 
 
 class UserModuleMock:
@@ -278,8 +281,8 @@ class UserModuleMock:
         self.output_fn = output_fn
 
 
-@patch('importlib.import_module')
-@patch('sagemaker_inference.transformer.find_spec', return_value=None)
+@patch("importlib.import_module")
+@patch("sagemaker_inference.transformer.find_spec", return_value=None)
 def test_validate_no_user_module_and_set_functions(find_spec, import_module):
     default_inference_handler = Mock()
     mock_env = Mock()
@@ -309,8 +312,8 @@ def test_validate_no_user_module_and_set_functions(find_spec, import_module):
     assert transformer._output_fn == default_output_fn
 
 
-@patch('importlib.import_module', return_value=object())
-@patch('sagemaker_inference.transformer.find_spec', return_value=Mock())
+@patch("importlib.import_module", return_value=object())
+@patch("sagemaker_inference.transformer.find_spec", return_value=Mock())
 def test_validate_user_module_and_set_functions(find_spec, import_module):
     default_inference_handler = Mock()
     mock_env = Mock()
@@ -340,8 +343,11 @@ def test_validate_user_module_and_set_functions(find_spec, import_module):
     assert transformer._output_fn == default_output_fn
 
 
-@patch('importlib.import_module', return_value=UserModuleMock(input_fn=None, predict_fn=None, output_fn=None))
-@patch('sagemaker_inference.transformer.find_spec', return_value=Mock())
+@patch(
+    "importlib.import_module",
+    return_value=UserModuleMock(input_fn=None, predict_fn=None, output_fn=None),
+)
+@patch("sagemaker_inference.transformer.find_spec", return_value=Mock())
 def test_validate_user_module_and_set_functions_transform_fn(find_spec, import_module):
     mock_env = Mock()
     mock_env.module_name = "foo_module"
@@ -364,19 +370,26 @@ def _assert_value_error_raised():
         transformer._environment = Mock()
         transformer._validate_user_module_and_set_functions()
 
-    assert 'Cannot use transform_fn implementation in conjunction with input_fn, predict_fn, ' \
-           'and/or output_fn implementation' in str(e.value)
+    assert (
+        "Cannot use transform_fn implementation in conjunction with input_fn, predict_fn, "
+        "and/or output_fn implementation" in str(e.value)
+    )
 
 
-@pytest.mark.parametrize('user_module', [UserModuleMock(input_fn=None),
-                                         UserModuleMock(predict_fn=None),
-                                         UserModuleMock(output_fn=None),
-                                         UserModuleMock(output_fn=None, predict_fn=None),
-                                         UserModuleMock(input_fn=None, output_fn=None),
-                                         UserModuleMock(input_fn=None, predict_fn=None),
-                                         UserModuleMock()])
-@patch('importlib.import_module')
-@patch('sagemaker_inference.transformer.find_spec', return_value=Mock())
+@pytest.mark.parametrize(
+    "user_module",
+    [
+        UserModuleMock(input_fn=None),
+        UserModuleMock(predict_fn=None),
+        UserModuleMock(output_fn=None),
+        UserModuleMock(output_fn=None, predict_fn=None),
+        UserModuleMock(input_fn=None, output_fn=None),
+        UserModuleMock(input_fn=None, predict_fn=None),
+        UserModuleMock(),
+    ],
+)
+@patch("importlib.import_module")
+@patch("sagemaker_inference.transformer.find_spec", return_value=Mock())
 def test_validate_user_module_error(find_spec, import_module, user_module):
     import_module.return_value = user_module
 

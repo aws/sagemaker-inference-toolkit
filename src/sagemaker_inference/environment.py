@@ -1,4 +1,4 @@
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2019-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License'). You
 # may not use this file except in compliance with the License. A copy of
@@ -18,24 +18,24 @@ from sagemaker_inference import content_types, logging, parameters
 
 logger = logging.get_logger()
 
-DEFAULT_MODULE_NAME = 'inference.py'
-DEFAULT_MODEL_SERVER_TIMEOUT = '60'
-DEFAULT_HTTP_PORT = '8080'
+DEFAULT_MODULE_NAME = "inference.py"
+DEFAULT_MODEL_SERVER_TIMEOUT = "60"
+DEFAULT_HTTP_PORT = "8080"
 
-SAGEMAKER_BASE_PATH = os.path.join('/opt', 'ml')  # type: str
+SAGEMAKER_BASE_PATH = os.path.join("/opt", "ml")  # type: str
 
 base_dir = os.environ.get(parameters.BASE_PATH_ENV, SAGEMAKER_BASE_PATH)  # type: str
 
-model_dir = os.path.join(base_dir, 'model')  # type: str
+model_dir = os.path.join(base_dir, "model")  # type: str
 """str: the directory where models should be saved, e.g., /opt/ml/model/"""
 
-code_dir = os.path.join(model_dir, 'code')  # type: str
+code_dir = os.path.join(model_dir, "code")  # type: str
 """str: the path of the user's code directory, e.g., /opt/ml/model/code/"""
 
 
 class Environment(object):
-    """Provides access to aspects of the serving environment relevant to serving containers, including
-    system characteristics, environment variables and configuration settings.
+    """Provides access to aspects of the serving environment relevant to serving containers,
+    including system characteristics, environment variables and configuration settings.
 
     The Environment is a read-only snapshot of the container environment.
     It is a dictionary-like object, allowing any builtin function that works with dictionary.
@@ -55,12 +55,16 @@ class Environment(object):
             For example: 1111-2222
 
     """
+
     def __init__(self):
         self._module_name = os.environ.get(parameters.USER_PROGRAM_ENV, DEFAULT_MODULE_NAME)
-        self._model_server_timeout = \
-            int(os.environ.get(parameters.MODEL_SERVER_TIMEOUT_ENV, DEFAULT_MODEL_SERVER_TIMEOUT))
+        self._model_server_timeout = int(
+            os.environ.get(parameters.MODEL_SERVER_TIMEOUT_ENV, DEFAULT_MODEL_SERVER_TIMEOUT)
+        )
         self._model_server_workers = os.environ.get(parameters.MODEL_SERVER_WORKERS_ENV)
-        self._default_accept = os.environ.get(parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON)
+        self._default_accept = os.environ.get(
+            parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON
+        )
         self._inference_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._management_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._safe_port_range = os.environ.get(parameters.SAFE_PORT_RANGE_ENV)
@@ -76,7 +80,7 @@ class Environment(object):
             str: Module name.
 
         """
-        if program_param and program_param.endswith('.py'):
+        if program_param and program_param.endswith(".py"):
             return program_param[:-3]
         return program_param
 

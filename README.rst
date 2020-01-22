@@ -2,6 +2,10 @@
 SageMaker Inference Toolkit
 ===========================
 
+.. image:: https://img.shields.io/badge/code_style-black-000000.svg
+   :target: https://github.com/python/black
+   :alt: Code style: black
+
 SageMaker Inference Toolkit is a library used for enabling serving within the SageMaker prebuilt deep learning framework containers.
 
 This library is the serving subset of the `SageMaker Containers library <https://github.com/aws/sagemaker-containers>`__.
