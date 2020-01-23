@@ -4,7 +4,7 @@ FROM awsdeeplearningteam/mxnet-model-server:base-cpu-py3.6
 LABEL com.amazonaws.sagemaker.capabilities.accept-bind-to-port=true
 LABEL com.amazonaws.sagemaker.capabilities.multi-models=true
 
-COPY mme_handler_service.py /mme_handler_service.py
+COPY dummy/mme_handler_service.py /mme_handler_service.py
 
 # Setup Environment for MME
 ENV SAGEMAKER_MULTI_MODEL=true
@@ -40,10 +40,10 @@ RUN mkdir resnet_18 \
  && echo '[{"shape": [1, 3, 224, 224], "name": "data"}]' > resnet-18-shapes.json \
  && cd ..
 
-COPY mms-entrypoint.py /usr/local/bin/dockerd-entrypoint.py
+COPY dummy/mms-entrypoint.py /usr/local/bin/dockerd-entrypoint.py
 
 RUN mkdir -p /home/model-server/
-COPY mme_handler_service.py /home/model-server/mme_handler_service.py
+COPY dummy/mme_handler_service.py /home/model-server/mme_handler_service.py
 ENV SAGEMAKER_HANDLER="/home/model-server/mme_handler_service.py:handle"
 
 EXPOSE 8080
