@@ -1,8 +1,6 @@
 """
 ModelHandler defines an example model handler for load and inference requests for PyTorch CPU models
 """
-from collections import namedtuple
-
 import torch
 import torchvision.models as models
 import numpy as np
@@ -60,7 +58,10 @@ class ModelHandler(object):
         :return: list of inference output in NDArray
         """
         # Do some inference call to engine here and return output
-        return self.pytorch_model(model_input)
+        self.pytorch_model.eval()
+        with torch.no_grad():
+            output = self.pytorch_model(model_input)
+        return output
 
     def postprocess(self, inference_output):
         """
