@@ -2,6 +2,14 @@
 SageMaker Inference Toolkit
 ===========================
 
+.. image:: https://img.shields.io/pypi/v/sagemaker-inference.svg
+   :target: https://pypi.python.org/pypi/sagemaker-inference
+   :alt: Latest Version
+
+.. image:: https://img.shields.io/pypi/pyversions/sagemaker-inference.svg
+   :target: https://pypi.python.org/pypi/sagemaker-inference
+   :alt: Supported Python Versions
+
 .. image:: https://img.shields.io/badge/code_style-black-000000.svg
    :target: https://github.com/python/black
    :alt: Code style: black
