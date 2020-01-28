@@ -1,3 +1,7 @@
+.. image:: https://github.com/aws/sagemaker-inference-toolkit/raw/master/branding/icon/sagemaker-banner.png
+    :height: 100px
+    :alt: SageMaker
+
 ===========================
 SageMaker Inference Toolkit
 ===========================
