@@ -18,13 +18,10 @@ SageMaker Inference Toolkit
    :target: https://github.com/python/black
    :alt: Code style: black
 
-SageMaker Inference Toolkit is a library used for enabling serving within the SageMaker prebuilt deep learning framework containers.
+**SageMaker Inference Toolkit** is an open-source library for serving machine learning models within a Docker container.
 
-This library is the serving subset of the `SageMaker Containers library <https://github.com/aws/sagemaker-containers>`__.
-
-Currently, this library is used by the following containers:
-
-- `SageMaker MXNet Serving Container <https://github.com/aws/sagemaker-mxnet-serving-container>`__
+This library's serving stack is built on `Multi Model Server (MMS) <https://github.com/awslabs/mxnet-model-server>`_ to serve machine learning models trained using `any machine learning framework in SageMaker <https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html>`__.
+SageMaker-compatible Docker containers can use the SageMaker Inference Toolkit to implement their serving stack. (It is used in some of the `prebuilt SageMaker Docker images for inference <https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html>`__.)
 
 -----------------
 Table of Contents
@@ -34,8 +31,6 @@ Table of Contents
 
 Getting Started
 ---------------
-
-The main purpose of this library is to start up a model server within a container to enable serving on SageMaker.
 
 This library assumes the following `SageMaker inference requirements <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-inference-code.html>`__ are met.
 
@@ -65,7 +60,7 @@ To run all tests:
 Using SageMaker Inference Toolkit
 ---------------------------------
 
-SageMaker Inference Toolkit serving stack leverages `Model Server for Apache MXNet (MMS) <https://github.com/awslabs/mxnet-model-server>`_ to server deep learning models trained using any ML/DL framework in SageMaker. Any SageMaker container can use the SageMaker Inference Toolkit to implement their serving stack. To use the Inference Toolkit, customers need to implement the following the components:
+To use the Inference Toolkit, customers need to implement the following the components:
 
 - An inference handler responsible to load the model, and provide default input, predict, and output functions:
 
@@ -151,10 +146,3 @@ SageMaker Inference Toolkit serving stack leverages `Model Server for Apache MXN
 
 Complete example `https://github.com/aws/sagemaker-pytorch-serving-container/pull/4/files`
 
-
-License
--------
-
-This library is licensed under the Apache 2.0 License.
-It is copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-The license is available at: http://aws.amazon.com/apache2.0/
