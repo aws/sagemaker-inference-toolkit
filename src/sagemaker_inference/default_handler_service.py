@@ -10,6 +10,7 @@
 # distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
+"""This module contains functionality for the default handler service."""
 from __future__ import absolute_import
 
 from sagemaker_inference.transformer import Transformer
@@ -29,7 +30,23 @@ class DefaultHandlerService(object):
         self._service = transformer if transformer else Transformer()
 
     def handle(self, data, context):
+        """Handle an inference request with input data and make a prediction.
+
+        Args:
+            data (obj): the request data.
+            context (obj): metadata on the incoming request data.
+
+        Returns:
+            list[obj]: The return value from the Transformer.transform method,
+                which is a serialized prediction result wrapped in a list if
+                inference is successful. Otherwise returns an error message
+                with the context set appropriately.
+
+        """
         return self._service.transform(data, context)
 
     def initialize(self):
+        """Calls the Transformer method that validates the user module against
+        the SageMaker inference contract.
+        """
         self._service.validate_and_initialize()

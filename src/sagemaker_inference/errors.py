@@ -10,16 +10,16 @@
 # distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
+"""This module contains user-defined exceptions."""
 from __future__ import absolute_import
 
 import textwrap
 
 
-class ClientError(Exception):
-    pass
-
-
 class UnsupportedFormatError(Exception):
+    """Exception used to indicate that an unsupported content type was provided.
+    """
+
     def __init__(self, content_type, **kwargs):
         self._message = textwrap.dedent(
             """Content type %s is not supported by this framework.
@@ -36,13 +36,16 @@ class BaseInferenceToolkitError(Exception):
 
     This is meant to be extended from so that customers may handle errors
     within inference servers.
-
-    :param status_code: HTTP Error Status Code to send to client
-    :param message: Response message to send to client
-    :param phrase: Response body to send to client
     """
 
     def __init__(self, status_code, message, phrase):
+        """Initializes an instance of BaseInferenceToolkitError.
+
+        Args:
+            status_code: HTTP Error Status Code to send to client
+            message: Response message to send to client
+            phrase: Response body to send to client
+        """
         self.status_code = status_code
         self.message = message
         self.phrase = phrase
@@ -54,13 +57,16 @@ class GenericInferenceToolkitError(BaseInferenceToolkitError):
 
     This is meant to be a generic implementation of the BaseInferenceToolkitError
     for re-raising unexpected exceptions in a way that can be sent back to the client.
-
-    :param status_code: HTTP Error Status Code to send to client
-    :param message: Response message to send to client
-    :param phrase: Response body to send to client
     """
 
     def __init__(self, status_code, message=None, phrase=None):
+        """Initializes an instance of GenericInferenceToolkitError.
+
+        Args:
+            status_code: HTTP Error Status Code to send to client
+            message: Response message to send to client
+            phrase: Response body to send to client
+        """
         message = message or "Invalid Request"
         phrase = phrase or message
         super(GenericInferenceToolkitError, self).__init__(status_code, message, phrase)
