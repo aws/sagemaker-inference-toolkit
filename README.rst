@@ -18,10 +18,7 @@ SageMaker Inference Toolkit
    :target: https://github.com/python/black
    :alt: Code style: black
 
-**SageMaker Inference Toolkit** is an open-source library for serving machine learning models within a Docker container.
-
-This library's serving stack is built on `Multi Model Server (MMS) <https://github.com/awslabs/mxnet-model-server>`_ to serve machine learning models trained using `any machine learning framework in SageMaker <https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html>`__.
-SageMaker-compatible Docker containers can use the SageMaker Inference Toolkit to implement their serving stack. (It is used in some of the `prebuilt SageMaker Docker images for inference <https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html>`__.)
+Serve machine learning models within a Docker container using Amazon SageMaker.
 
 -----------------
 Table of Contents
@@ -29,10 +26,24 @@ Table of Contents
 .. contents::
     :local:
 
-Getting Started
----------------
+Background
+-----------
 
-This library assumes the following `SageMaker inference requirements <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-inference-code.html>`__ are met.
+`Amazon SageMaker <https://aws.amazon.com/sagemaker/>`__ is a fully managed service that provides every developer and data scientist with the ability to build, train, and deploy machine learning models quickly.
+SageMaker removes the heavy lifting from each step of the machine learning process to make it easier to develop and deploy high quality models.
+
+Once you've trained a machine learning model, you can deploy it to a `Docker container <https://www.docker.com/resources/what-container>`__, where you can run your own inference code. The container includes the runtime, system tools, system libraries, and other code required to deploy your model.
+The code that runs in a container is effectively isolated from its surroundings, ensuring a consistent runtime, regardless of where the container is deployed.
+By using a container, you can deploy machine learning models quickly and reliably at any scale.
+
+The **SageMaker Inference Toolkit** library allows you to implement the model serving stack in your Docker container.
+This library's serving stack is built on `Multi Model Server (MMS) <https://github.com/awslabs/mxnet-model-server>`_, and it can serve your own models or those you trained on SageMaker using `any machine learning framework <https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html>`__.
+(It is used in some of the `prebuilt SageMaker Docker images for inference <https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html>`__.)
+
+For more background information, please read the `Amazon SageMaker Developer Guide <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html>`__.
+
+Example
+--------
 
 The following code block shows how to start the model server.
 
@@ -48,17 +59,8 @@ The Python file should define a ``handle`` method that acts as an entry point fo
 
 For more information on how to define your ``HANDLER_SERVICE`` file, see `Custom Service <https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md>`__.
 
-Running tests
--------------
-
-To run all tests:
-
-::
-
-    tox
-
-Using SageMaker Inference Toolkit
----------------------------------
+Usage
+------
 
 To use the Inference Toolkit, customers need to implement the following the components:
 
@@ -146,3 +148,20 @@ To use the Inference Toolkit, customers need to implement the following the comp
 
 Complete example `https://github.com/aws/sagemaker-pytorch-serving-container/pull/4/files`
 
+The `Amazon SageMaker Developer Guide <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-inference-code.html>`__ explains how SageMaker interacts with a Docker container that runs your own inference code for hosting services. Use this information to write inference code and create a Docker image.
+
+Installation
+-------------
+
+To install this library, add the following line to your Dockerfile:
+
+.. code:: dockerfile
+
+    RUN pip install sagemaker-inference-toolkit
+
+This library assumes the following `SageMaker inference requirements <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-inference-code.html>`__ are met.
+
+Contributing
+-------------
+
+Contributions are welcome! Please read our `contributing guidelines <https://github.com/aws/sagemaker-inference-toolkit/blob/master/CONTRIBUTING.md>`__ if you'd like to open an issue or submit a pull request.
