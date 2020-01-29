@@ -57,11 +57,9 @@ To install this library in your Docker container, add the following line to your
 Usage
 -----
 
-The `Amazon SageMaker Developer Guide <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-inference-code.html>`__ explains how SageMaker interacts with a Docker container that runs your own inference code for hosting services. Use this information to write inference code and create a Docker image.
+To use the Inference Toolkit, you need to do the following:
 
-To use the Inference Toolkit, customers need to implement the following the components:
-
-- An inference handler responsible to load the model, and provide default input, predict, and output functions:
+1. Implement an inference handler responsible to load the model, and provide default input, predict, and output functions:
 
 .. code:: python
 
@@ -110,7 +108,9 @@ To use the Inference Toolkit, customers need to implement the following the comp
             """
             return encoder.encode(prediction, accept)
 
-- A handler service that is executed by the model server:
+2. Implement a handler service that is executed by the model server.
+   (`Here is an example <https://github.com/awslabs/amazon-sagemaker-examples/blob/master/advanced_functionality/multi_model_bring_your_own/container/model_handler.py>`__ of a handler service.)
+   For more information on how to define your ``HANDLER_SERVICE`` file, see `the MMS Custom Service documentation <https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md>`__.
 
 .. code:: python
 
@@ -132,8 +132,8 @@ To use the Inference Toolkit, customers need to implement the following the comp
             transformer = Transformer(default_inference_handler=DefaultPytorchInferenceHandler())
             super(HandlerService, self).__init__(transformer=transformer)
 
-
-- A serving entrypoint responsible to start MMS:
+3. Implement a serving entrypoint, which starts the model server.
+   (`Here is an example <https://github.com/awslabs/amazon-sagemaker-examples/blob/master/advanced_functionality/multi_model_bring_your_own/container/dockerd-entrypoint.py>`__ of an entrypoint.)
 
 .. code:: python
 
@@ -141,14 +141,9 @@ To use the Inference Toolkit, customers need to implement the following the comp
 
     model_server.start_model_server(handler_service=HANDLER_SERVICE)
 
-The ``HANDLER_SERVICE`` is a string literal that points to the Python path of a Python file that will be executed by the
-model server for incoming invocation requests. This Python script is responsible for handling incoming data and passing it on to the engine for inference.
-The Python file should define a ``handle`` method that acts as an entry point for execution, this function will be invoked by the model server on a inference request.
+`Here is a complete example <https://github.com/awslabs/amazon-sagemaker-examples/tree/master/advanced_functionality/multi_model_bring_your_own>`__ demonstrating usage of the SageMaker Inference Toolkit in your own container for deployment to a Multi-Model Endpoint.
 
-For more information on how to define your ``HANDLER_SERVICE`` file, see `Custom Service <https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md>`__.
-
-
-`Here is a complete example <https://github.com/awslabs/amazon-sagemaker-examples/tree/master/advanced_functionality/multi_model_bring_your_own>`__ of using the SageMaker Inference Toolkit in your own container for deployment to a Multi-Model Endpoint.
+The `Amazon SageMaker Developer Guide <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-inference-code.html>`__ explains how SageMaker interacts with a Docker container that runs your own inference code for hosting services. Use this information to write inference code and create a Docker image.
 
 License
 -------
