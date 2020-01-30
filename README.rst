@@ -1,18 +1,24 @@
+.. image:: https://github.com/aws/sagemaker-inference-toolkit/raw/master/branding/icon/sagemaker-banner.png
+    :height: 100px
+    :alt: SageMaker
+
 ===========================
 SageMaker Inference Toolkit
 ===========================
 
+.. image:: https://img.shields.io/pypi/v/sagemaker-inference.svg
+   :target: https://pypi.python.org/pypi/sagemaker-inference
+   :alt: Latest Version
+
+.. image:: https://img.shields.io/pypi/pyversions/sagemaker-inference.svg
+   :target: https://pypi.python.org/pypi/sagemaker-inference
+   :alt: Supported Python Versions
+
 .. image:: https://img.shields.io/badge/code_style-black-000000.svg
    :target: https://github.com/python/black
-   :alt: Code style: black
+   :alt: Code Style: Black
 
-SageMaker Inference Toolkit is a library used for enabling serving within the SageMaker prebuilt deep learning framework containers.
-
-This library is the serving subset of the `SageMaker Containers library <https://github.com/aws/sagemaker-containers>`__.
-
-Currently, this library is used by the following containers:
-
-- `SageMaker MXNet Serving Container <https://github.com/aws/sagemaker-mxnet-serving-container>`__
+Serve machine learning models within a Docker container using Amazon SageMaker.
 
 -----------------
 Table of Contents
@@ -20,55 +26,54 @@ Table of Contents
 .. contents::
     :local:
 
-Getting Started
----------------
+Background
+----------
 
-The main purpose of this library is to start up a model server within a container to enable serving on SageMaker.
+`Amazon SageMaker <https://aws.amazon.com/sagemaker/>`__ is a fully managed service for data science and machine learning (ML) workflows.
+You can use Amazon SageMaker to simplify the process of building, training, and deploying ML models.
 
-This library assumes the following `SageMaker inference requirements <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-inference-code.html>`__ are met.
+Once you have a trained model, you can include it in a `Docker container <https://www.docker.com/resources/what-container>`__ that runs your inference code.
+A container provides an effectively isolated environment, ensuring a consistent runtime regardless of where the container is deployed.
+Containerizing your model and code enables fast and reliable deployment  of your model.
 
-The following code block shows how to start the model server.
+The **SageMaker Inference Toolkit** implements a model serving stack and can be easily added to any Docker container, making it `deployable to SageMaker <https://aws.amazon.com/sagemaker/deploy/>`__.
+This library's serving stack is built on `Multi Model Server <https://github.com/awslabs/mxnet-model-server>`__, and it can serve your own models or those you trained on SageMaker using `machine learning frameworks with native SageMaker support <https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html>`__.
+If you use a `prebuilt SageMaker Docker image for inference <https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html>`__, this library may already be included.
 
-.. code:: python
+For more information, see the Amazon SageMaker Developer Guide sections on `building your own container with Multi Model Server <https://docs.aws.amazon.com/sagemaker/latest/dg/build-multi-model-build-container.html>`__ and `using your own models <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html>`__.
 
-    from sagemaker_inference import model_server
+Installation
+------------
 
-    model_server.start_model_server(handler_service=HANDLER_SERVICE)
+To install this library in your Docker image, add the following line to your `Dockerfile <https://docs.docker.com/engine/reference/builder/>`__:
 
-The ``HANDLER_SERVICE`` is a string literal that points to the Python path of a Python file that will be executed by the
-model server for incoming invocation requests. This Python script is responsible for handling incoming data and passing it on to the engine for inference.
-The Python file should define a ``handle`` method that acts as an entry point for execution, this function will be invoked by the model server on a inference request.
+.. code:: dockerfile
 
-For more information on how to define your ``HANDLER_SERVICE`` file, see `Custom Service <https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md>`__.
+    RUN pip3 install multi-model-server sagemaker-inference-toolkit
 
-Running tests
--------------
+`Here is an example <https://github.com/awslabs/amazon-sagemaker-examples/blob/master/advanced_functionality/multi_model_bring_your_own/container/Dockerfile>`__ of a Dockerfile that installs SageMaker Inference Toolkit.
 
-To run all tests:
+Usage
+-----
 
-::
+To use the SageMaker Inference Toolkit, you need to do the following:
 
-    tox
-
-Using SageMaker Inference Toolkit
----------------------------------
-
-SageMaker Inference Toolkit serving stack leverages `Model Server for Apache MXNet (MMS) <https://github.com/awslabs/mxnet-model-server>`_ to server deep learning models trained using any ML/DL framework in SageMaker. Any SageMaker container can use the SageMaker Inference Toolkit to implement their serving stack. To use the Inference Toolkit, customers need to implement the following the components:
-
-- An inference handler responsible to load the model, and provide default input, predict, and output functions:
+1. Implement an inference handler, which is responsible for loading the model and providing input, predict, and output functions.
+   (`Here is an example <https://github.com/aws/sagemaker-pytorch-serving-container/blob/master/src/sagemaker_pytorch_serving_container/default_inference_handler.py>`__ of an inference handler.)
 
 .. code:: python
 
     from sagemaker_inference import content_types, decoder, default_inference_handler, encoder, errors
 
     class DefaultPytorchInferenceHandler(default_inference_handler.DefaultInferenceHandler):
-        VALID_CONTENT_TYPES = (content_types.JSON, content_types.NPY)
 
         def default_model_fn(self, model_dir):
             """Loads a model. For PyTorch, a default function to load a model cannot be provided.
             Users should provide customized model_fn() in script.
+
             Args:
                 model_dir: a directory where model is saved.
+
             Returns: A PyTorch model.
             """
             raise NotImplementedError(textwrap.dedent("""
@@ -78,9 +83,11 @@ SageMaker Inference Toolkit serving stack leverages `Model Server for Apache MXN
 
         def default_input_fn(self, input_data, content_type):
             """A default input_fn that can handle JSON, CSV and NPZ formats.
+
             Args:
                 input_data: the request payload serialized in the content_type format
                 content_type: the request content_type
+
             Returns: input_data deserialized into torch.FloatTensor or torch.cuda.FloatTensor depending if cuda is available.
             """
             return decoder.decode(input_data, content_type)
@@ -88,30 +95,35 @@ SageMaker Inference Toolkit serving stack leverages `Model Server for Apache MXN
         def default_predict_fn(self, data, model):
             """A default predict_fn for PyTorch. Calls a model on data deserialized in input_fn.
             Runs prediction on GPU if cuda is available.
+
             Args:
                 data: input data (torch.Tensor) for prediction deserialized by input_fn
                 model: PyTorch model loaded in memory by model_fn
+
             Returns: a prediction
             """
             return model(input_data)
 
         def default_output_fn(self, prediction, accept):
             """A default output_fn for PyTorch. Serializes predictions from predict_fn to JSON, CSV or NPY format.
+
             Args:
                 prediction: a prediction result from predict_fn
                 accept: type which the output data needs to be serialized
+
             Returns: output data serialized
             """
             return encoder.encode(prediction, accept)
 
-- A handler service that is executed by the model server:
+2. Implement a handler service that is executed by the model server.
+   (`Here is an example <https://github.com/aws/sagemaker-pytorch-serving-container/blob/master/src/sagemaker_pytorch_serving_container/handler_service.py>`__ of a handler service.)
+   For more information on how to define your ``HANDLER_SERVICE`` file, see `the MMS custom service documentation <https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md>`__.
 
 .. code:: python
 
     from sagemaker_inference.default_handler_service import DefaultHandlerService
     from sagemaker_inference.transformer import Transformer
-    from sagemaker_pytorch_serving_container.default_inference_handler import \
-        DefaultPytorchInferenceHandler
+    from sagemaker_pytorch_serving_container.default_inference_handler import DefaultPytorchInferenceHandler
 
 
     class HandlerService(DefaultHandlerService):
@@ -126,23 +138,30 @@ SageMaker Inference Toolkit serving stack leverages `Model Server for Apache MXN
             transformer = Transformer(default_inference_handler=DefaultPytorchInferenceHandler())
             super(HandlerService, self).__init__(transformer=transformer)
 
-
-- A serving entrypoint responsible to start MMS:
+3. Implement a serving entrypoint, which starts the model server.
+   (`Here is an example <https://github.com/aws/sagemaker-pytorch-serving-container/blob/master/src/sagemaker_pytorch_serving_container/serving.py>`__ of a serving entrypoint.)
 
 .. code:: python
 
     from sagemaker_inference import model_server
-    
-    def main():
-        model_server.start_model_server(handler_service=HANDLER_SERVICE)
 
+    model_server.start_model_server(handler_service=HANDLER_SERVICE)
 
-Complete example `https://github.com/aws/sagemaker-pytorch-serving-container/pull/4/files`
+4. Define the location of the entrypoint in your Dockerfile.
 
+.. code:: dockerfile
+
+    ENTRYPOINT ["python", "/usr/local/bin/entrypoint.py"]
+
+`Here is a complete example <https://github.com/awslabs/amazon-sagemaker-examples/tree/master/advanced_functionality/multi_model_bring_your_own>`__ demonstrating usage of the SageMaker Inference Toolkit in your own container for deployment to a multi-model endpoint.
 
 License
 -------
 
-This library is licensed under the Apache 2.0 License.
-It is copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-The license is available at: http://aws.amazon.com/apache2.0/
+This library is licensed under the `Apache 2.0 License <http://aws.amazon.com/apache2.0/>`__.
+For more details, please take a look at the `LICENSE <https://github.com/aws-samples/sagemaker-inference-toolkit/blob/master/LICENSE>`__ file.
+
+Contributing
+------------
+
+Contributions are welcome! Please read our `contributing guidelines <https://github.com/aws/sagemaker-inference-toolkit/blob/master/CONTRIBUTING.md>`__ if you'd like to open an issue or submit a pull request.

@@ -10,6 +10,10 @@
 # distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
+"""This module contains functionality for the Transformer class,
+which represents the execution workflow for handling inference
+requests.
+"""
 from __future__ import absolute_import
 
 try:
@@ -23,6 +27,14 @@ except ImportError:
     import imp  # noqa: F401
 
     def find_spec(module_name):
+        """Function that searches for a module.
+
+        Args:
+            module_name: The name of the module to search for.
+
+        Returns:
+            bool: Whether the module was found.
+        """
         try:
             imp.find_module(module_name)
             return True
@@ -66,10 +78,13 @@ class Transformer(object):
     def handle_error(context, inference_exception):
         """Set context appropriately for error response.
 
-        :param context: Inference context
-        :param inference_exception: A subclass of BaseInferenceToolkitError that
+        Args:
+            context: Inference context
+            inference_exception: A subclass of BaseInferenceToolkitError that
             has information for error response
-        :return: Error message
+
+        Returns:
+            str: error message
         """
         context.set_response_status(
             code=inference_exception.status_code, phrase=inference_exception.phrase

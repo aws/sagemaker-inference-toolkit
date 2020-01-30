@@ -84,7 +84,6 @@ disable=
     too-many-instance-attributes,
     invalid-name,
     useless-object-inheritance, # TODO: Enable this check and fix code once Python 2 is no longer supported.
-    missing-docstring, # TODO: Update all documentation, add missing docstrings, and remove this line.
 
 [REPORTS]
 # Set the output format. Available formats are text, parseable, colorized, msvs
