@@ -29,19 +29,20 @@ Table of Contents
 Background
 ----------
 
-`Amazon SageMaker <https://aws.amazon.com/sagemaker/>`__ is a fully managed service that provides every developer and data scientist with the ability to build, train, and `deploy <https://aws.amazon.com/sagemaker/deploy/>`__ machine learning models quickly.
-SageMaker removes the heavy lifting from each step of the machine learning process to make it easier to develop and deploy high quality models.
+`Amazon SageMaker <https://aws.amazon.com/sagemaker/>`__ is a fully managed service for data science and machine learning (ML) workflows.
+You can use Amazon SageMaker to simplify the process of building, training, and `deploying <https://aws.amazon.com/sagemaker/deploy/>`__ ML models.
 
-Once you've trained a machine learning model, you can deploy it to a `Docker container <https://www.docker.com/resources/what-container>`__, where you can run your own inference code.
-The code that runs in a container is effectively isolated from its surroundings, ensuring a consistent runtime, regardless of where the container is deployed.
-By using a container, you can deploy machine learning models quickly and reliably at any scale.
-Additionally, you will be able to use your container to create a `Multi-Model Endpoint <https://docs.aws.amazon.com/sagemaker/latest/dg/multi-model-endpoints.html>`__, which enables you to deploy multiple models on a single endpoint and serve them using a single container.
+Once you've trained a model, you can deploy it to a `Docker container <https://www.docker.com/resources/what-container>`__ that runs your inference code.
+A container provides an effectively isolated environment, ensuring a consistent runtime regardless of where the container is deployed.
+Containerizing your model and code enables fast and reliable deployment of your model.
 
-The **SageMaker Inference Toolkit** library allows you to implement the model serving stack in your Docker container, making it compatible with SageMaker Multi Model Endpoints.
-This library's serving stack is built on `Multi Model Server (MMS) <https://github.com/awslabs/mxnet-model-server>`_, and it can serve your own models or those you trained on SageMaker using `any machine learning framework <https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html>`__.
-(It is used in some of the `prebuilt SageMaker Docker images for inference <https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html>`__.)
+You can also use your container to serve multiple models deployed on a single endpoint.
+`Multi-model endpoints <https://docs.aws.amazon.com/sagemaker/latest/dg/multi-model-endpoints.html>`__ provide a scalable and cost-effective solution to deploying large numbers of models.
+You can use the **SageMaker Inference Toolkit** to implement the model serving stack in your Docker container, making it compatible with SageMaker multi-model endpoints.
+This library's serving stack is built on `Multi Model Server <https://github.com/awslabs/mxnet-model-server>`_, and it can serve your own models or those you trained on SageMaker using `any machine learning framework <https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html>`__.
+(If you use a `prebuilt SageMaker Docker images for inference <https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html>`__, this library may already be included.)
 
-For more background information, please consult the Amazon SageMaker Developer Guide sections on `building your own container with Multi Model Server <https://docs.aws.amazon.com/sagemaker/latest/dg/build-multi-model-build-container.html>`__ and `using your own models <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html>`__.
+For more information, see the Amazon SageMaker Developer Guide sections on `building your own container with Multi Model Server <https://docs.aws.amazon.com/sagemaker/latest/dg/build-multi-model-build-container.html>`__ and `using your own models <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html>`__.
 
 Installation
 ------------
@@ -142,7 +143,7 @@ To use the SageMaker Inference Toolkit, you need to do the following:
 
     model_server.start_model_server(handler_service=HANDLER_SERVICE)
 
-`Here is a complete example <https://github.com/awslabs/amazon-sagemaker-examples/tree/master/advanced_functionality/multi_model_bring_your_own>`__ demonstrating usage of the SageMaker Inference Toolkit in your own container for deployment to a Multi-Model Endpoint.
+`Here is a complete example <https://github.com/awslabs/amazon-sagemaker-examples/tree/master/advanced_functionality/multi_model_bring_your_own>`__ demonstrating usage of the SageMaker Inference Toolkit in your own container for deployment to a multi-model endpoint.
 
 License
 -------
