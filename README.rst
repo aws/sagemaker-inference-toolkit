@@ -30,17 +30,15 @@ Background
 ----------
 
 `Amazon SageMaker <https://aws.amazon.com/sagemaker/>`__ is a fully managed service for data science and machine learning (ML) workflows.
-You can use Amazon SageMaker to simplify the process of building, training, and `deploying <https://aws.amazon.com/sagemaker/deploy/>`__ ML models.
+You can use Amazon SageMaker to simplify the process of building, training, and deploying ML models.
 
-Once you've trained a model, you can deploy it to a `Docker container <https://www.docker.com/resources/what-container>`__ that runs your inference code.
+Once you have a trained model, you can include it in a `Docker container <https://www.docker.com/resources/what-container>`__ that runs your inference code.
 A container provides an effectively isolated environment, ensuring a consistent runtime regardless of where the container is deployed.
-Containerizing your model and code enables fast and reliable deployment of your model.
+Containerizing your model and code enables fast and reliable deployment  of your model.
 
-You can also use your container to serve multiple models deployed on a single endpoint.
-`Multi-model endpoints <https://docs.aws.amazon.com/sagemaker/latest/dg/multi-model-endpoints.html>`__ provide a scalable and cost-effective solution to deploying large numbers of models.
-You can use the **SageMaker Inference Toolkit** to implement the model serving stack in your Docker container, making it compatible with SageMaker multi-model endpoints.
-This library's serving stack is built on `Multi Model Server <https://github.com/awslabs/mxnet-model-server>`_, and it can serve your own models or those you trained on SageMaker using `any machine learning framework <https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html>`__.
-(If you use a `prebuilt SageMaker Docker images for inference <https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html>`__, this library may already be included.)
+The **SageMaker Inference Toolkit** implements a model serving stack and can be easily added to any Docker container, making it `deployable to SageMaker <https://aws.amazon.com/sagemaker/deploy/>`__.
+This library's serving stack is built on `Multi Model Server <https://github.com/awslabs/mxnet-model-server>`__, and it can serve your own models or those you trained on SageMaker using `machine learning frameworks with native SageMaker support <https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html>`__.
+If you use a `prebuilt SageMaker Docker image for inference <https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html>`__, this library may already be included.
 
 For more information, see the Amazon SageMaker Developer Guide sections on `building your own container with Multi Model Server <https://docs.aws.amazon.com/sagemaker/latest/dg/build-multi-model-build-container.html>`__ and `using your own models <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html>`__.
 

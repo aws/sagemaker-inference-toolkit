@@ -10,15 +10,14 @@
 # distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-"""This module contains user-defined exceptions."""
+"""This module contains custom exceptions."""
 from __future__ import absolute_import
 
 import textwrap
 
 
 class UnsupportedFormatError(Exception):
-    """Exception used to indicate that an unsupported content type was provided.
-    """
+    """Exception used to indicate that an unsupported content type was provided."""
 
     def __init__(self, content_type, **kwargs):
         self._message = textwrap.dedent(
@@ -42,9 +41,9 @@ class BaseInferenceToolkitError(Exception):
         """Initializes an instance of BaseInferenceToolkitError.
 
         Args:
-            status_code: HTTP Error Status Code to send to client
-            message: Response message to send to client
-            phrase: Response body to send to client
+            status_code (int): HTTP Error Status Code to send to client
+            message (str): Response message to send to client
+            phrase (str): Response body to send to client
         """
         self.status_code = status_code
         self.message = message
@@ -63,9 +62,9 @@ class GenericInferenceToolkitError(BaseInferenceToolkitError):
         """Initializes an instance of GenericInferenceToolkitError.
 
         Args:
-            status_code: HTTP Error Status Code to send to client
-            message: Response message to send to client
-            phrase: Response body to send to client
+            status_code (int): HTTP Error Status Code to send to client
+            message (str): Response message to send to client
+            phrase (str): Response body to send to client
         """
         message = message or "Invalid Request"
         phrase = phrase or message

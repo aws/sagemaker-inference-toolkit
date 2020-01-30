@@ -21,6 +21,6 @@ def get_logger():
     creating it if necessary.
 
     Returns:
-        (logging.Logger): Instance of the Logger class.
+        logging.Logger: Instance of the Logger class.
     """
     return logging.getLogger("sagemaker-inference")

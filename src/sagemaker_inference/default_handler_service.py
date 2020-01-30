@@ -30,7 +30,7 @@ class DefaultHandlerService(object):
         self._service = transformer if transformer else Transformer()
 
     def handle(self, data, context):
-        """Handle an inference request with input data and make a prediction.
+        """Handles an inference request with input data and makes a prediction.
 
         Args:
             data (obj): the request data.

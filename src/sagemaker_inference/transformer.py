@@ -33,7 +33,7 @@ except ImportError:
             module_name: The name of the module to search for.
 
         Returns:
-            (bool): Whether the module was found.
+            bool: Whether the module was found.
         """
         try:
             imp.find_module(module_name)
@@ -84,7 +84,7 @@ class Transformer(object):
             has information for error response
 
         Returns:
-            (str): error message
+            str: error message
         """
         context.set_response_status(
             code=inference_exception.status_code, phrase=inference_exception.phrase
