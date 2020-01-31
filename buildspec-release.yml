@@ -19,12 +19,17 @@ phases:
       # run unit tests
       - tox -e py36,py27 -- test/unit
 
-      # build dummy container image
+      # build dummy container
       - python3 setup.py sdist
       - cp dist/sagemaker_inference-*.tar.gz test/container/sagemaker_inference.tar.gz
       - cd test/container
-      - docker build -t sagemaker-inference-toolkit-test:dummy -f Dockerfile .
+      - docker build -t sagemaker-inference-toolkit-test:dummy -f dummy/Dockerfile .
       - rm sagemaker_inference.tar.gz
+
+      # build mxnet container
+      - docker build -t sagemaker-inference-toolkit-test:mxnet -f mxnet/Dockerfile .
+
+      - cd ../..
 
       # run local integration tests
       - IGNORE_COVERAGE=- tox -e py36,py27 -- test/integration/local
