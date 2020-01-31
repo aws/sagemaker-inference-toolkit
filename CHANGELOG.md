@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.1.5 (2020-01-31)
+
+### Bug Fixes and Other Changes
+
+ * add DLC local integration tests
+
+### Documentation Changes
+
+ * add missing docstrings and update README
+
+### Testing and Release Infrastructure
+
+ * fix buildspec-release.yml
+
 ## v1.1.4.post1 (2020-01-16)
 
 ### Documentation changes
