@@ -42,7 +42,7 @@ If you use a `prebuilt SageMaker Docker image for inference <https://docs.aws.am
 
 For more information, see the Amazon SageMaker Developer Guide sections on `building your own container with Multi Model Server <https://docs.aws.amazon.com/sagemaker/latest/dg/build-multi-model-build-container.html>`__ and `using your own models <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html>`__.
 
-🧰 Installation
+🛠️ Installation
 ------------
 
 To install this library in your Docker image, add the following line to your `Dockerfile <https://docs.docker.com/engine/reference/builder/>`__:
@@ -53,7 +53,7 @@ To install this library in your Docker image, add the following line to your `Do
 
 `Here is an example <https://github.com/awslabs/amazon-sagemaker-examples/blob/master/advanced_functionality/multi_model_bring_your_own/container/Dockerfile>`__ of a Dockerfile that installs SageMaker Inference Toolkit.
 
-🛠️ Usage
+💻 Usage
 -----
 
 To use the SageMaker Inference Toolkit, you need to do the following:
