@@ -139,7 +139,7 @@ To use the SageMaker Inference Toolkit, you need to do the following:
 This library is licensed under the [Apache 2.0 License](http://aws.amazon.com/apache2.0/).
 For more details, please take a look at the [LICENSE](https://github.com/aws-samples/sagemaker-inference-toolkit/blob/master/LICENSE) file.
 
-## :handshaking: Contributing
+## :handshake: Contributing
 
 Contributions are welcome!
 Please read our [contributing guidelines](https://github.com/aws/sagemaker-inference-toolkit/blob/master/CONTRIBUTING.md)
