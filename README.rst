@@ -26,7 +26,7 @@ Table of Contents
 .. contents::
     :local:
 
-Background
+📚 Background
 ----------
 
 `Amazon SageMaker <https://aws.amazon.com/sagemaker/>`__ is a fully managed service for data science and machine learning (ML) workflows.
@@ -42,7 +42,7 @@ If you use a `prebuilt SageMaker Docker image for inference <https://docs.aws.am
 
 For more information, see the Amazon SageMaker Developer Guide sections on `building your own container with Multi Model Server <https://docs.aws.amazon.com/sagemaker/latest/dg/build-multi-model-build-container.html>`__ and `using your own models <https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html>`__.
 
-Installation
+🧰 Installation
 ------------
 
 To install this library in your Docker image, add the following line to your `Dockerfile <https://docs.docker.com/engine/reference/builder/>`__:
@@ -53,7 +53,7 @@ To install this library in your Docker image, add the following line to your `Do
 
 `Here is an example <https://github.com/awslabs/amazon-sagemaker-examples/blob/master/advanced_functionality/multi_model_bring_your_own/container/Dockerfile>`__ of a Dockerfile that installs SageMaker Inference Toolkit.
 
-Usage
+🛠️ Usage
 -----
 
 To use the SageMaker Inference Toolkit, you need to do the following:
@@ -155,13 +155,13 @@ To use the SageMaker Inference Toolkit, you need to do the following:
 
 `Here is a complete example <https://github.com/awslabs/amazon-sagemaker-examples/tree/master/advanced_functionality/multi_model_bring_your_own>`__ demonstrating usage of the SageMaker Inference Toolkit in your own container for deployment to a multi-model endpoint.
 
-License
+📜 License
 -------
 
 This library is licensed under the `Apache 2.0 License <http://aws.amazon.com/apache2.0/>`__.
 For more details, please take a look at the `LICENSE <https://github.com/aws-samples/sagemaker-inference-toolkit/blob/master/LICENSE>`__ file.
 
-Contributing
+🤝 Contributing
 ------------
 
 Contributions are welcome! Please read our `contributing guidelines <https://github.com/aws/sagemaker-inference-toolkit/blob/master/CONTRIBUTING.md>`__ if you'd like to open an issue or submit a pull request.
