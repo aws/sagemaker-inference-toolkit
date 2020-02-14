@@ -35,6 +35,8 @@ RUN pip3 install multi-model-server sagemaker-inference-toolkit
 
 ## :computer: Usage
 
+### Implementation Steps
+
 To use the SageMaker Inference Toolkit, you need to do the following:
 
 1.  Implement an inference handler, which is responsible for loading the model and providing input, predict, and output functions.
@@ -131,6 +133,8 @@ To use the SageMaker Inference Toolkit, you need to do the following:
     ``` dockerfile
     ENTRYPOINT ["python", "/usr/local/bin/entrypoint.py"]
     ```
+
+### Complete Example
 
 [Here is a complete example](https://github.com/awslabs/amazon-sagemaker-examples/tree/master/advanced_functionality/multi_model_bring_your_own) demonstrating usage of the SageMaker Inference Toolkit in your own container for deployment to a multi-model endpoint.
 
