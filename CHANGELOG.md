@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.5.post1 (2020-02-17)
+
+### Documentation Changes
+
+ * convert README to Markdown and add emoji
+
 ## v1.1.5.post0 (2020-02-06)
 
 ### Documentation Changes
