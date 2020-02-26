@@ -33,7 +33,7 @@ if os.environ.get(parameters.MULTI_MODEL_ENV) == "true":
     model_dir = os.path.join(base_dir, "models")  # type: str
 else:
     model_dir = os.path.join(base_dir, "model")  # type: str
-"""str: the directory where models should be saved, e.g., /opt/ml/model/"""
+# str: the directory where models should be saved, e.g., /opt/ml/model/
 
 code_dir = os.path.join(model_dir, "code")  # type: str
 """str: the path of the user's code directory, e.g., /opt/ml/model/code/"""
