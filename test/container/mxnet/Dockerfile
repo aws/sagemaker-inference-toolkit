@@ -85,13 +85,13 @@ RUN useradd -m model-server \
  && mkdir -p /home/model-server/tmp \
  && chown -R model-server /home/model-server
 
-COPY mms-entrypoint.py /usr/local/bin/dockerd-entrypoint.py
+COPY mms_entrypoint.py /usr/local/bin/dockerd_entrypoint.py
 COPY config.properties /home/model-server
 
-RUN chmod +x /usr/local/bin/dockerd-entrypoint.py
+RUN chmod +x /usr/local/bin/dockerd_entrypoint.py
 
 RUN curl https://aws-dlc-licenses.s3.amazonaws.com/aws-mxnet-1.6.0/license.txt -o /license.txt
 
 EXPOSE 8080 8081
-ENTRYPOINT ["python", "/usr/local/bin/dockerd-entrypoint.py"]
+ENTRYPOINT ["python", "/usr/local/bin/dockerd_entrypoint.py"]
 CMD ["mxnet-model-server", "--start", "--mms-config", "/home/model-server/config.properties"]
