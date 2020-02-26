@@ -29,7 +29,10 @@ SAGEMAKER_BASE_PATH = os.path.join("/opt", "ml")  # type: str
 
 base_dir = os.environ.get(parameters.BASE_PATH_ENV, SAGEMAKER_BASE_PATH)  # type: str
 
-model_dir = os.path.join(base_dir, "model")  # type: str
+if os.environ.get(parameters.MULTI_MODEL_ENV) == "true":
+    model_dir = os.path.join(base_dir, "models")  # type: str
+else:
+    model_dir = os.path.join(base_dir, "model")  # type: str
 """str: the directory where models should be saved, e.g., /opt/ml/model/"""
 
 code_dir = os.path.join(model_dir, "code")  # type: str
