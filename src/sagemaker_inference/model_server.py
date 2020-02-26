@@ -67,11 +67,7 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
 
     """
 
-    if ENABLE_MULTI_MODEL:
-        if not os.getenv("SAGEMAKER_HANDLER"):
-            os.environ["SAGEMAKER_HANDLER"] = handler_service
-    else:
-        _adapt_to_mms_format(handler_service)
+    _adapt_to_mms_format(handler_service)
 
     _create_model_server_config_file()
 
