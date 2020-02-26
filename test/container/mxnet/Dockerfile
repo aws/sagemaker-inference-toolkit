@@ -64,7 +64,7 @@ RUN ${PIP} --no-cache-dir install --upgrade \
 
 WORKDIR /
 
-COPY sagemaker_mxnet_inference.tar.gz /sagemaker_mxnet_inference.tar.gz
+COPY mxnet/sagemaker_mxnet_inference.tar.gz /sagemaker_mxnet_inference.tar.gz
 
 RUN ${PIP} install --no-cache-dir \
     ${MX_URL} \
@@ -104,8 +104,8 @@ RUN useradd -m model-server \
  && mkdir -p /home/model-server/tmp \
  && chown -R model-server /home/model-server
 
-COPY mms_entrypoint.py /usr/local/bin/dockerd_entrypoint.py
-COPY config.properties /home/model-server
+COPY mxnet/mms_entrypoint.py /usr/local/bin/dockerd_entrypoint.py
+COPY mxnet/config.properties /home/model-server
 
 RUN chmod +x /usr/local/bin/dockerd_entrypoint.py
 
