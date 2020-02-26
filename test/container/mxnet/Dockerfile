@@ -81,6 +81,25 @@ RUN ${PIP} install --no-cache-dir \
 # TODO: Should we be installing OpenCV in our image like this? Is there another way we can fix this?
 RUN ln -s /dev/null /dev/raw1394
 
+##################################
+# download models to model_store
+##################################
+RUN mkdir resnet_152 \
+ && cd resnet_152 \
+ && wget -O resnet-152-0000.params http://data.mxnet.io/models/imagenet/resnet/152-layers/resnet-152-0000.params \
+ && wget -O resnet-152-symbol.json http://data.mxnet.io/models/imagenet/resnet/152-layers/resnet-152-symbol.json \
+ && wget -O synset.txt http://data.mxnet.io/models/imagenet/synset.txt \
+ && echo '[{"shape": [1, 3, 224, 224], "name": "data"}]' > resnet-152-shapes.json \
+ && cd ..
+
+RUN mkdir resnet_18 \
+ && cd resnet_18 \
+ && wget -O resnet-18-0000.params http://data.mxnet.io/models/imagenet/resnet/18-layers/resnet-18-0000.params \
+ && wget -O resnet-18-symbol.json http://data.mxnet.io/models/imagenet/resnet/18-layers/resnet-18-symbol.json \
+ && wget -O synset.txt http://data.mxnet.io/models/imagenet/synset.txt \
+ && echo '[{"shape": [1, 3, 224, 224], "name": "data"}]' > resnet-18-shapes.json \
+ && cd ..
+
 RUN useradd -m model-server \
  && mkdir -p /home/model-server/tmp \
  && chown -R model-server /home/model-server
