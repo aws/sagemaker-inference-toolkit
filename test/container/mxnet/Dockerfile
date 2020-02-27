@@ -98,6 +98,8 @@ RUN wget -O resnet-18-0000.params http://data.mxnet.io/models/imagenet/resnet/18
  && echo '[{"shape": [1, 3, 224, 224], "name": "data"}]' > resnet-18-shapes.json \
  && cd /
 
+WORKDIR /
+
 RUN useradd -m model-server \
  && mkdir -p /home/model-server/tmp \
  && chown -R model-server /home/model-server
