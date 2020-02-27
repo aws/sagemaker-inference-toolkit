@@ -5,6 +5,9 @@ LABEL maintainer="Amazon AI"
 # Specify accept-bind-to-port LABEL for inference pipelines to use SAGEMAKER_BIND_TO_PORT
 # https://docs.aws.amazon.com/sagemaker/latest/dg/inference-pipeline-real-time.html
 LABEL com.amazonaws.sagemaker.capabilities.accept-bind-to-port=true
+# Specify multi-models LABEL to indicate container is capable of loading and serving multiple models concurrently
+# https://docs.aws.amazon.com/sagemaker/latest/dg/build-multi-model-build-container.html
+LABEL com.amazonaws.sagemaker.capabilities.multi-models=true
 
 ARG MMS_VERSION=1.0.8
 ARG MX_URL=https://aws-mxnet-pypi.s3-us-west-2.amazonaws.com/1.6.0/aws_mxnet_mkl-1.6.0-py2.py3-none-manylinux1_x86_64.whl
@@ -65,6 +68,7 @@ RUN ${PIP} --no-cache-dir install --upgrade \
 WORKDIR /
 
 COPY mxnet/sagemaker_mxnet_inference.tar.gz /sagemaker_mxnet_inference.tar.gz
+COPY mxnet/sagemaker_inference.tar.gz /sagemaker_inference.tar.gz
 
 RUN ${PIP} install --no-cache-dir \
     ${MX_URL} \
@@ -74,7 +78,8 @@ RUN ${PIP} install --no-cache-dir \
     numpy==1.17.4 \
     onnx==1.4.1 \
     /sagemaker_mxnet_inference.tar.gz \
- && rm /sagemaker_mxnet_inference.tar.gz
+    /sagemaker_inference.tar.gz \
+ && rm /sagemaker_mxnet_inference.tar.gz /sagemaker_inference.tar.gz
 
 # This is here to make our installed version of OpenCV work.
 # https://stackoverflow.com/questions/29274638/opencv-libdc1394-error-failed-to-initialize-libdc1394
@@ -106,6 +111,10 @@ RUN useradd -m model-server \
 
 COPY mxnet/mms_entrypoint.py /usr/local/bin/dockerd_entrypoint.py
 COPY mxnet/config.properties /home/model-server
+COPY mxnet/inference.py /opt/ml/models/code/inference.py
+
+#COPY mxnet/mme_handler_service.py /home/model-server/mme_handler_service.py
+#ENV SAGEMAKER_HANDLER="/home/model-server/mme_handler_service.py:handle"
 
 RUN chmod +x /usr/local/bin/dockerd_entrypoint.py
 
