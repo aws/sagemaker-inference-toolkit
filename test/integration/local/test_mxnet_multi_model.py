@@ -86,16 +86,18 @@ def test_list_models_empty():
 
 
 def test_load_models():
-    data1 = {"model_name": "resnet_152", "url": "/resnet_152"}
+    data1 = {"model_name": "resnet_152", "url": "/opt/ml/models/resnet_152"}
     code1, content1 = make_load_model_request(data=json.dumps(data1))
     assert code1 == 200
     assert content1["status"] == "Workers scaled"
 
     code2, content2 = make_list_model_request()
     assert code2 == 200
-    assert content2["models"] == [{"modelName": "resnet_152", "modelUrl": "/resnet_152"}]
+    assert content2["models"] == [
+        {"modelName": "resnet_152", "modelUrl": "/opt/ml/models/resnet_152"}
+    ]
 
-    data2 = {"model_name": "resnet_18", "url": "/resnet_18"}
+    data2 = {"model_name": "resnet_18", "url": "/opt/ml/models/resnet_18"}
     code3, content3 = make_load_model_request(data=json.dumps(data2))
     assert code3 == 200
     assert content3["status"] == "Workers scaled"
@@ -103,8 +105,8 @@ def test_load_models():
     code4, content4 = make_list_model_request()
     assert code4 == 200
     assert content4["models"] == [
-        {"modelName": "resnet_152", "modelUrl": "/resnet_152"},
-        {"modelName": "resnet_18", "modelUrl": "/resnet_18"},
+        {"modelName": "resnet_152", "modelUrl": "/opt/ml/models/resnet_152"},
+        {"modelName": "resnet_18", "modelUrl": "/opt/ml/models/resnet_18"},
     ]
 
 
@@ -115,7 +117,9 @@ def test_unload_models():
 
     code2, content2 = make_list_model_request()
     assert code2 == 200
-    assert content2["models"] == [{"modelName": "resnet_18", "modelUrl": "/resnet_18"}]
+    assert content2["models"] == [
+        {"modelName": "resnet_18", "modelUrl": "/opt/ml/models/resnet_18"}
+    ]
 
 
 def test_load_non_existing_model():
@@ -132,7 +136,7 @@ def test_unload_non_existing_model():
 
 def test_load_model_multiple_times():
     # resnet_18 is already loaded
-    data = {"model_name": "resnet_18", "url": "/resnet_18"}
+    data = {"model_name": "resnet_18", "url": "/opt/ml/models/resnet_18"}
     code3, content3 = make_load_model_request(data=json.dumps(data))
     assert code3 == 409
 
