@@ -89,18 +89,18 @@ RUN ln -s /dev/null /dev/raw1394
 ##################################
 # download models to model_store
 ##################################
-WORKDIR /opt/ml/models/resnet_152
-RUN wget -O resnet-152-0000.params http://data.mxnet.io/models/imagenet/resnet/152-layers/resnet-152-0000.params \
- && wget -O resnet-152-symbol.json http://data.mxnet.io/models/imagenet/resnet/152-layers/resnet-152-symbol.json \
+WORKDIR /opt/ml/models/resnet_152/model
+RUN wget -O model-0000.params http://data.mxnet.io/models/imagenet/resnet/152-layers/resnet-152-0000.params \
+ && wget -O model-symbol.json http://data.mxnet.io/models/imagenet/resnet/152-layers/resnet-152-symbol.json \
  && wget -O synset.txt http://data.mxnet.io/models/imagenet/synset.txt \
- && echo '[{"shape": [1, 3, 224, 224], "name": "data"}]' > resnet-152-shapes.json \
+ && echo '[{"shape": [1, 3, 224, 224], "name": "data"}]' > model-shapes.json \
  && cd /
 
-WORKDIR /opt/ml/models/resnet_18
-RUN wget -O resnet-18-0000.params http://data.mxnet.io/models/imagenet/resnet/18-layers/resnet-18-0000.params \
- && wget -O resnet-18-symbol.json http://data.mxnet.io/models/imagenet/resnet/18-layers/resnet-18-symbol.json \
+WORKDIR /opt/ml/models/resnet_18/model
+RUN wget -O model-0000.params http://data.mxnet.io/models/imagenet/resnet/18-layers/resnet-18-0000.params \
+ && wget -O model-symbol.json http://data.mxnet.io/models/imagenet/resnet/18-layers/resnet-18-symbol.json \
  && wget -O synset.txt http://data.mxnet.io/models/imagenet/synset.txt \
- && echo '[{"shape": [1, 3, 224, 224], "name": "data"}]' > resnet-18-shapes.json \
+ && echo '[{"shape": [1, 3, 224, 224], "name": "data"}]' > model-shapes.json \
  && cd /
 
 WORKDIR /
