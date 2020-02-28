@@ -113,9 +113,6 @@ COPY mxnet/mms_entrypoint.py /usr/local/bin/dockerd_entrypoint.py
 COPY mxnet/config.properties /home/model-server
 COPY mxnet/inference.py /opt/ml/models/code/inference.py
 
-#COPY mxnet/mme_handler_service.py /home/model-server/mme_handler_service.py
-#ENV SAGEMAKER_HANDLER="/home/model-server/mme_handler_service.py:handle"
-
 RUN chmod +x /usr/local/bin/dockerd_entrypoint.py
 
 RUN curl https://aws-dlc-licenses.s3.amazonaws.com/aws-mxnet-1.6.0/license.txt -o /license.txt
