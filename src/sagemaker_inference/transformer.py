@@ -141,7 +141,7 @@ class Transformer(object):
                     context, GenericInferenceToolkitError(http_client.INTERNAL_SERVER_ERROR, str(e))
                 )
 
-    def validate_and_initialize(self):  # type: () -> None
+    def validate_and_initialize(self, model_dir=environment.model_dir):  # type: () -> None
         """Validates the user module against the SageMaker inference contract.
 
         Load the model as defined by the ``model_fn`` to prepare handling predictions.
@@ -150,7 +150,7 @@ class Transformer(object):
         if not self._initialized:
             self._environment = environment.Environment()
             self._validate_user_module_and_set_functions()
-            self._model = self._model_fn(environment.model_dir)
+            self._model = self._model_fn(model_dir)
             self._initialized = True
 
     def _validate_user_module_and_set_functions(self):
