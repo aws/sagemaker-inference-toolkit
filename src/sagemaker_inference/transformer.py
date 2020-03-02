@@ -105,7 +105,9 @@ class Transformer(object):
                 with the context set appropriately.
         """
         try:
-            self.validate_and_initialize()
+            properties = context.system_properties
+            model_dir = properties.get("model_dir")
+            self.validate_and_initialize(model_dir=model_dir)
 
             input_data = data[0].get("body")
 
