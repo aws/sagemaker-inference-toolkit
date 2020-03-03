@@ -86,7 +86,7 @@ def test_list_models_empty():
 
 
 def test_load_models():
-    data1 = {"model_name": "model", "url": "/opt/ml/models/resnet_152/model"}
+    data1 = {"model_name": "resnet_152", "url": "/opt/ml/models/resnet_152/model"}
     code1, content1 = make_load_model_request(data=json.dumps(data1))
     assert code1 == 200
     assert content1["status"] == "Workers scaled"
@@ -94,10 +94,10 @@ def test_load_models():
     code2, content2 = make_list_model_request()
     assert code2 == 200
     assert content2["models"] == [
-        {"modelName": "model", "modelUrl": "/opt/ml/models/resnet_152/model"}
+        {"modelName": "resnet_152", "modelUrl": "/opt/ml/models/resnet_152/model"}
     ]
 
-    data2 = {"model_name": "model", "url": "/opt/ml/models/resnet_18/model"}
+    data2 = {"model_name": "resnet_18", "url": "/opt/ml/models/resnet_18/model"}
     code3, content3 = make_load_model_request(data=json.dumps(data2))
     assert code3 == 200
     assert content3["status"] == "Workers scaled"
@@ -105,20 +105,20 @@ def test_load_models():
     code4, content4 = make_list_model_request()
     assert code4 == 200
     assert content4["models"] == [
-        {"modelName": "model", "modelUrl": "/opt/ml/models/resnet_152/model"},
-        {"modelName": "model", "modelUrl": "/opt/ml/models/resnet_18/model"},
+        {"modelName": "resnet_152", "modelUrl": "/opt/ml/models/resnet_152/model"},
+        {"modelName": "resnet_18", "modelUrl": "/opt/ml/models/resnet_18/model"},
     ]
 
 
 def test_unload_models():
-    code1, content1 = make_unload_model_request("model")
+    code1, content1 = make_unload_model_request("resnet_152")
     assert code1 == 200
-    assert content1["status"] == 'Model "model" unregistered'
+    assert content1["status"] == 'Model "resnet_152" unregistered'
 
     code2, content2 = make_list_model_request()
     assert code2 == 200
     assert content2["models"] == [
-        {"modelName": "model", "modelUrl": "/opt/ml/models/resnet_18/model"}
+        {"modelName": "resnet_18", "modelUrl": "/opt/ml/models/resnet_18/model"}
     ]
 
 
@@ -130,14 +130,13 @@ def test_load_non_existing_model():
 
 def test_unload_non_existing_model():
     # resnet_152 is already unloaded
-    code1, content1 = make_unload_model_request("model")
+    code1, content1 = make_unload_model_request("resnet_152")
     assert code1 == 404
 
 
-@pytest.mark.skip(reason="Temporarily skip test to isolate issue")
 def test_load_model_multiple_times():
     # resnet_18 is already loaded
-    data = {"model_name": "model", "url": "/opt/ml/models/resnet_18/model"}
+    data = {"model_name": "resnet_18", "url": "/opt/ml/models/resnet_18/model"}
     code3, content3 = make_load_model_request(data=json.dumps(data))
     assert code3 == 409
 
@@ -147,6 +146,6 @@ def test_invocation():
     with open(image, "rb") as f:
         payload = f.read()
 
-    code, predictions = make_invocation_request("model", payload)
+    code, predictions = make_invocation_request("resnet_18", payload)
     assert code == 200
     assert len(predictions) == 5
