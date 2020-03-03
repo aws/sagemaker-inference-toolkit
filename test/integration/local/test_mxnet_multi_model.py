@@ -139,14 +139,3 @@ def test_load_model_multiple_times():
     data = {"model_name": "resnet_18", "url": "/opt/ml/models/resnet_18/model"}
     code3, content3 = make_load_model_request(data=json.dumps(data))
     assert code3 == 409
-
-
-@pytest.mark.skip(reason="Temporarily skip test to isolate issue")
-def test_invocation():
-    image = os.path.abspath("test/resources/data/cat.jpg")
-    with open(image, "rb") as f:
-        payload = f.read()
-
-    code, predictions = make_invocation_request("resnet_18", payload)
-    assert code == 200
-    assert len(predictions) == 5
