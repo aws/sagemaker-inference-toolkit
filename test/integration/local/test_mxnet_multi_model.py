@@ -134,7 +134,6 @@ def test_unload_non_existing_model():
     assert code1 == 404
 
 
-@pytest.mark.skip(reason="Temporarily skip test to isolate issue")
 def test_load_model_multiple_times():
     # resnet_18 is already loaded
     data = {"model_name": "resnet_18", "url": "/opt/ml/models/resnet_18/model"}
