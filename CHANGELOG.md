@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.0 (2020-03-04)
+
+### Features
+
+ * MME support
+
 ## v1.1.5.post1 (2020-02-17)
 
 ### Documentation Changes
