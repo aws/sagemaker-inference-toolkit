@@ -43,10 +43,14 @@ class DefaultHandlerService(object):
                 with the context set appropriately.
 
         """
+        self.initialize(context)
+
         return self._service.transform(data, context)
 
-    def initialize(self):
+    def initialize(self, context):
         """Calls the Transformer method that validates the user module against
         the SageMaker inference contract.
         """
-        self._service.validate_and_initialize()
+        properties = context.system_properties
+        model_dir = properties.get("model_dir")
+        self._service.validate_and_initialize(model_dir=model_dir)

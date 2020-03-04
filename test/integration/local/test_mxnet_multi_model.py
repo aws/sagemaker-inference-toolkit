@@ -12,7 +12,6 @@
 # language governing permissions and limitations under the License.
 
 import json
-import os
 import subprocess
 import sys
 import time
@@ -86,16 +85,18 @@ def test_list_models_empty():
 
 
 def test_load_models():
-    data1 = {"model_name": "resnet_152", "url": "/resnet_152"}
+    data1 = {"model_name": "resnet_152", "url": "/opt/ml/models/resnet_152/model"}
     code1, content1 = make_load_model_request(data=json.dumps(data1))
     assert code1 == 200
     assert content1["status"] == "Workers scaled"
 
     code2, content2 = make_list_model_request()
     assert code2 == 200
-    assert content2["models"] == [{"modelName": "resnet_152", "modelUrl": "/resnet_152"}]
+    assert content2["models"] == [
+        {"modelName": "resnet_152", "modelUrl": "/opt/ml/models/resnet_152/model"}
+    ]
 
-    data2 = {"model_name": "resnet_18", "url": "/resnet_18"}
+    data2 = {"model_name": "resnet_18", "url": "/opt/ml/models/resnet_18/model"}
     code3, content3 = make_load_model_request(data=json.dumps(data2))
     assert code3 == 200
     assert content3["status"] == "Workers scaled"
@@ -103,8 +104,8 @@ def test_load_models():
     code4, content4 = make_list_model_request()
     assert code4 == 200
     assert content4["models"] == [
-        {"modelName": "resnet_152", "modelUrl": "/resnet_152"},
-        {"modelName": "resnet_18", "modelUrl": "/resnet_18"},
+        {"modelName": "resnet_152", "modelUrl": "/opt/ml/models/resnet_152/model"},
+        {"modelName": "resnet_18", "modelUrl": "/opt/ml/models/resnet_18/model"},
     ]
 
 
@@ -115,7 +116,9 @@ def test_unload_models():
 
     code2, content2 = make_list_model_request()
     assert code2 == 200
-    assert content2["models"] == [{"modelName": "resnet_18", "modelUrl": "/resnet_18"}]
+    assert content2["models"] == [
+        {"modelName": "resnet_18", "modelUrl": "/opt/ml/models/resnet_18/model"}
+    ]
 
 
 def test_load_non_existing_model():
@@ -132,16 +135,6 @@ def test_unload_non_existing_model():
 
 def test_load_model_multiple_times():
     # resnet_18 is already loaded
-    data = {"model_name": "resnet_18", "url": "/resnet_18"}
+    data = {"model_name": "resnet_18", "url": "/opt/ml/models/resnet_18/model"}
     code3, content3 = make_load_model_request(data=json.dumps(data))
     assert code3 == 409
-
-
-def test_invocation():
-    image = os.path.abspath("test/resources/data/cat.jpg")
-    with open(image, "rb") as f:
-        payload = f.read()
-
-    code, predictions = make_invocation_request("resnet_18", payload)
-    assert code == 200
-    assert len(predictions) == 5

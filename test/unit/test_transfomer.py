@@ -84,7 +84,7 @@ def test_transform(validate, retrieve_content_type_header, accept_key):
 
     result = transformer.transform(data, context)
 
-    validate.assert_called_once_with()
+    validate.assert_called_once()
     retrieve_content_type_header.assert_called_once_with(request_property)
     transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT)
     context.set_response_content_type.assert_called_once_with(0, ACCEPT)
@@ -112,7 +112,7 @@ def test_transform_no_accept(validate, retrieve_content_type_header):
 
     transformer.transform(data, context)
 
-    validate.assert_called_once_with()
+    validate.assert_called_once()
     transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, DEFAULT_ACCEPT)
 
 
@@ -136,7 +136,7 @@ def test_transform_any_accept(validate, retrieve_content_type_header):
 
     transformer.transform(data, context)
 
-    validate.assert_called_once_with()
+    validate.assert_called_once()
     transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, DEFAULT_ACCEPT)
 
 

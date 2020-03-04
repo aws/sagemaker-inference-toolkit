@@ -16,7 +16,7 @@ from sagemaker_inference.default_handler_service import DefaultHandlerService
 from sagemaker_inference.transformer import Transformer
 
 DATA = "data"
-CONTEXT = "context"
+CONTEXT = Mock()
 TRANSFORMED_RESULT = "transformed_result"
 
 
@@ -49,6 +49,6 @@ def test_handle():
 def test_initialize():
     transformer = Mock()
 
-    DefaultHandlerService(transformer).initialize()
+    DefaultHandlerService(transformer).initialize(CONTEXT)
 
     assert transformer.validate_and_initialize().called_once()
