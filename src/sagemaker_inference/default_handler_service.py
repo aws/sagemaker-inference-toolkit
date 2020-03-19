@@ -43,8 +43,6 @@ class DefaultHandlerService(object):
                 with the context set appropriately.
 
         """
-        self.initialize(context)
-
         return self._service.transform(data, context)
 
     def initialize(self, context):
