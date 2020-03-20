@@ -158,7 +158,7 @@ class Transformer(object):
             self._model = self._model_fn(model_dir)
             self._initialized = True
 
-        if model_dir != environment.model_dir:
+        if os.environ.get("SAGEMAKER_MULTI_MODEL") == "true":
             self._add_user_module_to_path(model_dir)
             self._validate_user_module_and_set_functions()
             self._model = self._model_fn(model_dir)
