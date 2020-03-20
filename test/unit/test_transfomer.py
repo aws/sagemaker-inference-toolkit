@@ -39,7 +39,7 @@ def test_default_transformer():
     transformer = Transformer()
 
     assert isinstance(transformer._default_inference_handler, DefaultInferenceHandler)
-    assert transformer._initialized is False
+    assert len(transformer._initialized) == 0
     assert transformer._environment is None
     assert transformer._model is None
     assert transformer._model_fn is None
@@ -55,7 +55,7 @@ def test_transformer_with_custom_default_inference_handler():
     transformer = Transformer(default_inference_handler)
 
     assert transformer._default_inference_handler == default_inference_handler
-    assert transformer._initialized is False
+    assert len(transformer._initialized) == 0
     assert transformer._environment is None
     assert transformer._model is None
     assert transformer._model_fn is None
@@ -196,11 +196,11 @@ def test_validate_and_initialize(env, validate_user_module):
     model_fn = Mock()
     transformer._model_fn = model_fn
 
-    assert transformer._initialized is False
+    assert len(transformer._initialized) == 0
 
     transformer.validate_and_initialize()
 
-    assert transformer._initialized is True
+    assert len(transformer._initialized) == 1
 
     transformer.validate_and_initialize()
 
@@ -230,7 +230,7 @@ def test_handle_validate_and_initialize_error(env, validate_user_module):
     test_error_message = "Foo"
     validate_user_module.side_effect = ValueError(test_error_message)
 
-    assert transformer._initialized is False
+    assert len(transformer._initialized) == 0
 
     response = transformer.transform(data, context)
     assert test_error_message in str(response)
@@ -264,7 +264,7 @@ def test_handle_validate_and_initialize_user_error(env, validate_user_module):
 
     validate_user_module.side_effect = FooUserError(test_status_code, test_error_message)
 
-    assert transformer._initialized is False
+    assert len(transformer._initialized) == 0
 
     response = transformer.transform(data, context)
     assert test_error_message in str(response)
