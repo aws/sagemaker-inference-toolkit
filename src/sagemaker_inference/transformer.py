@@ -43,6 +43,7 @@ except ImportError:
 
 
 import importlib  # pylint: disable=ungrouped-imports
+import os
 
 from sagemaker_inference import content_types, environment, utils
 from sagemaker_inference.default_inference_handler import DefaultInferenceHandler
@@ -73,6 +74,8 @@ class Transformer(object):
         self._input_fn = None
         self._predict_fn = None
         self._output_fn = None
+
+        self._PYTHONPATH = os.environ.get("PYTHONPATH")
 
     @staticmethod
     def handle_error(context, inference_exception):
@@ -154,6 +157,15 @@ class Transformer(object):
             self._validate_user_module_and_set_functions()
             self._model = self._model_fn(model_dir)
             self._initialized = True
+
+        if model_dir != environment.model_dir:
+            self._add_user_module_to_path(model_dir)
+            self._validate_user_module_and_set_functions()
+            self._model = self._model_fn(model_dir)
+
+    def _add_user_module_to_path(self, model_dir):
+        code_dir = os.path.join(model_dir, "code")
+        os.environ["PYTHONPATH"] = ":".join(filter(None, (self._PYTHONPATH, code_dir)))
 
     def _validate_user_module_and_set_functions(self):
         """Retrieves and validates the inference handlers provided within the user module.
