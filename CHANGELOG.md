@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.1 (2020-03-23)
+
+### Bug Fixes and Other Changes
+
+ * Remove duplicated call to validate_and_initialize when handling requests
+
 ## v1.2.0 (2020-03-04)
 
 ### Features
