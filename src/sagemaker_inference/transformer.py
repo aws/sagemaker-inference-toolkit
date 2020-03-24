@@ -154,27 +154,27 @@ class Transformer(object):
 
         """
         if model_dir not in self._initialized:
-            self._environment = environment.Environment()
-            self._validate_user_module_and_set_functions()
-            self._model = self._model_fn(model_dir)
+            self._add_and_validate_user_module(model_dir)
             self._initialized.add(model_dir)
 
-        if model_dir != self._last_model_dir:
-            self._validate_multi_model_user_module(model_dir)
+        if (os.environ.get("SAGEMAKER_MULTI_MODEL") == "true") and (
+            model_dir != self._last_model_dir
+        ):
+            self._add_and_validate_user_module(model_dir)
 
         self._last_model_dir = model_dir
 
-    def _validate_multi_model_user_module(self, model_dir):
-        if os.environ.get("SAGEMAKER_MULTI_MODEL") == "true":
-            self._add_user_module_to_path(model_dir)
-            self._validate_user_module_and_set_functions()
-            self._model = self._model_fn(model_dir)
+    def _add_and_validate_user_module(self, model_dir):
+        self._environment = environment.Environment()
+        self._add_user_module_to_path(model_dir)
+        self._validate_inference_handlers_and_set_functions()
+        self._model = self._model_fn(model_dir)
 
     def _add_user_module_to_path(self, model_dir):
         code_dir = os.path.join(model_dir, "code")
         os.environ["PYTHONPATH"] = ":".join(filter(None, (self._PYTHONPATH, code_dir)))
 
-    def _validate_user_module_and_set_functions(self):
+    def _validate_inference_handlers_and_set_functions(self):
         """Retrieves and validates the inference handlers provided within the user module.
 
         Default implementations of the inference handlers are utilized in

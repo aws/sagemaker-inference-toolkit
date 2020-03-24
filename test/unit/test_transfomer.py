@@ -188,7 +188,7 @@ def test_transform_tuple(validate, retrieve_content_type_header):
     assert result[0] == transform_fn()[0]
 
 
-@patch("sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions")
+@patch("sagemaker_inference.transformer.Transformer._validate_inference_handlers_and_set_functions")
 @patch("sagemaker_inference.environment.Environment")
 def test_validate_and_initialize(env, validate_user_module):
     transformer = Transformer()
@@ -209,9 +209,10 @@ def test_validate_and_initialize(env, validate_user_module):
     validate_user_module.assert_called_once_with()
 
 
-@patch("sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions")
+@patch("sagemaker_inference.transformer.Transformer._validate_inference_handlers_and_set_functions")
 @patch("sagemaker_inference.environment.Environment")
-def test_handle_validate_and_initialize_error(env, validate_user_module):
+@patch("os.path.join")
+def test_handle_validate_and_initialize_error(env, validate_user_module, os_path_join):
     data = [{"body": INPUT_DATA}]
     request_processor = Mock()
 
@@ -239,9 +240,10 @@ def test_handle_validate_and_initialize_error(env, validate_user_module):
     )
 
 
-@patch("sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions")
+@patch("sagemaker_inference.transformer.Transformer._validate_inference_handlers_and_set_functions")
 @patch("sagemaker_inference.environment.Environment")
-def test_handle_validate_and_initialize_user_error(env, validate_user_module):
+@patch("os.path.join")
+def test_handle_validate_and_initialize_user_error(env, validate_user_module, os_path_join):
     test_status_code = http_client.FORBIDDEN
     test_error_message = "Foo"
 
@@ -300,7 +302,7 @@ def test_validate_no_user_module_and_set_functions(find_spec, import_module):
 
     transformer = Transformer(default_inference_handler)
     transformer._environment = mock_env
-    transformer._validate_user_module_and_set_functions()
+    transformer._validate_inference_handlers_and_set_functions()
 
     find_spec.assert_called_once_with(mock_env.module_name)
     import_module.assert_not_called()
@@ -331,7 +333,7 @@ def test_validate_user_module_and_set_functions(find_spec, import_module):
 
     transformer = Transformer(default_inference_handler)
     transformer._environment = mock_env
-    transformer._validate_user_module_and_set_functions()
+    transformer._validate_inference_handlers_and_set_functions()
 
     find_spec.assert_called_once_with(mock_env.module_name)
     import_module.assert_called_once_with(mock_env.module_name)
@@ -357,7 +359,7 @@ def test_validate_user_module_and_set_functions_transform_fn(find_spec, import_m
     transformer = Transformer()
     transformer._environment = mock_env
 
-    transformer._validate_user_module_and_set_functions()
+    transformer._validate_inference_handlers_and_set_functions()
 
     find_spec.assert_called_once_with(mock_env.module_name)
     import_module.assert_called_once_with(mock_env.module_name)
@@ -368,7 +370,7 @@ def _assert_value_error_raised():
     with pytest.raises(ValueError) as e:
         transformer = Transformer()
         transformer._environment = Mock()
-        transformer._validate_user_module_and_set_functions()
+        transformer._validate_inference_handlers_and_set_functions()
 
     assert (
         "Cannot use transform_fn implementation in conjunction with input_fn, predict_fn, "
