@@ -13,7 +13,11 @@
 """This module contains functionality for the default handler service."""
 from __future__ import absolute_import
 
+import os
+
 from sagemaker_inference.transformer import Transformer
+
+PYTHON_PATH_ENV = "PYTHONPATH"
 
 
 class DefaultHandlerService(object):
@@ -51,4 +55,12 @@ class DefaultHandlerService(object):
         """
         properties = context.system_properties
         model_dir = properties.get("model_dir")
+
+        # add model_dir/code to python path
+        code_dir_path = "{}:".format(model_dir + "/code")
+        if PYTHON_PATH_ENV in os.environ:
+            os.environ[PYTHON_PATH_ENV] = code_dir_path + os.environ[PYTHON_PATH_ENV]
+        else:
+            os.environ[PYTHON_PATH_ENV] = code_dir_path
+
         self._service.validate_and_initialize(model_dir=model_dir)

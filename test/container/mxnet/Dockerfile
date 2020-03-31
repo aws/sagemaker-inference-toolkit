@@ -111,7 +111,10 @@ RUN useradd -m model-server \
 
 COPY mxnet/mms_entrypoint.py /usr/local/bin/dockerd_entrypoint.py
 COPY mxnet/config.properties /home/model-server
-COPY mxnet/inference.py /opt/ml/models/code/inference.py
+
+# TEST: model_dir -> /opt/ml/models/<model_name>/inference.py
+COPY mxnet/inference.py /opt/ml/models/resnet_18/code/inference.py
+COPY mxnet/inference.py /opt/ml/models/resnet_152/code/inference.py
 
 RUN chmod +x /usr/local/bin/dockerd_entrypoint.py
 
