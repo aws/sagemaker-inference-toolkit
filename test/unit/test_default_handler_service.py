@@ -10,7 +10,7 @@
 # distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from mock import Mock, patch
+from mock import Mock, patch, MagicMock
 
 from sagemaker_inference.default_handler_service import DefaultHandlerService
 from sagemaker_inference.transformer import Transformer
@@ -48,7 +48,15 @@ def test_handle():
 
 def test_initialize():
     transformer = Mock()
+    properties = {
+        'model_dir': '/opt/ml/models/model-name'
+    }
 
-    DefaultHandlerService(transformer).initialize(CONTEXT)
+    def getitem(key):
+        return properties[key]
+
+    context = MagicMock()
+    context.system_properties.__getitem__.side_effect = getitem
+    DefaultHandlerService(transformer).initialize(context)
 
     assert transformer.validate_and_initialize().called_once()
