@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.2 (2020-04-01)
+
+### Bug Fixes and Other Changes
+
+ * add model_dir to python path at service initialization
+
 ## v1.2.1 (2020-03-23)
 
 ### Bug Fixes and Other Changes
