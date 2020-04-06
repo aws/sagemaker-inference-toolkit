@@ -55,6 +55,7 @@ class DefaultHandlerService(object):
         """
         properties = context.system_properties
         model_dir = properties.get("model_dir")
+        gpu_id = properties.get("gpu_id")
 
         # add model_dir/code to python path
         code_dir_path = "{}:".format(model_dir + "/code")
@@ -63,4 +64,4 @@ class DefaultHandlerService(object):
         else:
             os.environ[PYTHON_PATH_ENV] = code_dir_path
 
-        self._service.validate_and_initialize(model_dir=model_dir, context=context)
+        self._service.validate_and_initialize(model_dir=model_dir, gpu_id=gpu_id)
