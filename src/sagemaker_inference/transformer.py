@@ -48,6 +48,7 @@ from sagemaker_inference import content_types, environment, utils
 from sagemaker_inference.default_inference_handler import DefaultInferenceHandler
 from sagemaker_inference.errors import BaseInferenceToolkitError, GenericInferenceToolkitError
 
+import inspect
 
 class Transformer(object):
     """Represents the execution workflow for handling inference requests
@@ -152,7 +153,11 @@ class Transformer(object):
         if not self._initialized:
             self._environment = environment.Environment()
             self._validate_user_module_and_set_functions()
-            self._model = self._model_fn(model_dir, gpu_id=gpu_id)
+            num_args_model_fn = len(inspect.getargspec(self._model_fn).args)
+            if num_args_model_fn == 2:
+                self._model = self._model_fn(model_dir, gpu_id=gpu_id)
+            else:
+                self._model = self._model_fn(model_dir)
             self._initialized = True
 
     def _validate_user_module_and_set_functions(self):
