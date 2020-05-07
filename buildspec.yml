@@ -15,7 +15,7 @@ phases:
       - tox -e twine
 
       # run unit tests
-      - tox -e py36,py27 -- test/unit
+      - tox -e py27,py36,py37 --parallel all -- test/unit
 
       # build dummy container
       - python setup.py sdist
