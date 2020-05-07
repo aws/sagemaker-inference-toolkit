@@ -17,7 +17,7 @@ phases:
       - tox -e black-check
 
       # run unit tests
-      - tox -e py27,py36,py37 --parallel all -- test/unit
+      - tox -e py27,py36,py37 -- test/unit
 
       # build dummy container
       - python3 setup.py sdist
