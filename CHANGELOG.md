@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.0 (2020-05-07)
+
+### Features
+
+ * Add Python 3.7 support
+
+### Testing and Release Infrastructure
+
+ * Do not parallelize unit tests in buildspecs
+
 ## v1.2.2 (2020-04-01)
 
 ### Bug Fixes and Other Changes

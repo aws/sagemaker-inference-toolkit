@@ -15,7 +15,7 @@ phases:
       - tox -e twine
 
       # run unit tests
-      - tox -e py36,py27 -- test/unit
+      - tox -e py27,py36,py37 -- test/unit
 
       # build dummy container
       - python setup.py sdist
@@ -30,4 +30,4 @@ phases:
       - cd ../..
 
       # run local integration tests
-      - IGNORE_COVERAGE=- tox -e py36,py27 -- test/integration/local
+      - IGNORE_COVERAGE=- tox -e py27,py36,py37 -- test/integration/local
