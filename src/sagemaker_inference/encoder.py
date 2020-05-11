@@ -22,7 +22,7 @@ from six import BytesIO, StringIO
 from sagemaker_inference import content_types, errors
 
 
-def _array_to_json(array_like):  # type: (np.array or Iterable or int or float) -> str
+def _array_to_json(array_like):
     """Convert an array-like object to JSON.
 
     To understand better what an array-like object is see:
@@ -44,7 +44,7 @@ def _array_to_json(array_like):  # type: (np.array or Iterable or int or float) 
     return json.dumps(array_like, default=default)
 
 
-def _array_to_npy(array_like):  # type: (np.array or Iterable or int or float) -> object
+def _array_to_npy(array_like):
     """Convert an array-like object to the NPY format.
 
     To understand better what an array-like object is see:
@@ -62,7 +62,7 @@ def _array_to_npy(array_like):  # type: (np.array or Iterable or int or float) -
     return buffer.getvalue()
 
 
-def _array_to_csv(array_like):  # type: (np.array or Iterable or int or float) -> str
+def _array_to_csv(array_like):
     """Convert an array-like object to CSV.
 
     To understand better what an array-like object is see:
@@ -88,7 +88,6 @@ _encoder_map = {
 
 
 def encode(array_like, content_type):
-    # type: (np.array or Iterable or int or float, str) -> np.array
     """Encode an array-like object in a specific content_type to a numpy array.
 
     To understand better what an array-like object is see:

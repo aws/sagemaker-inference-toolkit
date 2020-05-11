@@ -78,7 +78,6 @@ _decoder_map = {
 
 
 def decode(obj, content_type):
-    # type: (np.array or Iterable or int or float, str) -> np.array
     """Decode an object to one of the default content types to a numpy array.
 
     Args:
