@@ -15,7 +15,6 @@ files and objects to NumPy arrays."""
 from __future__ import absolute_import
 
 import json
-from typing import Iterable  # noqa ignore=F401 imported but unused
 
 import numpy as np
 from six import BytesIO, StringIO
@@ -79,7 +78,6 @@ _decoder_map = {
 
 
 def decode(obj, content_type):
-    # type: (np.array or Iterable or int or float, str) -> np.array
     """Decode an object to one of the default content types to a numpy array.
 
     Args:
