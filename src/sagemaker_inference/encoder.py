@@ -15,7 +15,6 @@ to various types of objects and files."""
 from __future__ import absolute_import
 
 import json
-from typing import Iterable  # noqa ignore=F401 imported but unused
 
 import numpy as np
 from six import BytesIO, StringIO

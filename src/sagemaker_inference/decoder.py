@@ -15,7 +15,6 @@ files and objects to NumPy arrays."""
 from __future__ import absolute_import
 
 import json
-from typing import Iterable  # noqa ignore=F401 imported but unused
 
 import numpy as np
 from six import BytesIO, StringIO
