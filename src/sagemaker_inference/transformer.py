@@ -73,14 +73,14 @@ class Transformer(object):
         self._output_fn = None
 
     @staticmethod
-    def handle_error(context, inference_exception, tb):
+    def handle_error(context, inference_exception, trace):
         """Set context appropriately for error response.
 
         Args:
             context (mms.context.Context): The inference context.
             inference_exception (sagemaker_inference.errors.BaseInferenceToolkitError): An exception
                 raised during inference, with information for the error response.
-            tb (traceback): The stacktrace of the error.
+            trace (traceback): The stacktrace of the error.
 
         Returns:
             str: The error message and stacktrace from the exception.
@@ -88,7 +88,7 @@ class Transformer(object):
         context.set_response_status(
             code=inference_exception.status_code, phrase=inference_exception.phrase
         )
-        return ["{}\n{}".format(inference_exception.message, tb)]
+        return ["{}\n{}".format(inference_exception.message, trace)]
 
     def transform(self, data, context):
         """Take a request with input data, deserialize it, make a prediction, and return a
@@ -135,14 +135,14 @@ class Transformer(object):
             context.set_response_content_type(0, response_content_type)
             return [response]
         except Exception as e:  # pylint: disable=broad-except
-            tb = traceback.format_exc()
+            trace = traceback.format_exc()
             if isinstance(e, BaseInferenceToolkitError):
-                return self.handle_error(context, e, tb)
+                return self.handle_error(context, e, trace)
             else:
                 return self.handle_error(
                     context,
                     GenericInferenceToolkitError(http_client.INTERNAL_SERVER_ERROR, str(e)),
-                    tb,
+                    trace,
                 )
 
     def validate_and_initialize(self, model_dir=environment.model_dir):  # type: () -> None
