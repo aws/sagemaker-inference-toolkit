@@ -98,7 +98,7 @@ class ModelHandler(object):
             )
             self.mx_model.set_params(arg_params, aux_params, allow_missing=True)
             with open("synset.txt", "r") as f:
-                self.labels = [l.rstrip() for l in f]
+                self.labels = [line.rstrip() for line in f]
         except (mx.base.MXNetError, RuntimeError) as error:
             if re.search("Failed to allocate (.*) Memory", str(error), re.IGNORECASE):
                 logging.error("Memory allocation exception: {}".format(error))

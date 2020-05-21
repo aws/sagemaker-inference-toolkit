@@ -16,13 +16,11 @@ requests.
 """
 from __future__ import absolute_import
 
-try:
-    import http.client as http_client
-except ImportError:
-    import httplib as http_client
+import importlib
+import traceback
 
 try:
-    from importlib.util import find_spec
+    from importlib.util import find_spec  # pylint: disable=ungrouped-imports
 except ImportError:
     import imp  # noqa: F401
 
@@ -42,7 +40,7 @@ except ImportError:
             return None
 
 
-import importlib  # pylint: disable=ungrouped-imports
+from six.moves import http_client
 
 from sagemaker_inference import content_types, environment, utils
 from sagemaker_inference.default_inference_handler import DefaultInferenceHandler
@@ -75,21 +73,22 @@ class Transformer(object):
         self._output_fn = None
 
     @staticmethod
-    def handle_error(context, inference_exception):
+    def handle_error(context, inference_exception, trace):
         """Set context appropriately for error response.
 
         Args:
-            context: Inference context
-            inference_exception: A subclass of BaseInferenceToolkitError that
-            has information for error response
+            context (mms.context.Context): The inference context.
+            inference_exception (sagemaker_inference.errors.BaseInferenceToolkitError): An exception
+                raised during inference, with information for the error response.
+            trace (traceback): The stacktrace of the error.
 
         Returns:
-            str: error message
+            str: The error message and stacktrace from the exception.
         """
         context.set_response_status(
             code=inference_exception.status_code, phrase=inference_exception.phrase
         )
-        return [inference_exception.message]
+        return ["{}\n{}".format(inference_exception.message, trace)]
 
     def transform(self, data, context):
         """Take a request with input data, deserialize it, make a prediction, and return a
@@ -136,11 +135,14 @@ class Transformer(object):
             context.set_response_content_type(0, response_content_type)
             return [response]
         except Exception as e:  # pylint: disable=broad-except
+            trace = traceback.format_exc()
             if isinstance(e, BaseInferenceToolkitError):
-                return self.handle_error(context, e)
+                return self.handle_error(context, e, trace)
             else:
                 return self.handle_error(
-                    context, GenericInferenceToolkitError(http_client.INTERNAL_SERVER_ERROR, str(e))
+                    context,
+                    GenericInferenceToolkitError(http_client.INTERNAL_SERVER_ERROR, str(e)),
+                    trace,
                 )
 
     def validate_and_initialize(self, model_dir=environment.model_dir):  # type: () -> None

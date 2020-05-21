@@ -234,6 +234,7 @@ def test_handle_validate_and_initialize_error(env, validate_user_module):
 
     response = transformer.transform(data, context)
     assert test_error_message in str(response)
+    assert "Traceback (most recent call last)" in str(response)
     context.set_response_status.assert_called_with(
         code=http_client.INTERNAL_SERVER_ERROR, phrase=test_error_message
     )
@@ -268,6 +269,7 @@ def test_handle_validate_and_initialize_user_error(env, validate_user_module):
 
     response = transformer.transform(data, context)
     assert test_error_message in str(response)
+    assert "Traceback (most recent call last)" in str(response)
     context.set_response_status.assert_called_with(
         code=http_client.FORBIDDEN, phrase=test_error_message
     )
