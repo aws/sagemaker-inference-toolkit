@@ -16,10 +16,11 @@ requests.
 """
 from __future__ import absolute_import
 
+import importlib
 import traceback
 
 try:
-    from importlib.util import find_spec
+    from importlib.util import find_spec  # pylint: disable=ungrouped-imports
 except ImportError:
     import imp  # noqa: F401
 
@@ -38,7 +39,7 @@ except ImportError:
         except ImportError:
             return None
 
-import importlib  # pylint: disable=ungrouped-imports
+
 from six.moves import http_client
 
 from sagemaker_inference import content_types, environment, utils
