@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.2 (2020-05-25)
+
+### Bug Fixes and Other Changes
+
+ * include stacktrace when handling an error
+
 ## v1.3.1 (2020-05-11)
 
 ### Bug Fixes and Other Changes
