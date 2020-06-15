@@ -28,7 +28,7 @@ For more information, see the Amazon SageMaker Developer Guide sections on [buil
 To install this library in your Docker image, add the following line to your [Dockerfile](https://docs.docker.com/engine/reference/builder/):
 
 ``` dockerfile
-RUN pip3 install multi-model-server sagemaker-inference-toolkit
+RUN pip3 install multi-model-server sagemaker-inference
 ```
 
 [Here is an example](https://github.com/awslabs/amazon-sagemaker-examples/blob/master/advanced_functionality/multi_model_bring_your_own/container/Dockerfile) of a Dockerfile that installs SageMaker Inference Toolkit.
