@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.2.post0 (2020-06-16)
+
+### Documentation Changes
+
+ * fix package name
+
 ## v1.3.2 (2020-05-25)
 
 ### Bug Fixes and Other Changes
