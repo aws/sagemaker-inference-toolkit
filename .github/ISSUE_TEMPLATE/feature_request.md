@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest new functionality for this toolkit 
+about: Suggest new functionality for this toolkit
 title: ''
 labels: ''
 assignees: ''
