@@ -18,6 +18,7 @@ import os
 import signal
 import subprocess
 import sys
+import importlib
 
 import pkg_resources
 import psutil
@@ -30,29 +31,30 @@ from sagemaker_inference.environment import code_dir
 
 logger = logging.get_logger()
 
-MMS_CONFIG_FILE = os.path.join("/etc", "sagemaker-mms.properties")
-DEFAULT_HANDLER_SERVICE = default_handler_service.__name__
-DEFAULT_MMS_CONFIG_FILE = pkg_resources.resource_filename(
-    sagemaker_inference.__name__, "/etc/default-mms.properties"
+TS_CONFIG_FILE = os.path.join("/etc", "sagemaker-ts.properties")
+DEFAULT_TS_CONFIG_FILE = pkg_resources.resource_filename(
+    sagemaker_inference.__name__, "/etc/default-ts.properties"
 )
-MME_MMS_CONFIG_FILE = pkg_resources.resource_filename(
-    sagemaker_inference.__name__, "/etc/mme-mms.properties"
+MME_TS_CONFIG_FILE = pkg_resources.resource_filename(
+    sagemaker_inference.__name__, "/etc/mme-ts.properties"
 )
-DEFAULT_MMS_LOG_FILE = pkg_resources.resource_filename(
-    sagemaker_inference.__name__, "/etc/log4j.properties"
+DEFAULT_TS_LOG_FILE = pkg_resources.resource_filename(
+    sagemaker_inference.__name__, "/etc/ts.log4j.properties"
 )
-DEFAULT_MMS_MODEL_DIRECTORY = os.path.join(os.getcwd(), ".sagemaker/mms/models")
-DEFAULT_MMS_MODEL_NAME = "model"
+DEFAULT_TS_MODEL_DIRECTORY = os.path.join(os.getcwd(), ".sagemaker/ts/models")
+DEFAULT_TS_MODEL_NAME = "model"
+DEFAULT_TS_MODEL_SERIALIZED_FILE = "model.pth"
+DEFAULT_TS_HANDLER_SERVICE = "sagemaker_pytorch_serving_container.handler_service"
 
 ENABLE_MULTI_MODEL = os.getenv("SAGEMAKER_MULTI_MODEL", "false") == "true"
-MODEL_STORE = "/" if ENABLE_MULTI_MODEL else DEFAULT_MMS_MODEL_DIRECTORY
+MODEL_STORE = "/" if ENABLE_MULTI_MODEL else DEFAULT_TS_MODEL_DIRECTORY
 
 PYTHON_PATH_ENV = "PYTHONPATH"
 REQUIREMENTS_PATH = os.path.join(code_dir, "requirements.txt")
-MMS_NAMESPACE = "com.amazonaws.ml.mms.ModelServer"
+TS_NAMESPACE = "org.pytorch.serve.ModelServer"
 
 
-def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
+def start_model_server(handler_service=DEFAULT_TS_HANDLER_SERVICE):
     """Configure and start the model server.
 
     Args:
@@ -73,50 +75,55 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
             os.environ["SAGEMAKER_HANDLER"] = handler_service
         set_python_path()
     else:
-        _adapt_to_mms_format(handler_service)
+        _adapt_to_ts_format(handler_service)
 
-    _create_model_server_config_file()
+    _create_torchserve_config_file()
 
     if os.path.exists(REQUIREMENTS_PATH):
         install_requirements()
 
-    mxnet_model_server_cmd = [
-        "mxnet-model-server",
+    ts_model_server_cmd = [
+        "torchserve",
         "--start",
         "--model-store",
         MODEL_STORE,
-        "--mms-config",
-        MMS_CONFIG_FILE,
+        "--ts-config",
+        TS_CONFIG_FILE,
         "--log-config",
-        DEFAULT_MMS_LOG_FILE,
+        DEFAULT_TS_LOG_FILE,
+        "--models",
+        "model.mar"
     ]
 
-    logger.info(mxnet_model_server_cmd)
-    subprocess.Popen(mxnet_model_server_cmd)
+    logger.info(ts_model_server_cmd)
+    subprocess.Popen(ts_model_server_cmd)
 
-    mms_process = retrieve_model_server_process(MMS_NAMESPACE)
+    ts_process = retrieve_model_server_process(TS_NAMESPACE)
 
-    add_sigterm_handler(mms_process)
+    add_sigterm_handler(ts_process)
 
-    mms_process.wait()
+    ts_process.wait()
 
 
-def _adapt_to_mms_format(handler_service):
-    if not os.path.exists(DEFAULT_MMS_MODEL_DIRECTORY):
-        os.makedirs(DEFAULT_MMS_MODEL_DIRECTORY)
+def _adapt_to_ts_format(handler_service):
+    if not os.path.exists(DEFAULT_TS_MODEL_DIRECTORY):
+        os.makedirs(DEFAULT_TS_MODEL_DIRECTORY)
+
 
     model_archiver_cmd = [
-        "model-archiver",
+        "torch-model-archiver",
         "--model-name",
-        DEFAULT_MMS_MODEL_NAME,
+        DEFAULT_TS_MODEL_NAME,
         "--handler",
         handler_service,
-        "--model-path",
-        environment.model_dir,
+        "--serialized-file",
+        os.path.join(environment.model_dir, DEFAULT_TS_MODEL_SERIALIZED_FILE),
         "--export-path",
-        DEFAULT_MMS_MODEL_DIRECTORY,
-        "--archive-format",
-        "no-archive",
+        DEFAULT_TS_MODEL_DIRECTORY,
+        "--extra-files",
+        os.path.join(environment.model_dir, environment.Environment().module_name + ".py"),
+        "--version",
+        "1",
     ]
 
     logger.info(model_archiver_cmd)
@@ -124,13 +131,14 @@ def _adapt_to_mms_format(handler_service):
 
     set_python_path()
 
-def _create_model_server_config_file():
-    configuration_properties = _generate_mms_config_properties()
 
-    utils.write_file(MMS_CONFIG_FILE, configuration_properties)
+def _create_torchserve_config_file():
+    configuration_properties = _generate_ts_config_properties()
+
+    utils.write_file(TS_CONFIG_FILE, configuration_properties)
 
 
-def _generate_mms_config_properties():
+def _generate_ts_config_properties():
     env = environment.Environment()
 
     user_defined_configuration = {
@@ -148,8 +156,8 @@ def _generate_mms_config_properties():
             custom_configuration += "{}={}\n".format(key, value)
 
     if ENABLE_MULTI_MODEL:
-        default_configuration = utils.read_file(MME_MMS_CONFIG_FILE)
+        default_configuration = utils.read_file(MME_TS_CONFIG_FILE)
     else:
-        default_configuration = utils.read_file(DEFAULT_MMS_CONFIG_FILE)
+        default_configuration = utils.read_file(DEFAULT_TS_CONFIG_FILE)
 
     return default_configuration + custom_configuration

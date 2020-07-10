@@ -18,7 +18,7 @@ import types
 from mock import Mock, patch
 import pytest
 
-from sagemaker_inference import environment, model_server
+from sagemaker_inference import environment, model_server, model_server_utils
 from sagemaker_inference.model_server import MMS_NAMESPACE, REQUIREMENTS_PATH
 
 PYTHON_PATH = "python_path"
@@ -27,9 +27,9 @@ DEFAULT_CONFIGURATION = "default_configuration"
 
 @patch("subprocess.call")
 @patch("subprocess.Popen")
-@patch("sagemaker_inference.model_server._retrieve_mms_server_process")
-@patch("sagemaker_inference.model_server._add_sigterm_handler")
-@patch("sagemaker_inference.model_server._install_requirements")
+@patch("sagemaker_inference.model_server.retrieve_model_server_process")
+@patch("sagemaker_inference.model_server.add_sigterm_handler")
+@patch("sagemaker_inference.model_server.install_requirements")
 @patch("os.path.exists", return_value=True)
 @patch("sagemaker_inference.model_server._create_model_server_config_file")
 @patch("sagemaker_inference.model_server._adapt_to_mms_format")
@@ -67,8 +67,8 @@ def test_start_model_server_default_service_handler(
 
 @patch("subprocess.call")
 @patch("subprocess.Popen")
-@patch("sagemaker_inference.model_server._retrieve_mms_server_process")
-@patch("sagemaker_inference.model_server._add_sigterm_handler")
+@patch("sagemaker_inference.model_server.retrieve_model_server_process")
+@patch("sagemaker_inference.model_server.add_sigterm_handler")
 @patch("sagemaker_inference.model_server._create_model_server_config_file")
 @patch("sagemaker_inference.model_server._adapt_to_mms_format")
 def test_start_model_server_custom_handler_service(
@@ -81,7 +81,7 @@ def test_start_model_server_custom_handler_service(
     adapt.assert_called_once_with(handler_service)
 
 
-@patch("sagemaker_inference.model_server._set_python_path")
+@patch("sagemaker_inference.model_server.set_python_path")
 @patch("subprocess.check_call")
 @patch("os.makedirs")
 @patch("os.path.exists", return_value=False)
@@ -111,7 +111,7 @@ def test_adapt_to_mms_format(path_exists, make_dir, subprocess_check_call, set_p
     set_python_path.assert_called_once_with()
 
 
-@patch("sagemaker_inference.model_server._set_python_path")
+@patch("sagemaker_inference.model_server.set_python_path")
 @patch("subprocess.check_call")
 @patch("os.makedirs")
 @patch("os.path.exists", return_value=True)
@@ -124,24 +124,6 @@ def test_adapt_to_mms_format_existing_path(
 
     path_exists.assert_called_once_with(model_server.DEFAULT_MMS_MODEL_DIRECTORY)
     make_dir.assert_not_called()
-
-
-@patch.dict(os.environ, {model_server.PYTHON_PATH_ENV: PYTHON_PATH}, clear=True)
-def test_set_existing_python_path():
-    model_server._set_python_path()
-
-    code_dir_path = "{}:".format(environment.code_dir)
-
-    assert os.environ[model_server.PYTHON_PATH_ENV] == code_dir_path + PYTHON_PATH
-
-
-@patch.dict(os.environ, {}, clear=True)
-def test_new_python_path():
-    model_server._set_python_path()
-
-    code_dir_path = "{}:".format(environment.code_dir)
-
-    assert os.environ[model_server.PYTHON_PATH_ENV] == code_dir_path
 
 
 @patch("sagemaker_inference.model_server._generate_mms_config_properties")
@@ -192,76 +174,3 @@ def test_generate_mms_config_properties_default_workers(env, read_file):
 
     assert mms_config_properties.startswith(DEFAULT_CONFIGURATION)
     assert workers not in mms_config_properties
-
-
-@patch("signal.signal")
-def test_add_sigterm_handler(signal_call):
-    mms = Mock()
-
-    model_server._add_sigterm_handler(mms)
-
-    mock_calls = signal_call.mock_calls
-    first_argument = mock_calls[0][1][0]
-    second_argument = mock_calls[0][1][1]
-
-    assert len(mock_calls) == 1
-    assert first_argument == signal.SIGTERM
-    assert isinstance(second_argument, types.FunctionType)
-
-
-@patch("subprocess.check_call")
-def test_install_requirements(check_call):
-    model_server._install_requirements()
-
-
-@patch("subprocess.check_call", side_effect=subprocess.CalledProcessError(0, "cmd"))
-def test_install_requirements_installation_failed(check_call):
-    with pytest.raises(ValueError) as e:
-        model_server._install_requirements()
-
-    assert "failed to install required packages" in str(e.value)
-
-
-@patch("retrying.Retrying.should_reject", return_value=False)
-@patch("psutil.process_iter")
-def test_retrieve_mms_server_process(process_iter, retry):
-    server = Mock()
-    server.cmdline.return_value = MMS_NAMESPACE
-
-    processes = list()
-    processes.append(server)
-
-    process_iter.return_value = processes
-
-    process = model_server._retrieve_mms_server_process()
-
-    assert process == server
-
-
-@patch("retrying.Retrying.should_reject", return_value=False)
-@patch("psutil.process_iter", return_value=list())
-def test_retrieve_mms_server_process_no_server(process_iter, retry):
-    with pytest.raises(Exception) as e:
-        model_server._retrieve_mms_server_process()
-
-    assert "mms model server was unsuccessfully started" in str(e.value)
-
-
-@patch("retrying.Retrying.should_reject", return_value=False)
-@patch("psutil.process_iter")
-def test_retrieve_mms_server_process_too_many_servers(process_iter, retry):
-    server = Mock()
-    second_server = Mock()
-    server.cmdline.return_value = MMS_NAMESPACE
-    second_server.cmdline.return_value = MMS_NAMESPACE
-
-    processes = list()
-    processes.append(server)
-    processes.append(second_server)
-
-    process_iter.return_value = processes
-
-    with pytest.raises(Exception) as e:
-        model_server._retrieve_mms_server_process()
-
-    assert "multiple mms model servers are not supported" in str(e.value)
