@@ -17,6 +17,7 @@ from __future__ import absolute_import
 import json
 
 import numpy as np
+import scipy.sparse
 from six import BytesIO, StringIO
 
 from sagemaker_inference import content_types, errors
@@ -70,22 +71,36 @@ def _npy_to_numpy(npy_array):  # type: (object) -> np.array
     return np.load(stream, allow_pickle=True)
 
 
+def _npz_to_sparse(npz_bytes):  # type: (object) -> scipy.sparse.spmatrix
+    """Convert .npz-formatted data to a sparse matrix.
+
+    Args:
+        npz_bytes (object): Bytes encoding a sparse matrix in the .npz format.
+
+    Returns:
+        (scipy.sparse.spmatrix): A sparse matrix.
+    """
+    buffer = BytesIO(npz_bytes)
+    return scipy.sparse.load_npz(buffer)
+
+
 _decoder_map = {
     content_types.NPY: _npy_to_numpy,
     content_types.CSV: _csv_to_numpy,
     content_types.JSON: _json_to_numpy,
+    content_types.NPZ: _npz_to_sparse,
 }
 
 
 def decode(obj, content_type):
-    """Decode an object to one of the default content types to a numpy array.
+    """Decode an object that is encoded as one of the default content types.
 
     Args:
         obj (object): to be decoded.
         content_type (str): content type to be used.
 
     Returns:
-        np.array: decoded object.
+        object: decoded object for prediction.
     """
     try:
         decoder = _decoder_map[content_type]

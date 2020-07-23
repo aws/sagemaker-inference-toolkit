@@ -13,6 +13,7 @@
 from mock import Mock, patch
 import numpy as np
 import pytest
+import scipy.sparse
 from six import BytesIO
 
 from sagemaker_inference import content_types, decoder, errors
@@ -60,6 +61,26 @@ def test_json_to_numpy(target, expected):
 )
 def test_csv_to_numpy(target, expected):
     actual = decoder._csv_to_numpy(target)
+    np.testing.assert_equal(actual, expected)
+
+
+@pytest.mark.parametrize(
+    "target",
+    [
+        scipy.sparse.csc_matrix(np.array([[0, 0, 3], [4, 0, 0]])),
+        scipy.sparse.csr_matrix(np.array([[1, 0], [0, 7]])),
+        scipy.sparse.coo_matrix(np.array([[6, 2], [5, 9]])),
+    ],
+)
+def test_npz_to_sparse(target):
+    buffer = BytesIO()
+    scipy.sparse.save_npz(buffer, target)
+    data = buffer.getvalue()
+    matrix = decoder._npz_to_sparse(data)
+
+    actual = matrix.toarray()
+    expected = target.toarray()
+
     np.testing.assert_equal(actual, expected)
 
 
