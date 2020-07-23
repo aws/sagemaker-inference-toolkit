@@ -16,4 +16,5 @@ CSV = "text/csv"
 OCTET_STREAM = "application/octet-stream"
 ANY = "*/*"
 NPY = "application/x-npy"
+NPZ = "application/x-npz"
 UTF8_TYPES = [JSON, CSV]
