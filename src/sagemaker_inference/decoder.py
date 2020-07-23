@@ -17,9 +17,8 @@ from __future__ import absolute_import
 import json
 
 import numpy as np
-from six import BytesIO, StringIO
-
 import scipy.sparse
+from six import BytesIO, StringIO
 
 from sagemaker_inference import content_types, errors
 
