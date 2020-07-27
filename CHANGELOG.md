@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.0 (2020-07-27)
+
+### Features
+
+ * Decode application/x-npz content type
+
 ## v1.3.2.post1 (2020-06-29)
 
 ### Testing and Release Infrastructure
