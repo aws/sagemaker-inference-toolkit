@@ -13,7 +13,12 @@
 from mock import Mock, mock_open, patch
 import pytest
 
-from sagemaker_inference.utils import read_file, retrieve_content_type_header, write_file
+from sagemaker_inference.utils import (
+    parse_accept,
+    read_file,
+    retrieve_content_type_header,
+    write_file,
+)
 
 TEXT = "text"
 CONTENT_TYPE = "content_type"
@@ -74,3 +79,15 @@ def test_content_type_header(content_type_key):
     result = retrieve_content_type_header(request_property)
 
     assert result == CONTENT_TYPE
+
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        ("application/json", ["application/json"]),
+        ("application/json, text/csv", ["application/json", "text/csv"]),
+    ],
+)
+def test_parse_accept(input, expected):
+    actual = parse_accept(input)
+    assert actual == expected
