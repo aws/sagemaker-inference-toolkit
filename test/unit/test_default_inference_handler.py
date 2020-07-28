@@ -24,11 +24,20 @@ def test_default_input_fn(loads):
     loads.assert_called_with(42, content_types.JSON)
 
 
+@pytest.mark.parametrize(
+    "accept, expected_content_type",
+    [
+        ("text/csv", "text/csv"),
+        ("text/csv, application/json", "text/csv"),
+        ("unsupported/type, text/csv", "text/csv"),
+        ("unsupported/type", "application/json"),
+    ],
+)
 @patch("sagemaker_inference.encoder.encode", lambda prediction, accept: prediction ** 2)
-def test_default_output_fn():
-    result, accept = DefaultInferenceHandler().default_output_fn(2, content_types.CSV)
+def test_default_output_fn(accept, expected_content_type):
+    result, content_type = DefaultInferenceHandler().default_output_fn(2, accept)
     assert result == 4
-    assert accept == content_types.CSV
+    assert content_type == expected_content_type
 
 
 def test_default_model_fn():
