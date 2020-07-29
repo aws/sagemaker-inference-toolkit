@@ -30,7 +30,6 @@ def test_default_input_fn(loads):
         ("text/csv", "text/csv"),
         ("text/csv, application/json", "text/csv"),
         ("unsupported/type, text/csv", "text/csv"),
-        ("unsupported/type", "application/json"),
     ],
 )
 @patch("sagemaker_inference.encoder.encode", lambda prediction, accept: prediction ** 2)
