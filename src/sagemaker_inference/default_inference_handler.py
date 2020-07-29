@@ -15,12 +15,14 @@ which provides a bare-bones implementation of default inference functions.
 """
 import textwrap
 
-from sagemaker_inference import content_types, decoder, encoder, utils
+from sagemaker_inference import content_types, decoder, encoder, errors, utils
 
 
 class DefaultInferenceHandler(object):
     """Bare-bones implementation of default inference functions.
     """
+
+    SUPPORTED_CONTENT_TYPES = {content_types.NPY, content_types.JSON, content_types.CSV}
 
     def default_model_fn(self, model_dir):
         """Function responsible for loading the model.
@@ -86,6 +88,6 @@ class DefaultInferenceHandler(object):
 
         """
         for content_type in utils.parse_accept(accept):
-            if content_type in encoder.SUPPORTED_CONTENT_TYPES:
+            if content_type in self.SUPPORTED_CONTENT_TYPES:
                 return encoder.encode(prediction, content_type), content_type
-        return encoder.encode(prediction, content_types.JSON), content_types.JSON
+        raise errors.UnsupportedFormatError(accept)
