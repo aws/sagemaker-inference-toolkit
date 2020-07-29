@@ -66,3 +66,16 @@ def retrieve_content_type_header(request_property):
             return request_property[key]
 
     return None
+
+
+def parse_accept(accept):
+    """Parses the Accept header sent with a request.
+
+    Args:
+        accept (str): the value of an Accept header.
+
+    Returns:
+        (list): A list containing the MIME types that the client is able to
+            understand.
+    """
+    return accept.replace(" ", "").split(",")

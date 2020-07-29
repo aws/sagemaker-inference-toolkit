@@ -15,7 +15,7 @@ which provides a bare-bones implementation of default inference functions.
 """
 import textwrap
 
-from sagemaker_inference import decoder, encoder
+from sagemaker_inference import decoder, encoder, errors, utils
 
 
 class DefaultInferenceHandler(object):
@@ -85,4 +85,7 @@ class DefaultInferenceHandler(object):
             obj: prediction data.
 
         """
-        return encoder.encode(prediction, accept), accept
+        for content_type in utils.parse_accept(accept):
+            if content_type in encoder.SUPPORTED_CONTENT_TYPES:
+                return encoder.encode(prediction, content_type), content_type
+        raise errors.UnsupportedFormatError(accept)
