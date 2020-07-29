@@ -87,6 +87,9 @@ _encoder_map = {
 }
 
 
+SUPPORTED_CONTENT_TYPES = set(_encoder_map.keys())
+
+
 def encode(array_like, content_type):
     """Encode an array-like object in a specific content_type to a numpy array.
 

@@ -86,6 +86,7 @@ def test_content_type_header(content_type_key):
     [
         ("application/json", ["application/json"]),
         ("application/json, text/csv", ["application/json", "text/csv"]),
+        ("application/json,text/csv", ["application/json", "text/csv"]),
     ],
 )
 def test_parse_accept(input, expected):

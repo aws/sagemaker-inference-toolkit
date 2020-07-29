@@ -78,4 +78,4 @@ def parse_accept(accept):
         (list): A list containing the MIME types that the client is able to
             understand.
     """
-    return accept.split(", ")
+    return accept.replace(" ", "").split(",")
