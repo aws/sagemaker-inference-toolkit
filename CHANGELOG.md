@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.0 (2020-07-30)
+
+### Features
+
+ * Support multiple accept types
+
 ## v1.4.0 (2020-07-27)
 
 ### Features
