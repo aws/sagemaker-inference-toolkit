@@ -16,6 +16,7 @@ import pytest
 from sagemaker_inference.utils import (
     parse_accept,
     read_file,
+    remove_crlf,
     retrieve_content_type_header,
     write_file,
 )
@@ -92,3 +93,10 @@ def test_content_type_header(content_type_key):
 def test_parse_accept(input, expected):
     actual = parse_accept(input)
     assert actual == expected
+
+
+def test_remove_crlf():
+    illegal_string = "test:\r\nstring"
+    sanitized_string = "test   string"
+
+    assert sanitized_string == remove_crlf(illegal_string)

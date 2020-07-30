@@ -79,3 +79,24 @@ def parse_accept(accept):
             understand.
     """
     return accept.replace(" ", "").split(",")
+
+
+def remove_crlf(illegal_string):
+    """Removes characters prohibited by the MMS dependency Netty.
+
+    https://github.com/netty/netty/issues/8312
+
+    Args:
+        illegal_string: The string containing prohibited characters.
+
+    Returns:
+        str: The input string with the prohibited characters removed.
+    """
+    prohibited = ["\r", "\n", ":"]
+
+    sanitized_string = illegal_string
+
+    for character in prohibited:
+        sanitized_string = sanitized_string.replace(character, " ")
+
+    return sanitized_string
