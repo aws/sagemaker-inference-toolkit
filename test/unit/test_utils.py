@@ -97,6 +97,6 @@ def test_parse_accept(input, expected):
 
 def test_remove_crlf():
     illegal_string = "test:\r\nstring"
-    sanitized_string = "test   string"
+    sanitized_string = "test:  string"
 
     assert sanitized_string == remove_crlf(illegal_string)

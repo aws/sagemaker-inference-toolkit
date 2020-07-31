@@ -92,7 +92,7 @@ def remove_crlf(illegal_string):
     Returns:
         str: The input string with the prohibited characters removed.
     """
-    prohibited = ["\r", "\n", ":"]
+    prohibited = ("\r", "\n")
 
     sanitized_string = illegal_string
 
