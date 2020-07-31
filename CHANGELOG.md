@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.1 (2020-07-31)
+
+### Bug Fixes and Other Changes
+
+ * remove prohibited characters from error response
+
 ## v1.5.0 (2020-07-30)
 
 ### Features
