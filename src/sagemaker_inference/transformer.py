@@ -90,7 +90,7 @@ class Transformer(object):
         stack_trace = utils.remove_crlf(trace)
 
         context.set_response_status(code=inference_exception.status_code, phrase=phrase)
-        return [message, stack_trace]
+        return ["{} {}".format(message, stack_trace)]
 
     def transform(self, data, context):
         """Take a request with input data, deserialize it, make a prediction, and return a
