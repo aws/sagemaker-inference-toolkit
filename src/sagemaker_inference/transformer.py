@@ -85,12 +85,11 @@ class Transformer(object):
         Returns:
             str: The error message and stacktrace from the exception.
         """
-        phrase = utils.remove_crlf(inference_exception.phrase)
-        message = utils.remove_crlf(inference_exception.message)
-        stack_trace = utils.remove_crlf(trace)
-
-        context.set_response_status(code=inference_exception.status_code, phrase=phrase)
-        return ["{} {}".format(message, stack_trace)]
+        context.set_response_status(
+            code=inference_exception.status_code,
+            phrase=utils.remove_crlf(inference_exception.phrase),
+        )
+        return ["{}\n{}".format(inference_exception.message, trace)]
 
     def transform(self, data, context):
         """Take a request with input data, deserialize it, make a prediction, and return a
