@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.2 (2020-08-04)
+
+### Bug Fixes and Other Changes
+
+ * sanitize only the response phrase
+
 ## v1.5.1 (2020-07-31)
 
 ### Bug Fixes and Other Changes
