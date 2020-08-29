@@ -40,7 +40,7 @@ RUN pip3 install multi-model-server sagemaker-inference
 To use the SageMaker Inference Toolkit, you need to do the following:
 
 1.  Implement an inference handler, which is responsible for loading the model and providing input, predict, and output functions.
-    ([Here is an example](https://github.com/aws/sagemaker-pytorch-serving-container/blob/master/src/sagemaker_pytorch_serving_container/default_inference_handler.py) of an inference handler.)
+    ([Here is an example](https://github.com/aws/sagemaker-pytorch-serving-container/blob/master/src/sagemaker_pytorch_serving_container/default_pytorch_inference_handler.py) of an inference handler.)
 
     ``` python
     from sagemaker_inference import content_types, decoder, default_inference_handler, encoder, errors
