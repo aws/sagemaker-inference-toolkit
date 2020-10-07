@@ -50,8 +50,8 @@ def test_start_model_server_default_service_handler(
     exists.assert_called_once_with(REQUIREMENTS_PATH)
     install_requirements.assert_called_once_with()
 
-    mxnet_model_server_cmd = [
-        "mxnet-model-server",
+    multi_model_server_cmd = [
+        "multi-model-server",
         "--start",
         "--model-store",
         model_server.DEFAULT_MMS_MODEL_DIRECTORY,
@@ -61,7 +61,7 @@ def test_start_model_server_default_service_handler(
         model_server.DEFAULT_MMS_LOG_FILE,
     ]
 
-    subprocess_popen.assert_called_once_with(mxnet_model_server_cmd)
+    subprocess_popen.assert_called_once_with(multi_model_server_cmd)
     sigterm.assert_called_once_with(retrieve.return_value)
 
 

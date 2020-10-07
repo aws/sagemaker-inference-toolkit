@@ -79,8 +79,8 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
     if os.path.exists(REQUIREMENTS_PATH):
         _install_requirements()
 
-    mxnet_model_server_cmd = [
-        "mxnet-model-server",
+    multi_model_server_cmd = [
+        "multi-model-server",
         "--start",
         "--model-store",
         MODEL_STORE,
@@ -90,8 +90,8 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
         DEFAULT_MMS_LOG_FILE,
     ]
 
-    logger.info(mxnet_model_server_cmd)
-    subprocess.Popen(mxnet_model_server_cmd)
+    logger.info(multi_model_server_cmd)
+    subprocess.Popen(multi_model_server_cmd)
 
     mms_process = _retrieve_mms_server_process()
 
