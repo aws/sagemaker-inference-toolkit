@@ -18,7 +18,7 @@ A container provides an effectively isolated environment, ensuring a consistent 
 Containerizing your model and code enables fast and reliable deployment of your model.
 
 The **SageMaker Inference Toolkit** implements a model serving stack and can be easily added to any Docker container, making it [deployable to SageMaker](https://aws.amazon.com/sagemaker/deploy/).
-This library's serving stack is built on [Multi Model Server](https://github.com/awslabs/mxnet-model-server), and it can serve your own models or those you trained on SageMaker using [machine learning frameworks with native SageMaker support](https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html).
+This library's serving stack is built on [Multi Model Server](https://github.com/awslabs/multi-model-server), and it can serve your own models or those you trained on SageMaker using [machine learning frameworks with native SageMaker support](https://docs.aws.amazon.com/sagemaker/latest/dg/frameworks.html).
 If you use a [prebuilt SageMaker Docker image for inference](https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html), this library may already be included.
 
 For more information, see the Amazon SageMaker Developer Guide sections on [building your own container with Multi Model Server](https://docs.aws.amazon.com/sagemaker/latest/dg/build-multi-model-build-container.html) and [using your own models](https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html).
@@ -40,7 +40,7 @@ RUN pip3 install multi-model-server sagemaker-inference
 To use the SageMaker Inference Toolkit, you need to do the following:
 
 1.  Implement an inference handler, which is responsible for loading the model and providing input, predict, and output functions.
-    ([Here is an example](https://github.com/aws/sagemaker-pytorch-serving-container/blob/master/src/sagemaker_pytorch_serving_container/default_inference_handler.py) of an inference handler.)
+    ([Here is an example](https://github.com/aws/sagemaker-pytorch-serving-container/blob/master/src/sagemaker_pytorch_serving_container/default_pytorch_inference_handler.py) of an inference handler.)
 
     ``` python
     from sagemaker_inference import content_types, decoder, default_inference_handler, encoder, errors
@@ -98,7 +98,7 @@ To use the SageMaker Inference Toolkit, you need to do the following:
 
 2.  Implement a handler service that is executed by the model server.
     ([Here is an example](https://github.com/aws/sagemaker-pytorch-serving-container/blob/master/src/sagemaker_pytorch_serving_container/handler_service.py) of a handler service.)
-    For more information on how to define your `HANDLER_SERVICE` file, see [the MMS custom service documentation](https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md).
+    For more information on how to define your `HANDLER_SERVICE` file, see [the MMS custom service documentation](https://github.com/awslabs/multi-model-server/blob/master/docs/custom_service.md).
 
     ``` python
     from sagemaker_inference.default_handler_service import DefaultHandlerService
@@ -112,7 +112,7 @@ To use the SageMaker Inference Toolkit, you need to do the following:
         This class extends ``DefaultHandlerService``, which define the following:
             - The ``handle`` method is invoked for all incoming inference requests to the model server.
             - The ``initialize`` method is invoked at model server start up.
-        Based on: https://github.com/awslabs/mxnet-model-server/blob/master/docs/custom_service.md
+        Based on: https://github.com/awslabs/multi-model-server/blob/master/docs/custom_service.md
         """
         def __init__(self):
             transformer = Transformer(default_inference_handler=DefaultPytorchInferenceHandler())
