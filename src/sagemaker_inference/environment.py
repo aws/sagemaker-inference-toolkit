@@ -35,6 +35,7 @@ else:
     model_dir = os.path.join(base_dir, "model")  # type: str
 # str: the directory where models should be saved, e.g., /opt/ml/model/
 
+config_dir = os.path.join(base_dir, "etc")  # type: str
 code_dir = os.path.join(model_dir, "code")  # type: str
 """str: the path of the user's code directory, e.g., /opt/ml/model/code/"""
 

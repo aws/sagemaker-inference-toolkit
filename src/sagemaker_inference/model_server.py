@@ -25,11 +25,11 @@ from retrying import retry
 
 import sagemaker_inference
 from sagemaker_inference import default_handler_service, environment, logging, utils
-from sagemaker_inference.environment import code_dir
+from sagemaker_inference.environment import code_dir, config_dir
 
 logger = logging.get_logger()
 
-MMS_CONFIG_FILE = os.path.join("/etc", "sagemaker-mms.properties")
+MMS_CONFIG_FILE = os.path.join(config_dir, "sagemaker-mms.properties")
 DEFAULT_HANDLER_SERVICE = default_handler_service.__name__
 DEFAULT_MMS_CONFIG_FILE = pkg_resources.resource_filename(
     sagemaker_inference.__name__, "/etc/default-mms.properties"

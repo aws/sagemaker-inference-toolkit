@@ -107,7 +107,9 @@ WORKDIR /
 
 RUN useradd -m model-server \
  && mkdir -p /home/model-server/tmp \
- && chown -R model-server /home/model-server
+ && chown -R model-server /home/model-server \
+ && mkdir -p /opt/ml/etc \
+ && chown -R model-server /opt/ml/etc
 
 COPY mxnet/mms_entrypoint.py /usr/local/bin/dockerd_entrypoint.py
 COPY mxnet/config.properties /home/model-server
