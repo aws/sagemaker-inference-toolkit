@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.5.3 (2020-10-15)
+
+### Bug Fixes and Other Changes
+
+ * upgrade MMS version and update command
+
+### Documentation Changes
+
+ * update link in README.md
+
 ## v1.5.2 (2020-08-04)
 
 ### Bug Fixes and Other Changes
