@@ -165,11 +165,6 @@ def _generate_mms_config_properties():
         default_configuration = utils.read_file(DEFAULT_MMS_CONFIG_FILE)
 
     return default_configuration + custom_configuration
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> Addding SIGCILD Handler for MMS
 
 
 def _add_sigterm_handler(mms_process):
