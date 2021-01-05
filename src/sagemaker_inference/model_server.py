@@ -90,16 +90,9 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
         DEFAULT_MMS_LOG_FILE,
     ]
 
-<<<<<<< HEAD
     logger.info(multi_model_server_cmd)
     subprocess.Popen(multi_model_server_cmd)
     mms_process = _retrieve_mms_server_process()
-=======
-    logger.info(mxnet_model_server_cmd)
-    subprocess.Popen(mxnet_model_server_cmd)
-
-    mms_process = retrieve_model_server_process(MMS_NAMESPACE)
->>>>>>> Addding SIGCILD Handler for MMS
     _add_sigterm_handler(mms_process)
     _add_sigchild_handler()
 
@@ -172,11 +165,6 @@ def _generate_mms_config_properties():
         default_configuration = utils.read_file(DEFAULT_MMS_CONFIG_FILE)
 
     return default_configuration + custom_configuration
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> Addding SIGCILD Handler for MMS
 
 
 def _add_sigterm_handler(mms_process):
