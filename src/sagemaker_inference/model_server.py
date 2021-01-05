@@ -206,12 +206,12 @@ def _retrieve_mms_server_process():
     return mms_server_processes[0]
 
 
-def _reap_children(signo, frame): # pylint: disable=unused-argument
+def _reap_children(signo, frame):  # pylint: disable=unused-argument
     """Cleans up all defunct child processes."""
     pid = 1
     try:
         while pid > 0:
-            pid, status = os.waitpid(-1, os.WNOHANG) # pylint: disable=unused-variable
+            pid, status = os.waitpid(-1, os.WNOHANG)  # pylint: disable=unused-variable
     except OSError:
         logger.error("Failed to reap children process")
 
