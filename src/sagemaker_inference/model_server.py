@@ -92,7 +92,7 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
 
     logger.info(multi_model_server_cmd)
     subprocess.Popen(multi_model_server_cmd)
-    mms_process = retrieve_model_server_process(MMS_NAMESPACE)
+    mms_process = _retrieve_mms_server_process()
     _add_sigterm_handler(mms_process)
     _add_sigchild_handler()
 
