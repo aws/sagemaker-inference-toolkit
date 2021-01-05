@@ -92,10 +92,9 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
 
     logger.info(multi_model_server_cmd)
     subprocess.Popen(multi_model_server_cmd)
-
-    mms_process = _retrieve_mms_server_process()
-
+    mms_process = retrieve_model_server_process(MMS_NAMESPACE)
     _add_sigterm_handler(mms_process)
+    _add_sigchild_handler()
 
     mms_process.wait()
 
@@ -166,6 +165,11 @@ def _generate_mms_config_properties():
         default_configuration = utils.read_file(DEFAULT_MMS_CONFIG_FILE)
 
     return default_configuration + custom_configuration
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> Addding SIGCILD Handler for MMS
 
 
 def _add_sigterm_handler(mms_process):
@@ -205,3 +209,17 @@ def _retrieve_mms_server_process():
         raise Exception("multiple mms model servers are not supported")
 
     return mms_server_processes[0]
+
+
+def _reap_children(signo, frame): # pylint: disable=unused-argument
+    """Cleans up all defunct child processes."""
+    pid = 1
+    try:
+        while pid > 0:
+            pid, status = os.waitpid(-1, os.WNOHANG) # pylint: disable=unused-variable
+    except OSError:
+        logger.error("Failed to reap children process")
+
+
+def _add_sigchild_handler():
+    signal.signal(signal.SIGCHLD, _reap_children)
