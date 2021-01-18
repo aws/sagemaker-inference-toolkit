@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.4 (2021-01-18)
+
+### Bug Fixes and Other Changes
+
+ * add SIGCHILD Handler for MMS
+ * add model-archiver and multi-model-server to required packages
+
 ## v1.5.3 (2020-10-15)
 
 ### Bug Fixes and Other Changes
