@@ -30,8 +30,6 @@ def read_version():
 packages = setuptools.find_packages(where="src", exclude=("test",))
 
 required_packages = [
-    "model-archiver",
-    "multi-model-server",
     "numpy",
     "six",
     "psutil",
