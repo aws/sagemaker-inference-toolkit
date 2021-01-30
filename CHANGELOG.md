@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.5 (2021-01-30)
+
+### Bug Fixes and Other Changes
+
+ * remove conflicting dependencies
+
 ## v1.5.4 (2021-01-18)
 
 ### Bug Fixes and Other Changes
