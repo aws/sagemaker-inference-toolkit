@@ -150,6 +150,7 @@ def _generate_mms_config_properties():
         "default_workers_per_model": env.model_server_workers,
         "inference_address": "http://0.0.0.0:{}".format(env.inference_http_port),
         "management_address": "http://0.0.0.0:{}".format(env.management_http_port),
+        "vmargs": "-XX:-UseContainerSupport",
     }
 
     custom_configuration = str()
