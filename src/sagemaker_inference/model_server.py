@@ -180,10 +180,15 @@ def _add_sigterm_handler(mms_process):
 
 def _install_requirements():
     logger.info("installing packages from requirements.txt...")
-    pip_install_cmd = [sys.executable, "-m", "pip", "install", "-r", REQUIREMENTS_PATH]
+    if sys.version_info >= (3, 5):
+        pip_install_cmd = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
+        kw = {"cwd": code_dir}
+    else:
+        pip_install_cmd = [sys.executable, "-m", "pip", "install", "-r", REQUIREMENTS_PATH]
+        kw = {}
 
     try:
-        subprocess.check_call(pip_install_cmd)
+        subprocess.check_call(pip_install_cmd, **kw)
     except subprocess.CalledProcessError:
         logger.error("failed to install required packages, exiting")
         raise ValueError("failed to install required packages")
