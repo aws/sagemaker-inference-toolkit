@@ -180,7 +180,7 @@ def _add_sigterm_handler(mms_process):
 
 def _install_requirements():
     logger.info("installing packages from requirements.txt...")
-    if sys.version_info >= (3, 5):
+    if sys.version_info >= (3, 6):
         pip_install_cmd = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
         kw = {"cwd": code_dir}
     else:
