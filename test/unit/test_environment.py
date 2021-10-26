@@ -24,6 +24,9 @@ from sagemaker_inference import environment, parameters
         parameters.USER_PROGRAM_ENV: "main.py",
         parameters.MODEL_SERVER_TIMEOUT_ENV: "20",
         parameters.MODEL_SERVER_WORKERS_ENV: "8",
+        parameters.MODEL_SERVER_PRELOAD_MODEL_ENV: "true",
+        parameters.MODEL_SERVER_NETTY_THREADS_ENV: "1",
+        parameters.MODEL_SERVER_NETTY_CLIENT_THREADS_ENV: "2",
         parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV: "text/html",
         parameters.BIND_TO_PORT_ENV: "1738",
         parameters.SAFE_PORT_RANGE_ENV: "1111-2222",
@@ -39,6 +42,9 @@ def test_env():
     assert env.module_name == "main"
     assert env.model_server_timeout == 20
     assert env.model_server_workers == "8"
+    assert env.model_server_netty_threads == "1"
+    assert env.model_server_netty_client_threads == "2"
+    assert env.model_server_preload_model == "true"
     assert env.default_accept == "text/html"
     assert env.inference_http_port == "1738"
     assert env.management_http_port == "1738"
