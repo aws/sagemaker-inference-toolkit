@@ -110,7 +110,7 @@ class Environment(object):
         """str: Number of worker processes the model server is configured to use."""
         return self._model_server_workers
 
-    @property 
+    @property
     def model_server_preload_model(self):  # type: () -> str
         """str: whether load the model just before scaling the first model worker, true or false."""
         return self._model_server_preload_model
