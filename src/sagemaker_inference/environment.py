@@ -68,6 +68,9 @@ class Environment(object):
             os.environ.get(parameters.MODEL_SERVER_TIMEOUT_ENV, DEFAULT_MODEL_SERVER_TIMEOUT)
         )
         self._model_server_workers = os.environ.get(parameters.MODEL_SERVER_WORKERS_ENV)
+        self._model_server_preload_model = os.environ.get(parameters.MODEL_SERVER_PRELOAD_MODEL_ENV)
+        self._model_server_netty_threads = os.environ.get(parameters.MODEL_SERVER_NETTY_THREADS_ENV)
+        self._model_server_netty_client_threads = os.environ.get(parameters.MODEL_SERVER_NETTY_CLIENT_THREADS_ENV)
         self._default_accept = os.environ.get(
             parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON
         )
@@ -106,6 +109,21 @@ class Environment(object):
     def model_server_workers(self):  # type: () -> str
         """str: Number of worker processes the model server is configured to use."""
         return self._model_server_workers
+
+    @property 
+    def model_server_preload_model(self):  # type: () -> str
+        """str: whether load the model just before scaling the first model worker, true or false."""
+        return self._model_server_preload_model
+
+    @property
+    def model_server_netty_threads(self):  # type: () -> str
+        """str: Number of frontend netty threads is configured to use."""
+        return self._model_server_netty_threads
+
+    @property
+    def model_server_netty_client_threads(self):  # type: () -> str
+        """str: Number of backend netty threads is configured to use."""
+        return self._model_server_netty_client_threads
 
     @property
     def default_accept(self):  # type: () -> str

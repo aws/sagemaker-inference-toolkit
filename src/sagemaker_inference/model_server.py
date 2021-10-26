@@ -151,6 +151,9 @@ def _generate_mms_config_properties():
         "inference_address": "http://0.0.0.0:{}".format(env.inference_http_port),
         "management_address": "http://0.0.0.0:{}".format(env.management_http_port),
         "vmargs": "-XX:-UseContainerSupport",
+        "preload_model": env.model_server_preload_model,
+        "number_of_netty_threads": env.model_server_netty_threads,
+        "netty_client_threads": env.model_server_netty_client_threads
     }
 
     custom_configuration = str()
