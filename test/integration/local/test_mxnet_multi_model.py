@@ -40,6 +40,7 @@ def container():
         attempts = 0
         while attempts < 10:
             time.sleep(3)
+            print("printing after sleeping for 3 sec. attempts:" + attempts)
             try:
                 requests.get(PING_URL)
                 break
