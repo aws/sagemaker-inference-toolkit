@@ -38,8 +38,8 @@ def container():
         proc = subprocess.Popen(command.split(), stdout=sys.stdout, stderr=subprocess.STDOUT)
 
         attempts = 0
-        while attempts < 5:
-            time.sleep(3)
+        while attempts < 10:
+            time.sleep(60)
             try:
                 requests.get(PING_URL)
                 break
