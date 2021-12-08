@@ -39,13 +39,14 @@ def container():
 
         attempts = 0
         while attempts < 10:
-            time.sleep(60)
+            time.sleep(3)
             try:
                 requests.get(PING_URL)
                 break
             except:  # noqa: E722
                 attempts += 1
                 pass
+            time.sleep(60)
         yield proc.pid
     finally:
         subprocess.check_call("docker rm -f sagemaker-inference-toolkit-test".split())
