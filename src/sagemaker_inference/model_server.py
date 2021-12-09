@@ -190,7 +190,7 @@ def _install_requirements():
 
 
 # retry for 10 minutes
-@retry(stop_max_delay=10 * 60 * 1000)
+@retry(wait_fixed=1000, stop_max_delay=10 * 60 * 1000)
 def _retrieve_mms_server_process():
     mms_server_processes = list()
 
