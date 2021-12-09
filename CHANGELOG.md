@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.6 (2021-12-09)
+
+### Bug Fixes and Other Changes
+
+ * Increase timeout for starting model server to 10 minutes
+ * Fixing issue #82
+
 ## v1.5.5 (2021-01-30)
 
 ### Bug Fixes and Other Changes
