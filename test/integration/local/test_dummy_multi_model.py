@@ -40,14 +40,11 @@ def container():
         attempts = 0
         while attempts < 10:
             time.sleep(3)
-            print("printing after sleeping for 3 sec. attempts:" + str(attempts))
             try:
                 requests.get(PING_URL)
                 break
             except:  # noqa: E722
                 attempts += 1
-                print("In the except block")
-                # time.sleep(60)
                 pass
         yield proc.pid
     finally:
