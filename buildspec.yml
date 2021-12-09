@@ -1,5 +1,10 @@
 version: 0.2
 
+env:
+  variables:
+    LC_ALL: "C.UTF-8"
+    LANG: "C.UTF-8"
+
 phases:
   pre_build:
     commands:
@@ -30,4 +35,4 @@ phases:
       - cd ../..
 
       # run local integration tests
-      - IGNORE_COVERAGE=- tox -e py27,py36,py37 -- test/integration/local
+      - IGNORE_COVERAGE=- tox -e py27,py36,py37 -- -s test/integration/local 

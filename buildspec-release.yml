@@ -1,5 +1,10 @@
 version: 0.2
 
+env:
+  variables:
+    LC_ALL: "C.UTF-8"
+    LANG: "C.UTF-8"
+
 phases:
   pre_build:
     commands:
