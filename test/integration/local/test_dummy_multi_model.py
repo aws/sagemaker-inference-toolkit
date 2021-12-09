@@ -46,7 +46,8 @@ def container():
                 break
             except:  # noqa: E722
                 attempts += 1
-                time.sleep(60)
+                print("In the except block")
+                # time.sleep(60)
                 pass
         yield proc.pid
     finally:
