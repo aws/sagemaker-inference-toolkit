@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.7 (2021-12-10)
+
+### Bug Fixes and Other Changes
+
+ * Re-enable output capturing
+
 ## v1.5.6 (2021-12-09)
 
 ### Bug Fixes and Other Changes
