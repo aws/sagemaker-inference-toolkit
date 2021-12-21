@@ -21,9 +21,10 @@ def configure_logger():
     includes a timestamp along with the message.
     """
     handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     handler.setFormatter(formatter)
     get_logger().addHandler(handler)
+
 
 def get_logger():
     """Return a logger with the name "sagemaker-inference",
