@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.8 (2021-12-23)
+
+### Bug Fixes and Other Changes
+
+ * Add formatter to logger with a timestamp.
+
 ## v1.5.7 (2021-12-10)
 
 ### Bug Fixes and Other Changes
