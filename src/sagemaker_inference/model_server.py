@@ -27,6 +27,7 @@ import sagemaker_inference
 from sagemaker_inference import default_handler_service, environment, logging, utils
 from sagemaker_inference.environment import code_dir
 
+logging.configure_logger()
 logger = logging.get_logger()
 
 MMS_CONFIG_FILE = os.path.join("/etc", "sagemaker-mms.properties")
