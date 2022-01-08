@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.9 (2022-01-08)
+
+### Bug Fixes and Other Changes
+
+ * log4j migration from 1 to 2. Moving properties file to xml
+
 ## v1.5.8 (2021-12-23)
 
 ### Bug Fixes and Other Changes
