@@ -75,7 +75,8 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
     else:
         _adapt_to_mms_format(handler_service)
 
-    _create_model_server_config_file()
+    env = environment.Environment()
+    _create_model_server_config_file(env)
 
     if os.path.exists(REQUIREMENTS_PATH):
         _install_requirements()
@@ -93,7 +94,10 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
 
     logger.info(multi_model_server_cmd)
     subprocess.Popen(multi_model_server_cmd)
-    mms_process = _retrieve_mms_server_process()
+
+    # retry for configured timeout
+    mms_process = _retry_retrieve_mms_server_process(env.startup_timeout)
+
     _add_sigterm_handler(mms_process)
     _add_sigchild_handler()
 
@@ -137,15 +141,13 @@ def _set_python_path():
         os.environ[PYTHON_PATH_ENV] = code_dir_path
 
 
-def _create_model_server_config_file():
-    configuration_properties = _generate_mms_config_properties()
+def _create_model_server_config_file(env):
+    configuration_properties = _generate_mms_config_properties(env)
 
     utils.write_file(MMS_CONFIG_FILE, configuration_properties)
 
 
-def _generate_mms_config_properties():
-    env = environment.Environment()
-
+def _generate_mms_config_properties(env):
     user_defined_configuration = {
         "default_response_timeout": env.model_server_timeout,
         "default_workers_per_model": env.model_server_workers,
@@ -190,8 +192,13 @@ def _install_requirements():
         raise ValueError("failed to install required packages")
 
 
-# retry for 10 minutes
-@retry(wait_fixed=1000, stop_max_delay=10 * 60 * 1000)
+def _retry_retrieve_mms_server_process(startup_timeout):
+    retrieve_mms_server_process = retry(wait_fixed=1000, stop_max_delay=startup_timeout * 1000)(
+        _retrieve_mms_server_process
+    )
+    return retrieve_mms_server_process()
+
+
 def _retrieve_mms_server_process():
     mms_server_processes = list()
 
