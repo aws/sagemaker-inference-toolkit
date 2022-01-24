@@ -15,7 +15,7 @@ import signal
 import subprocess
 import types
 
-from mock import Mock, patch, ANY
+from mock import ANY, Mock, patch
 import pytest
 
 from sagemaker_inference import environment, model_server
