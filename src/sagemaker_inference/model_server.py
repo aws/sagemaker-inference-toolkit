@@ -27,6 +27,7 @@ import sagemaker_inference
 from sagemaker_inference import default_handler_service, environment, logging, utils
 from sagemaker_inference.environment import code_dir
 
+logging.configure_logger()
 logger = logging.get_logger()
 
 MMS_CONFIG_FILE = os.path.join("/etc", "sagemaker-mms.properties")
@@ -38,7 +39,7 @@ MME_MMS_CONFIG_FILE = pkg_resources.resource_filename(
     sagemaker_inference.__name__, "/etc/mme-mms.properties"
 )
 DEFAULT_MMS_LOG_FILE = pkg_resources.resource_filename(
-    sagemaker_inference.__name__, "/etc/log4j.properties"
+    sagemaker_inference.__name__, "/etc/log4j2.xml"
 )
 DEFAULT_MMS_MODEL_DIRECTORY = os.path.join(os.getcwd(), ".sagemaker/mms/models")
 DEFAULT_MMS_MODEL_NAME = "model"

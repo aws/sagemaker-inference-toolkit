@@ -16,6 +16,16 @@ from __future__ import absolute_import
 import logging
 
 
+def configure_logger():
+    """Add a handler to the library's logger with a formatter that
+    includes a timestamp along with the message.
+    """
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+    get_logger().addHandler(handler)
+
+
 def get_logger():
     """Return a logger with the name "sagemaker-inference",
     creating it if necessary.
