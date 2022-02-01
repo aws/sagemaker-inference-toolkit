@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.10 (2022-02-01)
+
+### Bug Fixes and Other Changes
+
+ * Add NOTICE
+
 ## v1.5.9 (2022-01-08)
 
 ### Bug Fixes and Other Changes
