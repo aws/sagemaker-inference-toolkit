@@ -1,5 +1,6 @@
 include VERSION
 include LICENSE
+include NOTICE
 include README.rst
 
 recursive-exclude * __pycache__
