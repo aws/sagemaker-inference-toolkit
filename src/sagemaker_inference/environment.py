@@ -23,6 +23,7 @@ logger = logging.get_logger()
 
 DEFAULT_MODULE_NAME = "inference.py"
 DEFAULT_MODEL_SERVER_TIMEOUT = "60"
+DEFAULT_STARTUP_TIMEOUT = "600"  # 10 minutes
 DEFAULT_HTTP_PORT = "8080"
 
 SAGEMAKER_BASE_PATH = os.path.join("/opt", "ml")  # type: str
@@ -50,6 +51,7 @@ class Environment(object):
         module_name (str): The name of the user-provided module. Default is inference.py.
         model_server_timeout (int): Timeout in seconds for the model server. Default is 60.
         model_server_workers (str): Number of worker processes the model server will use.
+
         default_accept (str): The desired default MIME type of the inference in the response
             as specified in the user-supplied SAGEMAKER_DEFAULT_INVOCATIONS_ACCEPT environment
             variable. Otherwise, returns 'application/json' by default.
@@ -68,6 +70,9 @@ class Environment(object):
             os.environ.get(parameters.MODEL_SERVER_TIMEOUT_ENV, DEFAULT_MODEL_SERVER_TIMEOUT)
         )
         self._model_server_workers = os.environ.get(parameters.MODEL_SERVER_WORKERS_ENV)
+        self._startup_timeout = int(
+            os.environ.get(parameters.STARTUP_TIMEOUT_ENV, DEFAULT_STARTUP_TIMEOUT)
+        )
         self._default_accept = os.environ.get(
             parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON
         )
@@ -106,6 +111,13 @@ class Environment(object):
     def model_server_workers(self):  # type: () -> str
         """str: Number of worker processes the model server is configured to use."""
         return self._model_server_workers
+
+    @property
+    def startup_timeout(self):  # type () -> int
+        """int: Timeout, in seconds, used for starting up the model server and fetching
+        its process id, before giving up and throwing error.
+        """
+        return self._startup_timeout
 
     @property
     def default_accept(self):  # type: () -> str
