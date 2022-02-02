@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.11 (2022-02-02)
+
+### Bug Fixes and Other Changes
+
+ * Add configurable startup timeout
+
 ## v1.5.10 (2022-02-01)
 
 ### Bug Fixes and Other Changes
