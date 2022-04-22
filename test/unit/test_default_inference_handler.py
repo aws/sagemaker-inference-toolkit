@@ -32,7 +32,7 @@ def test_default_input_fn(loads):
         ("unsupported/type, text/csv", "text/csv"),
     ],
 )
-@patch("sagemaker_inference.encoder.encode", lambda prediction, accept: prediction ** 2)
+@patch("sagemaker_inference.encoder.encode", lambda prediction, accept: prediction**2)
 def test_default_output_fn(accept, expected_content_type):
     result, content_type = DefaultInferenceHandler().default_output_fn(2, accept)
     assert result == 4
