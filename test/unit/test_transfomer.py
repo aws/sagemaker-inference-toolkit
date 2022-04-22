@@ -41,6 +41,8 @@ def test_default_transformer():
     assert isinstance(transformer._default_inference_handler, DefaultInferenceHandler)
     assert transformer._initialized is False
     assert transformer._environment is None
+    assert transformer._pre_model_fn is None
+    assert transformer._model_warmup_fn is None
     assert transformer._model is None
     assert transformer._model_fn is None
     assert transformer._transform_fn is None
@@ -57,6 +59,8 @@ def test_transformer_with_custom_default_inference_handler():
     assert transformer._default_inference_handler == default_inference_handler
     assert transformer._initialized is False
     assert transformer._environment is None
+    assert transformer._pre_model_fn is None
+    assert transformer._model_warmup_fn is None
     assert transformer._model is None
     assert transformer._model_fn is None
     assert transformer._transform_fn is None
@@ -308,6 +312,8 @@ def test_validate_no_user_module_and_set_functions(find_spec, import_module):
     import_module.assert_not_called()
     assert transformer._default_inference_handler == default_inference_handler
     assert transformer._environment == mock_env
+    assert transformer._pre_model_fn == None
+    assert transformer._model_warmup_fn == None
     assert transformer._model_fn == default_model_fn
     assert transformer._input_fn == default_input_fn
     assert transformer._predict_fn == default_predict_fn
@@ -321,11 +327,15 @@ def test_validate_user_module_and_set_functions(find_spec, import_module):
     mock_env = Mock()
     mock_env.module_name = "foo_module"
 
+    default_pre_model_fn = object()
+    default_model_warmup_fn = object()
     default_model_fn = object()
     default_input_fn = object()
     default_predict_fn = object()
     default_output_fn = object()
 
+    default_inference_handler.default_pre_model_fn = default_pre_model_fn
+    default_inference_handler.default_model_warmup_fn = default_model_warmup_fn
     default_inference_handler.default_model_fn = default_model_fn
     default_inference_handler.default_input_fn = default_input_fn
     default_inference_handler.default_predict_fn = default_predict_fn
@@ -339,6 +349,8 @@ def test_validate_user_module_and_set_functions(find_spec, import_module):
     import_module.assert_called_once_with(mock_env.module_name)
     assert transformer._default_inference_handler == default_inference_handler
     assert transformer._environment == mock_env
+    assert transformer._pre_model_fn == default_pre_model_fn
+    assert transformer._model_warmup_fn == default_model_warmup_fn
     assert transformer._model_fn == default_model_fn
     assert transformer._input_fn == default_input_fn
     assert transformer._predict_fn == default_predict_fn
