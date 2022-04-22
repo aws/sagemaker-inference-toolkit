@@ -23,9 +23,19 @@ class DefaultInferenceHandler(object):
     """
 
     def default_pre_model_fn(self, model_dir):
+        """Placeholder Function for pre_model_fn, do nothing
+
+        Args:
+            model_dir (str): The directory where model files are stored.
+        """
         pass
 
     def default_model_warmup_fn(self, model_dir):
+        """Placeholder Function for model_warmup_fn, do nothing
+
+        Args:
+            model_dir (str): The directory where model files are stored.
+        """
         pass
 
     def default_model_fn(self, model_dir):

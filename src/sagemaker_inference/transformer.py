@@ -173,8 +173,12 @@ class Transformer(object):
         """
         user_module_name = self._environment.module_name
 
-        self._pre_model_fn = getattr(self._default_inference_handler, "default_pre_model_fn", None)
-        self._model_warmup_fn = getattr(self._default_inference_handler, "default_model_warmup_fn", None)
+        self._pre_model_fn = getattr(
+            self._default_inference_handler, "default_pre_model_fn", None
+        )
+        self._model_warmup_fn = getattr(
+            self._default_inference_handler, "default_model_warmup_fn", None
+        )
 
         if find_spec(user_module_name) is not None:
             user_module = importlib.import_module(user_module_name)
@@ -200,8 +204,10 @@ class Transformer(object):
             self._input_fn = input_fn or self._default_inference_handler.default_input_fn
             self._predict_fn = predict_fn or self._default_inference_handler.default_predict_fn
             self._output_fn = output_fn or self._default_inference_handler.default_output_fn
-            self._pre_model_fn = pre_model_fn if pre_model_fn is not None else self._pre_model_fn
-            self._model_warmup_fn = model_warmup_fn if model_warmup_fn is not None else self._model_warmup_fn
+            if pre_model_fn is not None:
+                self._pre_model_fn = pre_model_fn
+            if model_warmup_fn is not None:
+                self._model_warmup_fn = model_warmup_fn
         else:
             self._model_fn = self._default_inference_handler.default_model_fn
             self._input_fn = self._default_inference_handler.default_input_fn
