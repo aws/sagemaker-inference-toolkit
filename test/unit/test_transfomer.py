@@ -312,8 +312,8 @@ def test_validate_no_user_module_and_set_functions(find_spec, import_module):
     import_module.assert_not_called()
     assert transformer._default_inference_handler == default_inference_handler
     assert transformer._environment == mock_env
-    assert transformer._pre_model_fn == None
-    assert transformer._model_warmup_fn == None
+    assert transformer._pre_model_fn is None
+    assert transformer._model_warmup_fn is None
     assert transformer._model_fn == default_model_fn
     assert transformer._input_fn == default_input_fn
     assert transformer._predict_fn == default_predict_fn
