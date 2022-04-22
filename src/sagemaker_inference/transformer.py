@@ -173,9 +173,7 @@ class Transformer(object):
         """
         user_module_name = self._environment.module_name
 
-        self._pre_model_fn = getattr(
-            self._default_inference_handler, "default_pre_model_fn", None
-        )
+        self._pre_model_fn = getattr(self._default_inference_handler, "default_pre_model_fn", None)
         self._model_warmup_fn = getattr(
             self._default_inference_handler, "default_model_warmup_fn", None
         )
