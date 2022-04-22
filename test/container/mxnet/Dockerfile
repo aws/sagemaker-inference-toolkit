@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM public.ecr.aws/e2s1w5p1/ubuntu:16.04
 
 LABEL maintainer="Amazon AI"
 
