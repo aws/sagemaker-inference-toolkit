@@ -72,7 +72,7 @@ COPY mxnet/sagemaker_inference.tar.gz /sagemaker_inference.tar.gz
 
 RUN ${PIP} install --no-cache-dir \
     ${MX_URL} \
-    git+git://github.com/dmlc/gluon-nlp.git@v0.9.0 \
+    git+https://github.com/dmlc/gluon-nlp.git@v0.9.0 \
     multi-model-server==$MMS_VERSION \
     keras-mxnet==2.2.4.1 \
     numpy==1.17.4 \
