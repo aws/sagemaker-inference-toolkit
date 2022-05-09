@@ -21,7 +21,7 @@ from sagemaker_inference import content_types, decoder, errors
 
 @pytest.mark.parametrize(
     "target",
-    ([42, 6, 9], [42.0, 6.0, 9.0], ["42", "6", "9"], [u"42", u"6", u"9"], {42: {"6": 9.0}}),
+    ([42, 6, 9], [42.0, 6.0, 9.0], ["42", "6", "9"], ["42", "6", "9"], {42: {"6": 9.0}}),
 )
 def test_npy_to_numpy(target):
     buffer = BytesIO()
@@ -39,7 +39,7 @@ def test_npy_to_numpy(target):
         ("[42, 6, 9]", np.array([42, 6, 9])),
         ("[42.0, 6.0, 9.0]", np.array([42.0, 6.0, 9.0])),
         ('["42", "6", "9"]', np.array(["42", "6", "9"])),
-        (u'["42", "6", "9"]', np.array([u"42", u"6", u"9"])),
+        ('["42", "6", "9"]', np.array(["42", "6", "9"])),
     ],
 )
 def test_json_to_numpy(target, expected):

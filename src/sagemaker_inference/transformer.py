@@ -66,6 +66,8 @@ class Transformer(object):
         self._environment = None
         self._model = None
 
+        self._pre_model_fn = None
+        self._model_warmup_fn = None
         self._model_fn = None
         self._transform_fn = None
         self._input_fn = None
@@ -155,7 +157,11 @@ class Transformer(object):
         if not self._initialized:
             self._environment = environment.Environment()
             self._validate_user_module_and_set_functions()
+            if self._pre_model_fn is not None:
+                self._pre_model_fn(model_dir)
             self._model = self._model_fn(model_dir)
+            if self._model_warmup_fn is not None:
+                self._model_warmup_fn(model_dir)
             self._initialized = True
 
     def _validate_user_module_and_set_functions(self):
@@ -166,6 +172,12 @@ class Transformer(object):
 
         """
         user_module_name = self._environment.module_name
+
+        self._pre_model_fn = getattr(self._default_inference_handler, "default_pre_model_fn", None)
+        self._model_warmup_fn = getattr(
+            self._default_inference_handler, "default_model_warmup_fn", None
+        )
+
         if find_spec(user_module_name) is not None:
             user_module = importlib.import_module(user_module_name)
 
@@ -177,6 +189,8 @@ class Transformer(object):
             input_fn = getattr(user_module, "input_fn", None)
             predict_fn = getattr(user_module, "predict_fn", None)
             output_fn = getattr(user_module, "output_fn", None)
+            pre_model_fn = getattr(user_module, "pre_model_fn", None)
+            model_warmup_fn = getattr(user_module, "model_warmup_fn", None)
 
             if transform_fn and (input_fn or predict_fn or output_fn):
                 raise ValueError(
@@ -188,6 +202,10 @@ class Transformer(object):
             self._input_fn = input_fn or self._default_inference_handler.default_input_fn
             self._predict_fn = predict_fn or self._default_inference_handler.default_predict_fn
             self._output_fn = output_fn or self._default_inference_handler.default_output_fn
+            if pre_model_fn is not None:
+                self._pre_model_fn = pre_model_fn
+            if model_warmup_fn is not None:
+                self._model_warmup_fn = model_warmup_fn
         else:
             self._model_fn = self._default_inference_handler.default_model_fn
             self._input_fn = self._default_inference_handler.default_input_fn
