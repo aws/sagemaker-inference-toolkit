@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.0 (2022-05-10)
+
+### Features
+
+ * preModel and warmup function support
+
 ## v1.5.11 (2022-02-02)
 
 ### Bug Fixes and Other Changes
