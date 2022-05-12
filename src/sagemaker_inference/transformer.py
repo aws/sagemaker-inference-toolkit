@@ -161,7 +161,7 @@ class Transformer(object):
                 self._pre_model_fn(model_dir)
             self._model = self._model_fn(model_dir)
             if self._model_warmup_fn is not None:
-                self._model_warmup_fn(model_dir)
+                self._model_warmup_fn(model_dir, self._model)
             self._initialized = True
 
     def _validate_user_module_and_set_functions(self):
