@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.1 (2022-05-12)
+
+### Bug Fixes and Other Changes
+
+ * inference handler issue
+
 ## v1.6.0 (2022-05-10)
 
 ### Features
