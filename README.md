@@ -7,7 +7,6 @@
 Serve machine learning models within a Docker container using Amazon
 SageMaker.
 
-
 ## :books: Background
 
 [Amazon SageMaker](https://aws.amazon.com/sagemaker/) is a fully managed service for data science and machine learning (ML) workflows.
