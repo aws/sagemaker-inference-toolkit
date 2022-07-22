@@ -124,7 +124,7 @@ class Transformer(object):
 
             response_list = []
 
-            for i in range(len(data)):
+            for _ in range(len(data)):
                 input_data = data[0].get("body")
 
                 request_processor = context.request_processor[0]
