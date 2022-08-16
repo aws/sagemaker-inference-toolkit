@@ -21,11 +21,12 @@ from sagemaker_inference import decoder, encoder, errors, utils
 class DefaultInferenceHandler(object):
     """Bare-bones implementation of default inference functions."""
 
-    def default_model_fn(self, model_dir):
+    def default_model_fn(self, model_dir, context=None):
         """Function responsible for loading the model.
 
         Args:
             model_dir (str): The directory where model files are stored.
+            context (obj): the request context (default: None).
 
         Returns:
             obj: the loaded model.
@@ -40,12 +41,14 @@ class DefaultInferenceHandler(object):
             )
         )
 
-    def default_input_fn(self, input_data, content_type):  # pylint: disable=no-self-use
+    def default_input_fn(self, input_data, content_type, context=None):
+        # pylint: disable=unused-argument, no-self-use
         """Function responsible for deserializing the input data into an object for prediction.
 
         Args:
             input_data (obj): the request data.
             content_type (str): the request content type.
+            context (obj): the request context (default: None).
 
         Returns:
             obj: data ready for prediction.
@@ -53,12 +56,13 @@ class DefaultInferenceHandler(object):
         """
         return decoder.decode(input_data, content_type)
 
-    def default_predict_fn(self, data, model):
+    def default_predict_fn(self, data, model, context=None):
         """Function responsible for model predictions.
 
         Args:
-            model (obj): model loaded by the model_fn
-            data: deserialized data returned by the input_fn
+            model (obj): model loaded by the model_fn.
+            data: deserialized data returned by the input_fn.
+            context (obj): the request context (default: None).
 
         Returns:
             obj: prediction result.
@@ -73,12 +77,13 @@ class DefaultInferenceHandler(object):
             )
         )
 
-    def default_output_fn(self, prediction, accept):  # pylint: disable=no-self-use
+    def default_output_fn(self, prediction, accept, context=None):  # pylint: disable=no-self-use
         """Function responsible for serializing the prediction result to the desired accept type.
 
         Args:
             prediction (obj): prediction result returned by the predict_fn.
             accept (str): accept header expected by the client.
+            context (obj): the request context (default: None).
 
         Returns:
             obj: prediction data.

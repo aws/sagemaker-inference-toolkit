@@ -10,7 +10,8 @@
 # distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from mock import Mock, patch
+
+from mock import call, Mock, patch
 import pytest
 
 try:
@@ -49,6 +50,7 @@ def test_default_transformer():
     assert transformer._input_fn is None
     assert transformer._predict_fn is None
     assert transformer._output_fn is None
+    assert transformer._context is None
 
 
 def test_transformer_with_custom_default_inference_handler():
@@ -67,16 +69,18 @@ def test_transformer_with_custom_default_inference_handler():
     assert transformer._input_fn is None
     assert transformer._predict_fn is None
     assert transformer._output_fn is None
+    assert transformer._context is None
 
 
 @pytest.mark.parametrize("accept_key", ["Accept", "accept"])
+@patch("sagemaker_inference.transformer.Transformer._run_handler_function", return_value=RESULT)
 @patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
 @patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
-def test_transform(validate, retrieve_content_type_header, accept_key):
+def test_transform(validate, retrieve_content_type_header, run_handler, accept_key):
     data = [{"body": INPUT_DATA}]
     context = Mock()
     request_processor = Mock()
-    transform_fn = Mock(return_value=RESULT)
+    transform_fn = Mock()
 
     context.request_processor = [request_processor]
     request_property = {accept_key: ACCEPT}
@@ -85,20 +89,24 @@ def test_transform(validate, retrieve_content_type_header, accept_key):
     transformer = Transformer()
     transformer._model = MODEL
     transformer._transform_fn = transform_fn
+    transformer._context = context
 
     result = transformer.transform(data, context)
 
     validate.assert_called_once()
     retrieve_content_type_header.assert_called_once_with(request_property)
-    transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT)
+    run_handler.assert_called_once_with(
+        transformer._transform_fn, MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT
+    )
     context.set_response_content_type.assert_called_once_with(0, ACCEPT)
     assert isinstance(result, list)
     assert result[0] == RESULT
 
 
+@patch("sagemaker_inference.transformer.Transformer._run_handler_function")
 @patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
 @patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
-def test_transform_no_accept(validate, retrieve_content_type_header):
+def test_transform_no_accept(validate, retrieve_content_type_header, run_handler):
     data = [{"body": INPUT_DATA}]
     context = Mock()
     request_processor = Mock()
@@ -113,16 +121,20 @@ def test_transform_no_accept(validate, retrieve_content_type_header):
     transformer._model = MODEL
     transformer._transform_fn = transform_fn
     transformer._environment = environment
+    transformer._context = context
 
     transformer.transform(data, context)
 
     validate.assert_called_once()
-    transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, DEFAULT_ACCEPT)
+    run_handler.assert_called_once_with(
+        transformer._transform_fn, MODEL, INPUT_DATA, CONTENT_TYPE, DEFAULT_ACCEPT
+    )
 
 
+@patch("sagemaker_inference.transformer.Transformer._run_handler_function")
 @patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
 @patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
-def test_transform_any_accept(validate, retrieve_content_type_header):
+def test_transform_any_accept(validate, retrieve_content_type_header, run_handler):
     data = [{"body": INPUT_DATA}]
     context = Mock()
     request_processor = Mock()
@@ -137,17 +149,21 @@ def test_transform_any_accept(validate, retrieve_content_type_header):
     transformer._model = MODEL
     transformer._transform_fn = transform_fn
     transformer._environment = environment
+    transformer._context = context
 
     transformer.transform(data, context)
 
     validate.assert_called_once()
-    transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, DEFAULT_ACCEPT)
+    run_handler.assert_called_once_with(
+        transformer._transform_fn, MODEL, INPUT_DATA, CONTENT_TYPE, DEFAULT_ACCEPT
+    )
 
 
 @pytest.mark.parametrize("content_type", content_types.UTF8_TYPES)
+@patch("sagemaker_inference.transformer.Transformer._run_handler_function")
 @patch("sagemaker_inference.utils.retrieve_content_type_header")
 @patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
-def test_transform_decode(validate, retrieve_content_type_header, content_type):
+def test_transform_decode(validate, retrieve_content_type_header, run_handler, content_type):
     input_data = Mock()
     context = Mock()
     request_processor = Mock()
@@ -162,20 +178,27 @@ def test_transform_decode(validate, retrieve_content_type_header, content_type):
     transformer = Transformer()
     transformer._model = MODEL
     transformer._transform_fn = transform_fn
+    transformer._context = context
 
     transformer.transform(data, context)
 
     input_data.decode.assert_called_once_with("utf-8")
-    transform_fn.assert_called_once_with(MODEL, INPUT_DATA, content_type, ACCEPT)
+    run_handler.assert_called_once_with(
+        transformer._transform_fn, MODEL, INPUT_DATA, content_type, ACCEPT
+    )
 
 
+@patch(
+    "sagemaker_inference.transformer.Transformer._run_handler_function",
+    return_value=(RESULT, ACCEPT),
+)
 @patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
 @patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
-def test_transform_tuple(validate, retrieve_content_type_header):
+def test_transform_tuple(validate, retrieve_content_type_header, run_handler):
     data = [{"body": INPUT_DATA}]
     context = Mock()
     request_processor = Mock()
-    transform_fn = Mock(return_value=(RESULT, ACCEPT))
+    transform_fn = Mock()
 
     context.request_processor = [request_processor]
     request_processor.get_request_properties.return_value = {"accept": ACCEPT}
@@ -183,13 +206,16 @@ def test_transform_tuple(validate, retrieve_content_type_header):
     transformer = Transformer()
     transformer._model = MODEL
     transformer._transform_fn = transform_fn
+    transformer._context = context
 
     result = transformer.transform(data, context)
 
-    transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT)
-    context.set_response_content_type.assert_called_once_with(0, transform_fn()[1])
+    run_handler.assert_called_once_with(
+        transformer._transform_fn, MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT
+    )
+    context.set_response_content_type.assert_called_once_with(0, run_handler()[1])
     assert isinstance(result, list)
-    assert result[0] == transform_fn()[0]
+    assert result[0] == run_handler()[0]
 
 
 @patch("sagemaker_inference.transformer.Transformer._validate_user_module_and_set_functions")
@@ -198,17 +224,20 @@ def test_validate_and_initialize(env, validate_user_module):
     transformer = Transformer()
 
     model_fn = Mock()
+    context = Mock()
     transformer._model_fn = model_fn
 
     assert transformer._initialized is False
+    assert transformer._context is None
 
-    transformer.validate_and_initialize()
+    transformer.validate_and_initialize(context=context)
 
     assert transformer._initialized is True
+    assert transformer._context == context
 
     transformer.validate_and_initialize()
 
-    model_fn.assert_called_once_with(environment.model_dir)
+    model_fn.assert_called_once_with(environment.model_dir, context)
     env.assert_called_once_with()
     validate_user_module.assert_called_once_with()
 
@@ -230,6 +259,7 @@ def test_handle_validate_and_initialize_error(env, validate_user_module):
     transformer._model = MODEL
     transformer._transform_fn = transform_fn
     transformer._model_fn = model_fn
+    transformer._context = context
 
     test_error_message = "Foo"
     validate_user_module.side_effect = ValueError(test_error_message)
@@ -266,6 +296,7 @@ def test_handle_validate_and_initialize_user_error(env, validate_user_module):
     transformer._model = MODEL
     transformer._transform_fn = transform_fn
     transformer._model_fn = model_fn
+    transformer._context = context
 
     validate_user_module.side_effect = FooUserError(test_status_code, test_error_message)
 
@@ -414,10 +445,16 @@ def test_validate_user_module_error(find_spec, import_module, user_module):
     _assert_value_error_raised()
 
 
-def test_default_transform_fn():
+@patch(
+    "sagemaker_inference.transformer.Transformer._run_handler_function",
+    side_effect=[PREPROCESSED_DATA, PREDICT_RESULT, PROCESSED_RESULT],
+)
+def test_default_transform_fn(run_handle_function):
     transformer = Transformer()
+    context = Mock()
+    transformer._context = context
 
-    input_fn = Mock(return_value=PREPROCESSED_DATA)
+    input_fn = Mock()
     predict_fn = Mock(return_value=PREDICT_RESULT)
     output_fn = Mock(return_value=PROCESSED_RESULT)
 
@@ -425,9 +462,44 @@ def test_default_transform_fn():
     transformer._predict_fn = predict_fn
     transformer._output_fn = output_fn
 
-    result = transformer._default_transform_fn(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT)
+    result = transformer._default_transform_fn(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT, context)
 
-    input_fn.assert_called_once_with(INPUT_DATA, CONTENT_TYPE)
-    predict_fn.assert_called_once_with(PREPROCESSED_DATA, MODEL)
-    output_fn.assert_called_once_with(PREDICT_RESULT, ACCEPT)
+    run_handle_function.assert_has_calls(
+        [
+            call(transformer._input_fn, *(INPUT_DATA, CONTENT_TYPE)),
+            call(transformer._predict_fn, *(PREPROCESSED_DATA, MODEL)),
+            call(transformer._output_fn, *(PREDICT_RESULT, ACCEPT)),
+        ]
+    )
+
     assert result == PROCESSED_RESULT
+
+
+def dummy_handler_func(a, b):
+    return b
+
+
+def test_run_handler_function():
+    arg1 = Mock()
+    arg2 = Mock()
+    context = Mock()
+    transformer = Transformer()
+    transformer._context = context
+
+    # test the case when handler function takes context
+    assert transformer._run_handler_function(dummy_handler_func, arg1) == context
+
+    # test the case when handler function does not take context
+    assert transformer._run_handler_function(dummy_handler_func, arg1, arg2) == arg2
+
+
+def test_run_handler_function_raise_error():
+    with pytest.raises(TypeError) as e:
+        a = Mock()
+        b = Mock()
+        c = Mock()
+        transformer = Transformer()
+        transformer._context = Mock()
+        transformer._run_handler_function(dummy_handler_func, a, b, c)
+
+    assert "dummy_handler_func takes 2 arguments but 3 were given." in str(e.value)
