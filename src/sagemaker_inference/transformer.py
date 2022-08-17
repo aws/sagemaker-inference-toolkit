@@ -16,6 +16,12 @@ requests.
 """
 from __future__ import absolute_import
 
+try:
+    from inspect import signature
+except ImportError:
+    # Python<3.3 backport:
+    from funcsigs import signature
+
 import importlib
 import traceback
 
@@ -125,7 +131,17 @@ class Transformer(object):
             if content_type in content_types.UTF8_TYPES:
                 input_data = input_data.decode("utf-8")
 
-            result = self._transform_fn(self._model, input_data, content_type, accept)
+            # If the configured transform_fn supports the optional request context argument, pass it
+            # through:
+            transform_args = [self._model, input_data, content_type, accept]
+            n_fn_args = len(signature(self._transform_fn).parameters)
+            if n_fn_args > 4:
+                # TODO: Probably wouldn't use the actual 'context' obj here?
+                # Some more curated, useful object could be preferred maybe... Just something so
+                # that users' override functions can access CustomAttributes header! (Maybe even
+                # modify it on the response?)
+                transform_args.append(context)
+            result = self._transform_fn(*transform_args)
 
             response = result
             response_content_type = accept
@@ -214,7 +230,7 @@ class Transformer(object):
 
             self._transform_fn = self._default_transform_fn
 
-    def _default_transform_fn(self, model, input_data, content_type, accept):
+    def _default_transform_fn(self, model, input_data, content_type, accept, context):
         """Make predictions against the model and return a serialized response.
         This serves as the default implementation of transform_fn, used when the
         user has not provided an implementation.
@@ -224,13 +240,22 @@ class Transformer(object):
             input_data (obj): the request data.
             content_type (str): the request content type.
             accept (str): accept header expected by the client.
+            context (?): TODO
 
         Returns:
             obj: the serialized prediction result or a tuple of the form
                 (response_data, content_type)
 
         """
-        data = self._input_fn(input_data, content_type)
-        prediction = self._predict_fn(data, model)
-        result = self._output_fn(prediction, accept)
+        # If configured handler functions support the extra context arg, pass it through:
+        n_input_args = len(signature(self._input_fn).parameters)
+        n_predict_args = len(signature(self._predict_fn).parameters)
+        n_output_args = len(signature(self._output_fn).parameters)
+
+        input_args = [input_data, content_type] + ([context] if n_input_args > 2 else [])
+        data = self._input_fn(*input_args)
+        predict_args = [data, model] + ([context] if n_predict_args > 2 else [])
+        prediction = self._predict_fn(*predict_args)
+        output_args = [prediction, accept] + ([context] if n_output_args > 2 else [])
+        result = self._output_fn(*output_args)
         return result
