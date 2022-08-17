@@ -34,6 +34,9 @@ required_packages = ["numpy", "six", "psutil", "retrying==1.3.3", "scipy"]
 # enum is introduced in Python 3.4. Installing enum back port
 if sys.version_info < (3, 4):
     required_packages.append("enum34 >= 1.1.6")
+# inspect.signature is introduced in Python 3.3. Installing funcsigs back port
+if sys.version_info < (3, 3):
+    required_packages.append("funcsigs >= 1.0.2")
 
 PKG_NAME = "sagemaker_inference"
 

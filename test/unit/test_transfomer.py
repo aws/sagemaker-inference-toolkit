@@ -18,6 +18,12 @@ try:
 except ImportError:
     import httplib as http_client
 
+try:
+    from inspect import signature
+except ImportError:
+    # Python<3.3 backport:
+    from funcsigs import signature
+
 from sagemaker_inference import content_types, environment
 from sagemaker_inference.default_inference_handler import DefaultInferenceHandler
 from sagemaker_inference.errors import BaseInferenceToolkitError
@@ -29,6 +35,7 @@ ACCEPT = "accept"
 DEFAULT_ACCEPT = "default_accept"
 RESULT = "result"
 MODEL = "foo"
+REQ_CONTEXT = object()
 
 PREPROCESSED_DATA = "preprocessed_data"
 PREDICT_RESULT = "prediction_result"
@@ -90,7 +97,41 @@ def test_transform(validate, retrieve_content_type_header, accept_key):
 
     validate.assert_called_once()
     retrieve_content_type_header.assert_called_once_with(request_property)
+    # Since Mock()'s callable signature has only 2 args ('args', 'kwargs'), the extra 'context' arg
+    # will not be added in this case (see test_transform_with_context below):
     transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT)
+    context.set_response_content_type.assert_called_once_with(0, ACCEPT)
+    assert isinstance(result, list)
+    assert result[0] == RESULT
+
+
+@pytest.mark.parametrize("accept_key", ["Accept", "accept"])
+@patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
+@patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
+def test_transform_with_context(validate, retrieve_content_type_header, accept_key):
+    data = [{"body": INPUT_DATA}]
+    context = Mock()
+    request_processor = Mock()
+
+    # Simulate setting a transform_fn that supports additional 'context' argument:
+    transform_fn = Mock(return_value=RESULT)
+    transform_fn.__signature__ = signature(
+        lambda model, input_data, content_type, accept, context: None
+    )
+
+    context.request_processor = [request_processor]
+    request_property = {accept_key: ACCEPT}
+    request_processor.get_request_properties.return_value = request_property
+
+    transformer = Transformer()
+    transformer._model = MODEL
+    transformer._transform_fn = transform_fn
+
+    result = transformer.transform(data, context)
+
+    validate.assert_called_once()
+    retrieve_content_type_header.assert_called_once_with(request_property)
+    transform_fn.assert_called_once_with(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT, context)
     context.set_response_content_type.assert_called_once_with(0, ACCEPT)
     assert isinstance(result, list)
     assert result[0] == RESULT
@@ -417,6 +458,8 @@ def test_validate_user_module_error(find_spec, import_module, user_module):
 def test_default_transform_fn():
     transformer = Transformer()
 
+    # Default Mock.__call__ signature has 2 args anyway (args, kwargs) so no signature hacking
+    # necessary for the context-free case:
     input_fn = Mock(return_value=PREPROCESSED_DATA)
     predict_fn = Mock(return_value=PREDICT_RESULT)
     output_fn = Mock(return_value=PROCESSED_RESULT)
@@ -425,9 +468,32 @@ def test_default_transform_fn():
     transformer._predict_fn = predict_fn
     transformer._output_fn = output_fn
 
-    result = transformer._default_transform_fn(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT)
+    result = transformer._default_transform_fn(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT, REQ_CONTEXT)
 
     input_fn.assert_called_once_with(INPUT_DATA, CONTENT_TYPE)
     predict_fn.assert_called_once_with(PREPROCESSED_DATA, MODEL)
     output_fn.assert_called_once_with(PREDICT_RESULT, ACCEPT)
+    assert result == PROCESSED_RESULT
+
+
+def test_default_transform_with_contextual_fns():
+    transformer = Transformer()
+
+    # Set the __signature__ on the mock functions to indicate the user overrides want req context:
+    input_fn = Mock(return_value=PREPROCESSED_DATA)
+    input_fn.__signature__ = signature(lambda input_data, content_type, context: None)
+    predict_fn = Mock(return_value=PREDICT_RESULT)
+    predict_fn.__signature__ = signature(lambda data, model, context: None)
+    output_fn = Mock(return_value=PROCESSED_RESULT)
+    output_fn.__signature__ = signature(lambda prediction, accept, context: None)
+
+    transformer._input_fn = input_fn
+    transformer._predict_fn = predict_fn
+    transformer._output_fn = output_fn
+
+    result = transformer._default_transform_fn(MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT, REQ_CONTEXT)
+
+    input_fn.assert_called_once_with(INPUT_DATA, CONTENT_TYPE, REQ_CONTEXT)
+    predict_fn.assert_called_once_with(PREPROCESSED_DATA, MODEL, REQ_CONTEXT)
+    output_fn.assert_called_once_with(PREDICT_RESULT, ACCEPT, REQ_CONTEXT)
     assert result == PROCESSED_RESULT
