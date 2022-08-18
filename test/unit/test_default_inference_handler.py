@@ -10,7 +10,7 @@
 # distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from mock import patch
+from mock import Mock, patch
 import pytest
 
 from sagemaker_inference import content_types
@@ -19,7 +19,8 @@ from sagemaker_inference.default_inference_handler import DefaultInferenceHandle
 
 @patch("sagemaker_inference.decoder.decode")
 def test_default_input_fn(loads):
-    assert DefaultInferenceHandler().default_input_fn(42, content_types.JSON)
+    context = Mock()
+    assert DefaultInferenceHandler().default_input_fn(42, content_types.JSON, context)
 
     loads.assert_called_with(42, content_types.JSON)
 
@@ -34,7 +35,8 @@ def test_default_input_fn(loads):
 )
 @patch("sagemaker_inference.encoder.encode", lambda prediction, accept: prediction**2)
 def test_default_output_fn(accept, expected_content_type):
-    result, content_type = DefaultInferenceHandler().default_output_fn(2, accept)
+    context = Mock()
+    result, content_type = DefaultInferenceHandler().default_output_fn(2, accept, context)
     assert result == 4
     assert content_type == expected_content_type
 

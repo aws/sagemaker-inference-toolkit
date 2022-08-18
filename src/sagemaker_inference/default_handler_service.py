@@ -63,4 +63,4 @@ class DefaultHandlerService(object):
         else:
             os.environ[PYTHON_PATH_ENV] = code_dir_path
 
-        self._service.validate_and_initialize(model_dir=model_dir)
+        self._service.validate_and_initialize(model_dir=model_dir, context=context)

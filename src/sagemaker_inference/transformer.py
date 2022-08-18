@@ -20,6 +20,16 @@ import importlib
 import traceback
 
 try:
+    from inspect import signature  # pylint: disable=ungrouped-imports
+except ImportError:
+    # for Python2.7
+    import subprocess
+    import sys
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "inspect2"])
+    from inspect2 import signature
+
+try:
     from importlib.util import find_spec  # pylint: disable=ungrouped-imports
 except ImportError:
     import imp  # noqa: F401
@@ -73,6 +83,7 @@ class Transformer(object):
         self._input_fn = None
         self._predict_fn = None
         self._output_fn = None
+        self._context = None
 
     @staticmethod
     def handle_error(context, inference_exception, trace):
@@ -109,7 +120,7 @@ class Transformer(object):
         try:
             properties = context.system_properties
             model_dir = properties.get("model_dir")
-            self.validate_and_initialize(model_dir=model_dir)
+            self.validate_and_initialize(model_dir=model_dir, context=context)
 
             input_data = data[0].get("body")
 
@@ -125,7 +136,9 @@ class Transformer(object):
             if content_type in content_types.UTF8_TYPES:
                 input_data = input_data.decode("utf-8")
 
-            result = self._transform_fn(self._model, input_data, content_type, accept)
+            result = self._run_handler_function(
+                self._transform_fn, *(self._model, input_data, content_type, accept)
+            )
 
             response = result
             response_content_type = accept
@@ -148,20 +161,25 @@ class Transformer(object):
                     trace,
                 )
 
-    def validate_and_initialize(self, model_dir=environment.model_dir):  # type: () -> None
+    def validate_and_initialize(self, model_dir=environment.model_dir, context=None):
         """Validates the user module against the SageMaker inference contract.
 
         Load the model as defined by the ``model_fn`` to prepare handling predictions.
 
         """
         if not self._initialized:
+            self._context = context
             self._environment = environment.Environment()
             self._validate_user_module_and_set_functions()
+
             if self._pre_model_fn is not None:
-                self._pre_model_fn(model_dir)
-            self._model = self._model_fn(model_dir)
+                self._run_handler_function(self._pre_model_fn, *(model_dir,))
+
+            self._model = self._run_handler_function(self._model_fn, *(model_dir,))
+
             if self._model_warmup_fn is not None:
-                self._model_warmup_fn(model_dir, self._model)
+                self._run_handler_function(self._model_warmup_fn, *(model_dir, self._model))
+
             self._initialized = True
 
     def _validate_user_module_and_set_functions(self):
@@ -214,7 +232,8 @@ class Transformer(object):
 
             self._transform_fn = self._default_transform_fn
 
-    def _default_transform_fn(self, model, input_data, content_type, accept):
+    def _default_transform_fn(self, model, input_data, content_type, accept, context=None):
+        # pylint: disable=unused-argument
         """Make predictions against the model and return a serialized response.
         This serves as the default implementation of transform_fn, used when the
         user has not provided an implementation.
@@ -224,13 +243,36 @@ class Transformer(object):
             input_data (obj): the request data.
             content_type (str): the request content type.
             accept (str): accept header expected by the client.
+            context (obj): the request context (default: None).
 
         Returns:
             obj: the serialized prediction result or a tuple of the form
                 (response_data, content_type)
 
         """
-        data = self._input_fn(input_data, content_type)
-        prediction = self._predict_fn(data, model)
-        result = self._output_fn(prediction, accept)
+        data = self._run_handler_function(self._input_fn, *(input_data, content_type))
+        prediction = self._run_handler_function(self._predict_fn, *(data, model))
+        result = self._run_handler_function(self._output_fn, *(prediction, accept))
+        return result
+
+    def _run_handler_function(self, func, *argv):
+        """Helper to call the handler function which covers 2 cases:
+        1. the handle function takes context
+        2. the handle function does not take context
+        """
+        num_func_input = len(signature(func).parameters)
+        if num_func_input == len(argv):
+            # function does not take context
+            result = func(*argv)
+        elif num_func_input == len(argv) + 1:
+            # function takes context
+            argv_context = argv + (self._context,)
+            result = func(*argv_context)
+        else:
+            raise TypeError(
+                "{} takes {} arguments but {} were given.".format(
+                    func.__name__, num_func_input, len(argv)
+                )
+            )
+
         return result
