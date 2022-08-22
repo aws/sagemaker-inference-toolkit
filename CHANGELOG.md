@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.7.0 (2022-08-22)
+
+### Features
+
+ * pass context to handler functions
+
 ## v1.6.1 (2022-05-12)
 
 ### Bug Fixes and Other Changes
