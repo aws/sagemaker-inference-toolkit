@@ -11,9 +11,9 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 """This module contains functionality for the default handler service."""
-from __future__ import absolute_import
 
 import os
+import sys
 
 from sagemaker_inference.transformer import Transformer
 
@@ -57,10 +57,7 @@ class DefaultHandlerService(object):
         model_dir = properties.get("model_dir")
 
         # add model_dir/code to python path
-        code_dir_path = "{}:".format(model_dir + "/code")
-        if PYTHON_PATH_ENV in os.environ:
-            os.environ[PYTHON_PATH_ENV] = code_dir_path + os.environ[PYTHON_PATH_ENV]
-        else:
-            os.environ[PYTHON_PATH_ENV] = code_dir_path
+        code_dir_path = model_dir + "/code"
+        sys.path.insert(1, code_dir_path)
 
         self._service.validate_and_initialize(model_dir=model_dir, context=context)
