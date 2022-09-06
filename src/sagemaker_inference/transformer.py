@@ -142,7 +142,7 @@ class Transformer(object):
                 result = self._run_handler_function(
                     self._transform_fn, *(self._model, input_data, content_type, accept)
                 )
- 
+
                 response = result
                 response_content_type = accept
 
