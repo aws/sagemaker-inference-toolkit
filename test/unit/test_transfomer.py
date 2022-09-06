@@ -102,6 +102,35 @@ def test_transform(validate, retrieve_content_type_header, run_handler, accept_k
     assert isinstance(result, list)
     assert result[0] == RESULT
 
+@pytest.mark.parametrize("accept_key", ["Accept", "accept"])
+@patch("sagemaker_inference.transformer.Transformer._run_handler_function", return_value=RESULT)
+@patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
+@patch("sagemaker_inference.transformer.Transformer.validate_and_initialize")
+def test_batch_transform(validate, retrieve_content_type_header, run_handler, accept_key):
+    data = [{"body": INPUT_DATA}, {"body": INPUT_DATA}]
+    context = Mock()
+    request_processor = Mock()
+    transform_fn = Mock()
+
+    context.request_processor = [request_processor]
+    request_property = {accept_key: ACCEPT}
+    request_processor.get_request_properties.return_value = request_property
+
+    transformer = Transformer()
+    transformer._model = MODEL
+    transformer._transform_fn = transform_fn
+    transformer._context = context
+
+    result = transformer.transform(data, context)
+
+    validate.assert_called_once()
+    retrieve_content_type_header.assert_called_once_with(request_property)
+    run_handler.assert_called_once_with(
+        transformer._transform_fn, MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT
+    )
+    context.set_response_content_type.assert_called_once_with(0, ACCEPT)
+    assert isinstance(result, list)
+    assert result == [RESULT, RESULT]
 
 @patch("sagemaker_inference.transformer.Transformer._run_handler_function")
 @patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
