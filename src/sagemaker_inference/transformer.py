@@ -135,14 +135,14 @@ class Transformer(object):
 
                 if not accept or accept == content_types.ANY:
                     accept = self._environment.default_accept
-                
+
                 if content_type in content_types.UTF8_TYPES:
                     input_data = input_data.decode("utf-8")
 
                 result = self._run_handler_function(
                     self._transform_fn, *(self._model, input_data, content_type, accept)
                 )
-                
+ 
                 response = result
                 response_content_type = accept
 
