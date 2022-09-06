@@ -102,6 +102,7 @@ def test_transform(validate, retrieve_content_type_header, run_handler, accept_k
     assert isinstance(result, list)
     assert result[0] == RESULT
 
+
 @pytest.mark.parametrize("accept_key", ["Accept", "accept"])
 @patch("sagemaker_inference.transformer.Transformer._run_handler_function", return_value=RESULT)
 @patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
@@ -131,6 +132,7 @@ def test_batch_transform(validate, retrieve_content_type_header, run_handler, ac
     context.set_response_content_type.assert_called_once_with(0, ACCEPT)
     assert isinstance(result, list)
     assert result == [RESULT, RESULT]
+
 
 @patch("sagemaker_inference.transformer.Transformer._run_handler_function")
 @patch("sagemaker_inference.utils.retrieve_content_type_header", return_value=CONTENT_TYPE)
