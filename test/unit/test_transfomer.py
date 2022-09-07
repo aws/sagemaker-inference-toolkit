@@ -124,7 +124,7 @@ def test_batch_transform(validate, retrieve_content_type_header, run_handler, ac
 
     result = transformer.transform(data, context)
 
-    assert validate.assert_called_once()
+    validate.assert_called_once()
     retrieve_content_type_header.assert_called_with(request_property)
     assert retrieve_content_type_header.call_count == 2
     run_handler.assert_called_with(
