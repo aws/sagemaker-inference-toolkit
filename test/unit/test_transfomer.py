@@ -124,12 +124,16 @@ def test_batch_transform(validate, retrieve_content_type_header, run_handler, ac
 
     result = transformer.transform(data, context)
 
-    validate.assert_called_once()
-    retrieve_content_type_header.assert_called_once_with(request_property)
-    run_handler.assert_called_once_with(
+    assert validate.called
+    assert validate.call_count == 2
+    retrieve_content_type_header.assert_called_with(request_property)
+    assert retrieve_content_type_header.call_count == 2
+    run_handler.assert_called_with(
         transformer._transform_fn, MODEL, INPUT_DATA, CONTENT_TYPE, ACCEPT
     )
-    context.set_response_content_type.assert_called_once_with(0, ACCEPT)
+    assert run_handler.call_count == 2
+    context.set_response_content_type.assert_called_with(0, ACCEPT)
+    assert context.set_response_content_type.call_count == 2
     assert isinstance(result, list)
     assert result == [RESULT, RESULT]
 
