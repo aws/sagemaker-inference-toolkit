@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.7.1 (2022-09-08)
+
+### Bug Fixes and Other Changes
+
+ * fix for batch inference
+
 ## v1.7.0 (2022-08-22)
 
 ### Features
