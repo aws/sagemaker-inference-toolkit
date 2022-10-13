@@ -41,11 +41,11 @@ MME_MMS_CONFIG_FILE = pkg_resources.resource_filename(
 DEFAULT_MMS_LOG_FILE = pkg_resources.resource_filename(
     sagemaker_inference.__name__, "/etc/log4j2.xml"
 )
-DEFAULT_MMS_MODEL_DIRECTORY = os.path.join(os.getcwd(), ".sagemaker/mms/models")
+DEFAULT_MMS_MODEL_EXPORT_DIRECTORY = os.path.join(os.getcwd(), ".sagemaker/mms/models")
 DEFAULT_MMS_MODEL_NAME = "model"
 
 ENABLE_MULTI_MODEL = os.getenv("SAGEMAKER_MULTI_MODEL", "false") == "true"
-MODEL_STORE = "/" if ENABLE_MULTI_MODEL else DEFAULT_MMS_MODEL_DIRECTORY
+MODEL_STORE = "/"
 
 PYTHON_PATH_ENV = "PYTHONPATH"
 REQUIREMENTS_PATH = os.path.join(code_dir, "requirements.txt")
@@ -68,15 +68,16 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
 
     """
 
-    if ENABLE_MULTI_MODEL:
-        if not os.getenv("SAGEMAKER_HANDLER"):
-            os.environ["SAGEMAKER_HANDLER"] = handler_service
-        _set_python_path()
-    else:
-        _adapt_to_mms_format(handler_service)
+    if ENABLE_MULTI_MODEL and not os.getenv("SAGEMAKER_HANDLER"):
+        os.environ["SAGEMAKER_HANDLER"] = handler_service
+
+    _set_python_path()
 
     env = environment.Environment()
-    _create_model_server_config_file(env)
+
+    # Note: multi-model default config already sets default_service_handler
+    handler_service_for_config = None if ENABLE_MULTI_MODEL else handler_service
+    _create_model_server_config_file(env, handler_service_for_config)
 
     if os.path.exists(REQUIREMENTS_PATH):
         _install_requirements()
@@ -91,6 +92,8 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
         "--log-config",
         DEFAULT_MMS_LOG_FILE,
     ]
+    if not ENABLE_MULTI_MODEL:
+        multi_model_server_cmd += ["--models", DEFAULT_MMS_MODEL_NAME + "=" + environment.model_dir]
 
     logger.info(multi_model_server_cmd)
     subprocess.Popen(multi_model_server_cmd)
@@ -104,9 +107,12 @@ def start_model_server(handler_service=DEFAULT_HANDLER_SERVICE):
     mms_process.wait()
 
 
+# Note: this legacy function is still here for backwards compatibility.
+# It should not normally need to be used, since the model artifact can be used
+# straight from the original model directory
 def _adapt_to_mms_format(handler_service):
-    if not os.path.exists(DEFAULT_MMS_MODEL_DIRECTORY):
-        os.makedirs(DEFAULT_MMS_MODEL_DIRECTORY)
+    if not os.path.exists(DEFAULT_MMS_MODEL_EXPORT_DIRECTORY):
+        os.makedirs(DEFAULT_MMS_MODEL_EXPORT_DIRECTORY)
 
     model_archiver_cmd = [
         "model-archiver",
@@ -117,7 +123,7 @@ def _adapt_to_mms_format(handler_service):
         "--model-path",
         environment.model_dir,
         "--export-path",
-        DEFAULT_MMS_MODEL_DIRECTORY,
+        DEFAULT_MMS_MODEL_EXPORT_DIRECTORY,
         "--archive-format",
         "no-archive",
     ]
@@ -141,13 +147,13 @@ def _set_python_path():
         os.environ[PYTHON_PATH_ENV] = code_dir_path
 
 
-def _create_model_server_config_file(env):
-    configuration_properties = _generate_mms_config_properties(env)
+def _create_model_server_config_file(env, handler_service=None):
+    configuration_properties = _generate_mms_config_properties(env, handler_service)
 
     utils.write_file(MMS_CONFIG_FILE, configuration_properties)
 
 
-def _generate_mms_config_properties(env):
+def _generate_mms_config_properties(env, handler_service=None):
     user_defined_configuration = {
         "default_response_timeout": env.model_server_timeout,
         "default_workers_per_model": env.model_server_workers,
@@ -155,6 +161,9 @@ def _generate_mms_config_properties(env):
         "management_address": "http://0.0.0.0:{}".format(env.management_http_port),
         "vmargs": "-XX:-UseContainerSupport",
     }
+    # If provided, add handler service to user config
+    if handler_service:
+        user_defined_configuration["default_service_handler"] = handler_service
 
     custom_configuration = str()
 
