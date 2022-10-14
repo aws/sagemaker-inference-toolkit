@@ -49,8 +49,9 @@ def test_start_model_server_default_service_handler(
 
     model_server.start_model_server()
 
-    adapt.assert_called_once_with(model_server.DEFAULT_HANDLER_SERVICE)
-    create_config.assert_called_once_with(env.return_value)
+    adapt.assert_not_called()
+
+    create_config.assert_called_once_with(env.return_value, model_server.DEFAULT_HANDLER_SERVICE)
     exists.assert_called_once_with(REQUIREMENTS_PATH)
     install_requirements.assert_called_once_with()
 
@@ -58,11 +59,13 @@ def test_start_model_server_default_service_handler(
         "multi-model-server",
         "--start",
         "--model-store",
-        model_server.DEFAULT_MMS_MODEL_DIRECTORY,
+        model_server.MODEL_STORE,
         "--mms-config",
         model_server.MMS_CONFIG_FILE,
         "--log-config",
         model_server.DEFAULT_MMS_LOG_FILE,
+        "--models",
+        "{}={}".format(model_server.DEFAULT_MMS_MODEL_NAME, environment.model_dir),
     ]
 
     subprocess_popen.assert_called_once_with(multi_model_server_cmd)
@@ -75,14 +78,16 @@ def test_start_model_server_default_service_handler(
 @patch("sagemaker_inference.model_server._add_sigterm_handler")
 @patch("sagemaker_inference.model_server._create_model_server_config_file")
 @patch("sagemaker_inference.model_server._adapt_to_mms_format")
+@patch("sagemaker_inference.environment.Environment")
 def test_start_model_server_custom_handler_service(
-    adapt, create_config, sigterm, retrieve, subprocess_popen, subprocess_call
+    env, adapt, create_config, sigterm, retrieve, subprocess_popen, subprocess_call
 ):
     handler_service = Mock()
 
     model_server.start_model_server(handler_service)
 
-    adapt.assert_called_once_with(handler_service)
+    adapt.assert_not_called()
+    create_config.assert_called_once_with(env.return_value, handler_service)
 
 
 @patch("sagemaker_inference.model_server._set_python_path")
@@ -94,8 +99,8 @@ def test_adapt_to_mms_format(path_exists, make_dir, subprocess_check_call, set_p
 
     model_server._adapt_to_mms_format(handler_service)
 
-    path_exists.assert_called_once_with(model_server.DEFAULT_MMS_MODEL_DIRECTORY)
-    make_dir.assert_called_once_with(model_server.DEFAULT_MMS_MODEL_DIRECTORY)
+    path_exists.assert_called_once_with(model_server.DEFAULT_MMS_MODEL_EXPORT_DIRECTORY)
+    make_dir.assert_called_once_with(model_server.DEFAULT_MMS_MODEL_EXPORT_DIRECTORY)
 
     model_archiver_cmd = [
         "model-archiver",
@@ -106,7 +111,7 @@ def test_adapt_to_mms_format(path_exists, make_dir, subprocess_check_call, set_p
         "--model-path",
         environment.model_dir,
         "--export-path",
-        model_server.DEFAULT_MMS_MODEL_DIRECTORY,
+        model_server.DEFAULT_MMS_MODEL_EXPORT_DIRECTORY,
         "--archive-format",
         "no-archive",
     ]
@@ -126,7 +131,7 @@ def test_adapt_to_mms_format_existing_path(
 
     model_server._adapt_to_mms_format(handler_service)
 
-    path_exists.assert_called_once_with(model_server.DEFAULT_MMS_MODEL_DIRECTORY)
+    path_exists.assert_called_once_with(model_server.DEFAULT_MMS_MODEL_EXPORT_DIRECTORY)
     make_dir.assert_not_called()
 
 
