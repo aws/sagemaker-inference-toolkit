@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.8.0 (2022-10-14)
+
+### Features
+
+ * Write handler to config file and serve model directly from o…
+
 ## v1.7.1 (2022-09-08)
 
 ### Bug Fixes and Other Changes
