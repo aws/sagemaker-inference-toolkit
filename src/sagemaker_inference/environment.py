@@ -25,6 +25,7 @@ DEFAULT_MODULE_NAME = "inference.py"
 DEFAULT_MODEL_SERVER_TIMEOUT = "60"
 DEFAULT_STARTUP_TIMEOUT = "600"  # 10 minutes
 DEFAULT_HTTP_PORT = "8080"
+DEFAULT_VMARGS = "-XX:-UseContainerSupport"
 
 SAGEMAKER_BASE_PATH = os.path.join("/opt", "ml")  # type: str
 
@@ -70,15 +71,12 @@ class Environment(object):
             os.environ.get(parameters.MODEL_SERVER_TIMEOUT_ENV, DEFAULT_MODEL_SERVER_TIMEOUT)
         )
         self._model_server_workers = os.environ.get(parameters.MODEL_SERVER_WORKERS_ENV)
-        self._startup_timeout = int(
-            os.environ.get(parameters.STARTUP_TIMEOUT_ENV, DEFAULT_STARTUP_TIMEOUT)
-        )
-        self._default_accept = os.environ.get(
-            parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON
-        )
+        self._startup_timeout = int(os.environ.get(parameters.STARTUP_TIMEOUT_ENV, DEFAULT_STARTUP_TIMEOUT))
+        self._default_accept = os.environ.get(parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON)
         self._inference_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._management_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._safe_port_range = os.environ.get(parameters.SAFE_PORT_RANGE_ENV)
+        self._vmargs = os.environ.get(parameters.VMARGS, DEFAULT_VMARGS)
 
     @staticmethod
     def _parse_module_name(program_param):
@@ -140,3 +138,8 @@ class Environment(object):
         specified by SageMaker for handling pings and invocations.
         """
         return self._safe_port_range
+
+    @property
+    def vmargs(self):  # type: () -> str
+        """str: vmargs can be provided for the JVM, to be overriden"""
+        return self._vmargs
