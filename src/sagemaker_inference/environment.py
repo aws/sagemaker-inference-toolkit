@@ -71,8 +71,12 @@ class Environment(object):
             os.environ.get(parameters.MODEL_SERVER_TIMEOUT_ENV, DEFAULT_MODEL_SERVER_TIMEOUT)
         )
         self._model_server_workers = os.environ.get(parameters.MODEL_SERVER_WORKERS_ENV)
-        self._startup_timeout = int(os.environ.get(parameters.STARTUP_TIMEOUT_ENV, DEFAULT_STARTUP_TIMEOUT))
-        self._default_accept = os.environ.get(parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON)
+        self._startup_timeout = int(
+            os.environ.get(parameters.STARTUP_TIMEOUT_ENV, DEFAULT_STARTUP_TIMEOUT)
+        )
+        self._default_accept = os.environ.get(
+            parameters.DEFAULT_INVOCATIONS_ACCEPT_ENV, content_types.JSON
+        )
         self._inference_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._management_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._safe_port_range = os.environ.get(parameters.SAFE_PORT_RANGE_ENV)
