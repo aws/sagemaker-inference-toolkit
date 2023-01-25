@@ -57,4 +57,4 @@ def test_initialize():
     context.system_properties.__getitem__.side_effect = getitem
     DefaultHandlerService(transformer).initialize(context)
 
-    transformer.validate_and_initialize().assert_called_once()
+    transformer.validate_and_initialize.assert_called_once()
