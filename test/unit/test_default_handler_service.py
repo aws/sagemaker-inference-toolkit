@@ -43,7 +43,7 @@ def test_handle():
     result = handler_service.handle(DATA, CONTEXT)
 
     assert result == TRANSFORMED_RESULT
-    assert transformer.transform.called_once_with(DATA, CONTEXT)
+    transformer.transform.assert_called_once_with(DATA, CONTEXT)
 
 
 def test_initialize():
@@ -57,4 +57,4 @@ def test_initialize():
     context.system_properties.__getitem__.side_effect = getitem
     DefaultHandlerService(transformer).initialize(context)
 
-    assert transformer.validate_and_initialize().called_once()
+    transformer.validate_and_initialize.assert_called_once()
