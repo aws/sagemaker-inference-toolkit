@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.8.1 (2023-01-31)
+
+### Bug Fixes and Other Changes
+
+ * Add environment variable VMARGS
+
 ## v1.8.0 (2022-10-14)
 
 ### Features
