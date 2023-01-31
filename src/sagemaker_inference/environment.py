@@ -80,7 +80,7 @@ class Environment(object):
         self._inference_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._management_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._safe_port_range = os.environ.get(parameters.SAFE_PORT_RANGE_ENV)
-        self._vmargs = os.environ.get(parameters.VMARGS, DEFAULT_VMARGS)
+        self._vmargs = os.environ.get(parameters.MODEL_SERVER_VMARGS, DEFAULT_VMARGS)
 
     @staticmethod
     def _parse_module_name(program_param):
