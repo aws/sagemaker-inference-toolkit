@@ -22,7 +22,7 @@ phases:
       - tox -e black-check
 
       # run unit tests
-      - tox -e py36,py37 -- test/unit
+      - tox -e py38,py39,py310 -- test/unit
 
       # build dummy container
       - python3 setup.py sdist
@@ -37,7 +37,7 @@ phases:
       - cd ../..
 
       # run local integration tests
-      - IGNORE_COVERAGE=- tox -e py36,py37 -- test/integration/local
+      - IGNORE_COVERAGE=- tox -e py38,py39,py310 -- test/integration/local
 
       # publish the release to github
       - git-release --publish
