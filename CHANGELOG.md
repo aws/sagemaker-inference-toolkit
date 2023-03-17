@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.9.0 (2023-03-17)
+
+### Features
+
+ * Add support for py39 and py38
+
 ## v1.8.1 (2023-01-31)
 
 ### Bug Fixes and Other Changes
