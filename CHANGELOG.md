@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.9.1 (2023-03-22)
+
+### Bug Fixes and Other Changes
+
+ * relax retrying dependency
+
 ## v1.9.0 (2023-03-17)
 
 ### Features
