@@ -82,7 +82,9 @@ class Environment(object):
         self._management_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._safe_port_range = os.environ.get(parameters.SAFE_PORT_RANGE_ENV)
         self._vmargs = os.environ.get(parameters.MODEL_SERVER_VMARGS, DEFAULT_VMARGS)
-        self._max_request_size_in_mb = os.environ.get(parameters.MAX_REQUEST_SIZE, DEFAULT_MAX_REQUEST_SIZE)
+        self._max_request_size_in_mb = os.environ.get(
+            parameters.MAX_REQUEST_SIZE, DEFAULT_MAX_REQUEST_SIZE
+        )
 
     @staticmethod
     def _parse_module_name(program_param):
