@@ -48,7 +48,7 @@ def test_env():
     assert env.management_http_port == "1738"
     assert env.safe_port_range == "1111-2222"
     assert "-XX:-UseContainerSupport" in env.vmargs
-    assert env.max_request_size == 10485760
+    assert env.max_request_size == 10 * 1024 * 1024
 
 
 @pytest.mark.parametrize("sagemaker_program", ["program.py", "program"])
