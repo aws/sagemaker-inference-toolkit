@@ -26,6 +26,7 @@ DEFAULT_MODEL_SERVER_TIMEOUT = "60"
 DEFAULT_STARTUP_TIMEOUT = "600"  # 10 minutes
 DEFAULT_HTTP_PORT = "8080"
 DEFAULT_VMARGS = "-XX:-UseContainerSupport"
+DEFAULT_MAX_REQUEST_SIZE = None
 
 SAGEMAKER_BASE_PATH = os.path.join("/opt", "ml")  # type: str
 
@@ -81,6 +82,9 @@ class Environment(object):
         self._management_http_port = os.environ.get(parameters.BIND_TO_PORT_ENV, DEFAULT_HTTP_PORT)
         self._safe_port_range = os.environ.get(parameters.SAFE_PORT_RANGE_ENV)
         self._vmargs = os.environ.get(parameters.MODEL_SERVER_VMARGS, DEFAULT_VMARGS)
+        self._max_request_size_in_mb = os.environ.get(
+            parameters.MAX_REQUEST_SIZE, DEFAULT_MAX_REQUEST_SIZE
+        )
 
     @staticmethod
     def _parse_module_name(program_param):
@@ -147,3 +151,11 @@ class Environment(object):
     def vmargs(self):  # type: () -> str
         """str: vmargs can be provided for the JVM, to be overriden"""
         return self._vmargs
+
+    @property
+    def max_request_size(self):  # type: () -> str
+        """str: max request size set by Sagemaker platform in bytes"""
+        if self._max_request_size_in_mb is not None:
+            return int(self._max_request_size_in_mb) * 1024 * 1024
+        else:
+            return None

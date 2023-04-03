@@ -160,6 +160,7 @@ def _generate_mms_config_properties(env, handler_service=None):
         "inference_address": "http://0.0.0.0:{}".format(env.inference_http_port),
         "management_address": "http://0.0.0.0:{}".format(env.management_http_port),
         "vmargs": env.vmargs,
+        "max_request_size": env.max_request_size,
     }
     # If provided, add handler service to user config
     if handler_service:
