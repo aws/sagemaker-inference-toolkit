@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.9.2 (2023-04-04)
+
+### Bug Fixes and Other Changes
+
+ * handle max_request_size param set by SM platofrm
+
 ## v1.9.1 (2023-03-22)
 
 ### Bug Fixes and Other Changes
