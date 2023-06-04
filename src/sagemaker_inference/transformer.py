@@ -122,40 +122,33 @@ class Transformer(object):
             model_dir = properties.get("model_dir")
             self.validate_and_initialize(model_dir=model_dir, context=context)
 
-            response_list = []
+            input_data = [req.get("body") for req in data]
 
-            for i in range(len(data)):
-                input_data = data[i].get("body")
+            request_processor = context.request_processor[0]
 
-                request_processor = context.request_processor[0]
+            request_property = request_processor.get_request_properties()
+            content_type = utils.retrieve_content_type_header(request_property)
+            accept = request_property.get("Accept") or request_property.get("accept")
 
-                request_property = request_processor.get_request_properties()
-                content_type = utils.retrieve_content_type_header(request_property)
-                accept = request_property.get("Accept") or request_property.get("accept")
+            if not accept or accept == content_types.ANY:
+                accept = self._environment.default_accept
 
-                if not accept or accept == content_types.ANY:
-                    accept = self._environment.default_accept
+            if content_type in content_types.UTF8_TYPES:
+                input_data = [item.decode("utf-8") for item in input_data]
+            result = self._run_handler_function(
+                self._transform_fn, *(self._model, input_data, content_type, accept)
+            )
 
-                if content_type in content_types.UTF8_TYPES:
-                    input_data = input_data.decode("utf-8")
+            response = result
+            response_content_type = accept
 
-                result = self._run_handler_function(
-                    self._transform_fn, *(self._model, input_data, content_type, accept)
-                )
+            if isinstance(result, tuple):
+                # handles tuple for backwards compatibility
+                response = result[0]
+                response_content_type = result[1]
 
-                response = result
-                response_content_type = accept
-
-                if isinstance(result, tuple):
-                    # handles tuple for backwards compatibility
-                    response = result[0]
-                    response_content_type = result[1]
-
-                context.set_response_content_type(0, response_content_type)
-
-                response_list.append(response)
-
-            return response_list
+            context.set_response_content_type(0, response_content_type)
+            return [response]
         except Exception as e:  # pylint: disable=broad-except
             trace = traceback.format_exc()
             if isinstance(e, BaseInferenceToolkitError):
