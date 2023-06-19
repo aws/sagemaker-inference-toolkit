@@ -166,6 +166,11 @@ def _generate_mms_config_properties(env, handler_service=None):
     if handler_service:
         user_defined_configuration["default_service_handler"] = handler_service
 
+    if env.model_server_timeout_seconds:
+        user_defined_configuration[
+            "default_response_timeout_seconds"
+        ] = env.model_server_timeout_seconds
+
     custom_configuration = str()
 
     for key in user_defined_configuration:

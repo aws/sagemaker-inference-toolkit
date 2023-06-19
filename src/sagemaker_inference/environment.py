@@ -16,6 +16,7 @@ characteristics, environment variables and configuration settings.
 from __future__ import absolute_import
 
 import os
+from typing import Optional
 
 from sagemaker_inference import content_types, logging, parameters
 
@@ -51,7 +52,9 @@ class Environment(object):
 
     Attributes:
         module_name (str): The name of the user-provided module. Default is inference.py.
-        model_server_timeout (int): Timeout in seconds for the model server. Default is 60.
+        model_server_timeout (int): Timeout for the model server. Default is 60.
+        model_server_timeout_seconds (Optional[int]): Timeout in seconds for the model server.
+            Default is None.
         model_server_workers (str): Number of worker processes the model server will use.
 
         default_accept (str): The desired default MIME type of the inference in the response
@@ -71,7 +74,13 @@ class Environment(object):
         self._model_server_timeout = int(
             os.environ.get(parameters.MODEL_SERVER_TIMEOUT_ENV, DEFAULT_MODEL_SERVER_TIMEOUT)
         )
+        timeout_seconds_var = os.environ.get(parameters.MODEL_SERVER_TIMEOUT_SECONDS_ENV)
+        self._model_server_timeout_seconds = (
+            int(timeout_seconds_var) if timeout_seconds_var is not None else None
+        )
+
         self._model_server_workers = os.environ.get(parameters.MODEL_SERVER_WORKERS_ENV)
+
         self._startup_timeout = int(
             os.environ.get(parameters.STARTUP_TIMEOUT_ENV, DEFAULT_STARTUP_TIMEOUT)
         )
@@ -107,53 +116,61 @@ class Environment(object):
         return self._parse_module_name(self._module_name)
 
     @property
-    def model_server_timeout(self):  # type: () -> int
-        """int: Timeout, in seconds, used for model server's backend workers before
-        they are deemed unresponsive and rebooted.
+    def model_server_timeout(self) -> int:
+        """int: Timeout used for model server's backend workers before they are
+        deemed unresponsive and rebooted.
+
         """
         return self._model_server_timeout
 
     @property
-    def model_server_workers(self):  # type: () -> str
+    def model_server_timeout_seconds(self) -> Optional[int]:
+        """int: Timeout, in seconds, used for model server's backend workers before
+        they are deemed unresponsive and rebooted.
+        """
+        return self._model_server_timeout_seconds
+
+    @property
+    def model_server_workers(self) -> Optional[str]:
         """str: Number of worker processes the model server is configured to use."""
         return self._model_server_workers
 
     @property
-    def startup_timeout(self):  # type () -> int
+    def startup_timeout(self) -> int:
         """int: Timeout, in seconds, used for starting up the model server and fetching
         its process id, before giving up and throwing error.
         """
         return self._startup_timeout
 
     @property
-    def default_accept(self):  # type: () -> str
+    def default_accept(self) -> str:
         """str: The desired default MIME type of the inference in the response."""
         return self._default_accept
 
     @property
-    def inference_http_port(self):  # type: () -> str
+    def inference_http_port(self) -> str:
         """str: HTTP port that SageMaker uses to handle invocations and pings."""
         return self._inference_http_port
 
     @property
-    def management_http_port(self):  # type: () -> str
+    def management_http_port(self) -> str:
         """str: HTTP port that SageMaker uses to handle model management requests."""
         return self._management_http_port
 
     @property
-    def safe_port_range(self):  # type: () -> str
+    def safe_port_range(self) -> Optional[str]:
         """str: HTTP port range that can be used by users to avoid collisions with the HTTP port
         specified by SageMaker for handling pings and invocations.
         """
         return self._safe_port_range
 
     @property
-    def vmargs(self):  # type: () -> str
+    def vmargs(self) -> str:
         """str: vmargs can be provided for the JVM, to be overriden"""
         return self._vmargs
 
     @property
-    def max_request_size(self):  # type: () -> str
+    def max_request_size(self) -> Optional[int]:
         """str: max request size set by Sagemaker platform in bytes"""
         if self._max_request_size_in_mb is not None:
             return int(self._max_request_size_in_mb) * 1024 * 1024
