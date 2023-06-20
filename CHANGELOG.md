@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.9.3 (2023-06-20)
+
+### Bug Fixes and Other Changes
+
+ * Add support for SAGEMAKER_MODEL_SERVER_TIMEOUT_SECONDS variable
+
 ## v1.9.2 (2023-04-04)
 
 ### Bug Fixes and Other Changes
