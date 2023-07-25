@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.10.0 (2023-07-25)
+
+### Features
+
+ * support codeartifact for installing requirements.txt packages
+
 ## v1.9.3 (2023-06-20)
 
 ### Bug Fixes and Other Changes
