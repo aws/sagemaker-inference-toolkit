@@ -273,7 +273,7 @@ def _retrieve_mms_server_process():
     mms_server_processes = list()
 
     for process in psutil.process_iter():
-        if process.status()==psutil.STATUS_ZOMBIE:
+        if process.status() == psutil.STATUS_ZOMBIE:
             continue
         if MMS_NAMESPACE in process.cmdline():
             mms_server_processes.append(process)
