@@ -29,7 +29,7 @@ def read_version():
 
 packages = setuptools.find_packages(where="src", exclude=("test",))
 
-required_packages = ["boto3", "numpy", "six", "psutil==5.9.5", "retrying>=1.3.3,<1.4", "scipy"]
+required_packages = ["boto3", "numpy", "six", "psutil", "retrying>=1.3.3,<1.4", "scipy"]
 
 # enum is introduced in Python 3.4. Installing enum back port
 if sys.version_info < (3, 4):

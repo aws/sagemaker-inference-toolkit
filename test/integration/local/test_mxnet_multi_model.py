@@ -46,6 +46,7 @@ def container():
             except:  # noqa: E722
                 attempts += 1
                 pass
+        time.sleep(60)
         yield proc.pid
     finally:
         subprocess.check_call("docker rm -f sagemaker-inference-toolkit-test".split())
