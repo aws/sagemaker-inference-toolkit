@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.10.1 (2023-10-25)
+
+### Bug Fixes and Other Changes
+
+ * Fix zombie process exception
+
 ## v1.10.0 (2023-07-25)
 
 ### Features
