@@ -42,7 +42,8 @@ RUN mkdir resnet_18 \
 
 COPY dummy/mms-entrypoint.py /usr/local/bin/dockerd-entrypoint.py
 
-RUN mkdir -p /home/model-server/
+RUN mkdir -p /home/model-server/ \
+ && mkdir -p /opt/ml/etc
 COPY dummy/mme_handler_service.py /home/model-server/mme_handler_service.py
 ENV SAGEMAKER_HANDLER="/home/model-server/mme_handler_service.py:handle"
 
