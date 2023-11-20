@@ -46,7 +46,7 @@ DEFAULT_MMS_LOG_FILE = pkg_resources.resource_filename(
 DEFAULT_MMS_MODEL_EXPORT_DIRECTORY = os.path.join(os.getcwd(), ".sagemaker/mms/models")
 DEFAULT_MMS_MODEL_NAME = "model"
 
-ENABLE_MULTI_MODEL = os.getenv("SAGEMAKER_MULTI_MODEL", "false") == "true"
+ENABLE_MULTI_MODEL = os.getenv("SAGEMAKER_MULTI_MODEL", False)
 MODEL_STORE = "/"
 
 PYTHON_PATH_ENV = "PYTHONPATH"
